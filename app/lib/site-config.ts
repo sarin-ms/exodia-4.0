@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: "Exodia 4.0",
-  title: "Exodia 4.0 | All Kerala Technical Learning Gala",
+  title: "Exodia '27'",
   description:
     "Exodia 4.0 returns this January. Discover the All Kerala Technical Learning Gala, where curiosity becomes creation.",
   url: "https://exodiacec.in",

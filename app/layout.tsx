@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import LoadingScreen from "@/app/components/LoadingScreen";
 import { siteConfig } from "@/app/lib/site-config";
 import "@fontsource-variable/rubik/wght.css";
 import "./globals.css";
@@ -135,7 +136,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             }).replace(/</g, "\\u003c"),
           }}
         />
-        {children}
+        <LoadingScreen>{children}</LoadingScreen>
       </body>
     </html>
   );

@@ -1,0 +1,292 @@
+.screen {
+  --wizard-width: min(68svh, clamp(13rem, 46vw, 26rem));
+  --wake-edge: clamp(7rem, 18vw, 20rem);
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: none;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--color-void);
+  color: var(--color-text);
+  opacity: 1;
+  transition: opacity var(--reveal-duration) ease-in-out,
+    visibility var(--reveal-duration);
+}
+
+.atmosphere {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 48%, color-mix(in srgb, var(--color-accent) 25%, var(--color-void)), var(--color-background) 48%, var(--color-void) 85%);
+}
+
+.atmosphere span {
+  position: absolute;
+  top: 26%;
+  left: 17%;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--color-cameo);
+  opacity: 0.35;
+}
+
+.atmosphere span:nth-child(2) { top: 38%; left: 78%; }
+.atmosphere span:nth-child(3) { top: 69%; left: 29%; }
+.atmosphere span:nth-child(4) { top: 75%; left: 87%; }
+.atmosphere span:nth-child(5) { top: 19%; left: 61%; }
+
+.traveler {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 100%;
+  width: var(--wizard-width);
+  height: 100%;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.screen[data-phase="waiting"] .traveler,
+.screen[data-phase="flying"] .traveler,
+.screen[data-phase="covered"] .traveler {
+  animation: flyAcross var(--flight-duration) linear both;
+}
+
+/* The cape pulls a full-height black curtain behind Harry as he crosses. */
+.capeWake {
+  position: absolute;
+  inset-block: 0;
+  left: 44%;
+  width: calc(100vw + var(--wizard-width) + 2 * var(--wake-edge));
+  color: var(--color-void);
+}
+
+.capeWake svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--wake-edge);
+  height: 100%;
+  fill: currentColor;
+}
+
+.capeWake::after {
+  position: absolute;
+  inset: 0 0 0 calc(var(--wake-edge) - 1px);
+  background: currentColor;
+  content: "";
+}
+
+.flyer {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  animation: flightSwoop var(--flight-duration) ease-in-out both;
+  animation-play-state: paused;
+}
+
+.screen[data-phase="waiting"] .flyer,
+.screen[data-phase="flying"] .flyer,
+.screen[data-phase="covered"] .flyer {
+  animation-play-state: running;
+}
+
+.magicTrail i {
+  position: absolute;
+  top: 61%;
+  left: 82%;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--color-cameo);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-cameo) 60%, transparent);
+  opacity: 0;
+  animation: magicDust 850ms ease-out infinite;
+}
+
+.magicTrail i:nth-child(2) { top: 65%; left: 80%; animation-delay: -170ms; }
+.magicTrail i:nth-child(3) { top: 58%; left: 84%; animation-delay: -340ms; }
+.magicTrail i:nth-child(4) { top: 63%; left: 79%; animation-delay: -510ms; }
+.magicTrail i:nth-child(5) { top: 60%; left: 83%; animation-delay: -680ms; }
+
+.status {
+  position: absolute;
+  z-index: 2;
+  bottom: max(5rem, calc(env(safe-area-inset-bottom) + 4rem));
+  left: 1.5rem;
+  right: 1.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  animation: statusFade var(--flight-duration) ease both;
+}
+
+.screen[data-phase="covered"] .atmosphere,
+.screen[data-phase="revealing"] .atmosphere,
+.screen[data-phase="revealing"] .traveler,
+.screen[data-phase="revealing"] .status {
+  visibility: hidden;
+}
+
+.screen[data-phase="revealing"] {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes flyAcross {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(calc(-100vw - var(--wizard-width) - var(--wake-edge)), 0, 0); }
+}
+
+@keyframes flightSwoop {
+  0% { transform: translateY(-37%) rotate(5deg); }
+  45% { transform: translateY(-59%) rotate(-3deg); }
+  100% { transform: translateY(-46%) rotate(2deg); }
+}
+
+@keyframes magicDust {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  20% { opacity: 0.65; }
+  100% { transform: translate(50px, 9px) scale(0.15); opacity: 0; }
+}
+
+@keyframes statusFade {
+  0%, 15% { opacity: 0; }
+  35%, 75% { opacity: 0.65; }
+  100% { opacity: 0; }
+}
+
+@keyframes heroReveal {
+  from { opacity: 0; transform: translateY(8px) scale(1.015); }
+  to { opacity: 1; transform: none; }
+}
+
+/* The page stays usable with scripting disabled or if hydration fails. */
+@media (scripting: enabled) {
+  .screen {
+    display: block;
+    animation: failOpen 0s 9s forwards;
+  }
+
+  .content[data-revealed="false"] {
+    visibility: hidden;
+    animation: revealContent 0s 9s forwards;
+  }
+
+  .content[data-revealed="true"] {
+    animation: heroReveal var(--reveal-duration) cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+}
+
+@keyframes failOpen {
+  to { visibility: hidden; pointer-events: none; }
+}
+
+@keyframes revealContent {
+  to { visibility: visible; }
+}
+
+@media (min-width: 768px) {
+  .status { bottom: 3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen { transition: none; }
+  .atmosphere, .traveler { display: none; }
+  .status { animation: none; }
+  .content[data-revealed="true"] { animation: none; }
+}
+
+.wizard {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  color: var(--color-void);
+  filter: drop-shadow(0 -1px 0 color-mix(in srgb, var(--color-cameo) 32%, transparent))
+    drop-shadow(0 0 12px color-mix(in srgb, var(--color-accent) 20%, transparent));
+}
+
+.rider {
+  transform-origin: 48% 50%;
+  animation: flying 2.8s ease-in-out infinite;
+}
+
+.capeBack {
+  transform-origin: 275px 190px;
+  animation: capeBillow 750ms ease-in-out infinite alternate;
+}
+
+.capeHem {
+  transform-origin: 290px 235px;
+  animation: capeFlutter 630ms ease-in-out -240ms infinite alternate;
+}
+
+.capeFold {
+  color: var(--color-surface);
+  animation: capeBillow 750ms ease-in-out infinite alternate;
+  transform-origin: 275px 190px;
+}
+
+.scarf {
+  color: var(--color-plum);
+  transform-origin: 225px 158px;
+  animation: scarfFlutter 520ms ease-in-out infinite alternate;
+}
+
+.glasses {
+  color: var(--color-cameo);
+  opacity: 0.7;
+}
+
+.broom {
+  color: var(--color-cinder);
+}
+
+.broomTail {
+  color: var(--color-void);
+}
+
+.bristles {
+  color: var(--color-plum);
+}
+
+@keyframes flying {
+  0%, 100% { transform: translate(7px, 7px) rotate(-4deg); }
+  50% { transform: translate(-7px, -9px) rotate(-7deg); }
+}
+
+@keyframes capeBillow {
+  from { transform: skewY(-5deg) scaleY(0.94); }
+  to { transform: skewY(4deg) scaleY(1.035); }
+}
+
+@keyframes capeFlutter {
+  from { transform: skewY(4deg) scaleY(1.03); }
+  to { transform: skewY(-5deg) scaleY(0.93); }
+}
+
+@keyframes scarfFlutter {
+  from { transform: skewY(-5deg) scaleY(0.85); }
+  to { transform: skewY(6deg) scaleY(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rider, .capeBack, .capeHem, .capeFold, .scarf {
+    animation: none;
+  }
+
+  .rider {
+    transform: rotate(-5deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen { display: none; }
+  .content[data-revealed="false"] { visibility: visible; animation: none; }
+}
