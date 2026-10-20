@@ -1,0 +1,32 @@
+# dependencies
+/node_modules/
+/.pnp
+.pnp.*
+
+# Next.js and generated output
+/.next/
+/out/
+/build/
+/coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# local planning, references, prototypes, and research
+/planning/
+/.cache/
+
+# environment and deployment state
+.env*
+!.env.example
+/.vercel/
+
+# local tooling and logs
+.DS_Store
+Thumbs.db
+*.pem
+*.log
+planning/
+.editorconfig
+AGENTS.md
+
+scripts/

@@ -1,0 +1,9 @@
+:root {
+  --color-background: #0d0c1a;
+  --color-surface: #211d2e;
+  --color-text: #ecceb6;
+  --color-text-muted: #b9afc8;
+  --color-accent: #826c9e;
+  --font-brand: "Exodia Spin Cycle", sans-serif;
+  --font-body: "Rubik Variable", "Rubik", sans-serif;
+}
