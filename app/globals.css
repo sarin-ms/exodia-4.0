@@ -14,10 +14,11 @@
 
 html {
   color-scheme: dark;
+  background: var(--color-background);
 }
 
 body {
-  min-width: 320px;
+  min-width: min(320px, 100%);
   margin: 0;
   background: var(--color-background);
   color: var(--color-text);
@@ -28,7 +29,6 @@ body {
 
 h1,
 h2,
-h3,
 p {
   margin: 0;
 }
@@ -37,10 +37,7 @@ a {
   color: inherit;
 }
 
-button,
-input,
-select,
-textarea {
+button {
   font: inherit;
 }
 

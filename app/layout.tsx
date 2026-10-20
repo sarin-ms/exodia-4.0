@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { siteConfig } from "@/app/lib/site-config";
-import "@fontsource-variable/rubik";
+import "@fontsource-variable/rubik/wght.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -47,9 +47,21 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     apple: [
       { url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
-      { url: "/icons/apple-touch-icon-167.png", type: "image/png", sizes: "167x167" },
-      { url: "/icons/apple-touch-icon-152.png", type: "image/png", sizes: "152x152" },
-      { url: "/icons/apple-touch-icon-120.png", type: "image/png", sizes: "120x120" },
+      {
+        url: "/icons/apple-touch-icon-167.png",
+        type: "image/png",
+        sizes: "167x167",
+      },
+      {
+        url: "/icons/apple-touch-icon-152.png",
+        type: "image/png",
+        sizes: "152x152",
+      },
+      {
+        url: "/icons/apple-touch-icon-120.png",
+        type: "image/png",
+        sizes: "120x120",
+      },
     ],
     other: [
       {
@@ -64,7 +76,12 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     statusBarStyle: "black-translucent",
   },
-  formatDetection: { telephone: false, date: false, address: false, email: false },
+  formatDetection: {
+    telephone: false,
+    date: false,
+    address: false,
+    email: false,
+  },
   robots: {
     index: true,
     follow: true,
@@ -93,6 +110,15 @@ type RootLayoutProps = Readonly<{
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en-IN">
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/spin-cycle.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body>
         <script
           type="application/ld+json"

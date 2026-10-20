@@ -1,24 +1,833 @@
+/* Hero */
 .hero {
+  position: relative;
+  z-index: 1;
   display: grid;
-  min-height: 100svh;
-  align-content: center;
-  justify-items: center;
-  gap: 1.25rem;
-  padding: 2rem 1.25rem;
+  min-height: max(44rem, 100svh);
+  align-items: center;
+  padding: 8rem 1.25rem 7rem;
+  overflow: clip;
+  isolation: isolate;
+  background: var(--color-background);
+  view-timeline: --hero-departure block;
+}
+.frame {
+  position: absolute;
+  z-index: 3;
+  inset: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-cameo) 15%, transparent);
+  pointer-events: none;
+  mask:
+    linear-gradient(#000, #000) top left / 2rem 2rem no-repeat,
+    linear-gradient(#000, #000) top right / 2rem 2rem no-repeat,
+    linear-gradient(#000, #000) bottom left / 2rem 2rem no-repeat,
+    linear-gradient(#000, #000) bottom right / 2rem 2rem no-repeat;
+}
+.identity {
+  min-width: 0;
+  z-index: 1;
+  width: 100%;
+  max-width: 62rem;
+  margin: 0 auto;
+  text-align: center;
+}
+.mark {
+  display: block;
+  width: clamp(6.5rem, 25vw, 10.5rem);
+  height: auto;
+  margin: 0 auto 1.6rem;
+  filter: drop-shadow(0 0 28px #ddbfad1c);
+}
+.title {
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto 1.15rem;
+  padding-top: 0.28em;
+  background: linear-gradient(
+    105deg,
+    #a890b9 2%,
+    var(--color-text) 35%,
+    #f3dcc7 52%,
+    var(--color-cameo) 74%,
+    #a890b9 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--color-text);
+  font-family: var(--font-brand);
+  font-size: clamp(2.5rem, 13.4vw, 7.5rem);
+  font-weight: 400;
+  font-synthesis: none;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+  filter: drop-shadow(0 3px 18px #0d0c1a);
+}
+.title span {
+  font: inherit;
+}
+.wordmark {
+  position: relative;
+  display: inline-block;
+}
+.sortingHat {
+  position: absolute;
+  z-index: 1;
+  right: -0.045em;
+  bottom: 0.98em;
+  width: 0.78em;
+  height: auto;
+  transform: rotate(12deg);
+  transform-origin: 50% 88%;
+  filter: brightness(1.2) drop-shadow(0 3px 5px #0d0c1a80);
+  pointer-events: none;
+  user-select: none;
+}
+.descriptor {
+  max-width: 20rem;
+  margin: 0 auto;
+  color: var(--color-cameo);
+  font-size: 0.65rem;
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: 0.11em;
+  text-wrap: balance;
+}
+
+/* HeroScenery */
+.landscape {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-background);
+  z-index: 0;
+}
+
+.sky {
+  object-fit: cover;
+  object-position: 72% center;
+  opacity: 0.29;
+  filter: saturate(0.45);
+  transform: scale(1.18);
+}
+
+.moon {
+  position: absolute;
+  top: 8%;
+  right: -2rem;
+  width: clamp(11rem, 23vw, 22rem);
+  opacity: 0.4;
+}
+
+.moon img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: saturate(0.5) drop-shadow(0 0 35px #ddbfad16);
+}
+
+.moonlight {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 78% 19%,
+      color-mix(in srgb, var(--color-cameo) 8%, transparent),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 49% 42%,
+      color-mix(in srgb, var(--color-accent) 8%, transparent),
+      transparent 54%
+    );
+}
+
+.castle {
+  position: absolute;
+  bottom: -3rem;
+  left: -16rem;
+  width: 42rem;
+  height: 26rem;
+  opacity: 0.3;
+  filter: saturate(0.35);
+  mask-image: linear-gradient(90deg, #000 12%, #000 55%, transparent 96%);
+}
+
+.castle img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  mask-image: linear-gradient(transparent, #000 28%, #000 66%, transparent 98%);
+}
+
+.cloudsBack,
+.cloudsFront {
+  position: absolute;
+  aspect-ratio: 3 / 1;
+}
+
+.cloudsBack {
+  top: 24%;
+  left: 21%;
+  width: 85%;
+  opacity: 0.16;
+}
+
+.cloudsFront {
+  bottom: -17%;
+  left: -20%;
+  width: 135%;
+  opacity: 0.19;
+}
+
+.cloudsBack img,
+.cloudsFront img {
+  object-fit: contain;
+}
+
+.constellations {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--color-cameo);
+  opacity: 0.13;
+  stroke: currentColor;
+  stroke-width: 0.6;
+  mask-image: linear-gradient(transparent 7%, #000 20%, #000 75%, transparent);
+}
+
+.constellations circle {
+  fill: currentColor;
+  stroke: none;
+}
+
+.star {
+  stroke-width: 0.8;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 49% 43%,
+      color-mix(in srgb, var(--color-background) 75%, transparent) 9%,
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-background) 70%, transparent),
+      transparent 29%,
+      transparent 64%,
+      var(--color-background)
+    ),
+    linear-gradient(
+      90deg,
+      #0d0c1a40,
+      transparent 28%,
+      transparent 76%,
+      #0d0c1a50
+    );
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .sky,
+    .moon,
+    .castle,
+    .cloudsBack,
+    .cloudsFront {
+      animation-duration: 1s;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --hero-departure;
+      animation-range: exit 0% exit 100%;
+    }
+
+    .sky {
+      animation-name: skyDepth;
+    }
+    .moon {
+      animation-name: moonDepth;
+    }
+    .castle {
+      animation-name: castleDepth;
+    }
+    .cloudsBack {
+      animation-name: cloudBackDepth;
+    }
+    .cloudsFront {
+      animation-name: cloudFrontDepth;
+    }
+  }
+}
+
+@keyframes skyDepth {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.18);
+  }
+  to {
+    transform: translate3d(0, -7svh, 0) scale(1.18);
+  }
+}
+@keyframes moonDepth {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(1.5svh, -3.5svh, 0);
+  }
+}
+@keyframes castleDepth {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(2.5svh, -17svh, 0);
+  }
+}
+@keyframes cloudBackDepth {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-8.5svh, -20svh, 0);
+  }
+}
+@keyframes cloudFrontDepth {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(12svh, -30svh, 0);
+  }
+}
+
+/* HeroAtmosphere */
+.atmosphere {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+}
+.particles,
+.decorations {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.particles {
+  opacity: 0.55;
+}
+.candle {
+  position: absolute;
+  display: flex;
+  width: 9px;
+  align-items: center;
+  flex-direction: column;
+  animation: levitate 9s ease-in-out infinite alternate;
+}
+.candle i {
+  width: 3px;
+  height: 8px;
+  margin-bottom: 3px;
+  border-radius: 70% 30% 60% 40%;
+  background: var(--color-text);
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--color-text) 65%, transparent),
+    0 0 24px color-mix(in srgb, var(--color-cameo) 20%, transparent);
+  transform-origin: center bottom;
+  animation: flicker 4s ease-in-out infinite alternate;
+}
+.candle span {
+  position: relative;
+  width: 5px;
+  height: 28px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-accent) 30%, transparent),
+    color-mix(in srgb, var(--color-cameo) 70%, transparent) 45%,
+    color-mix(in srgb, var(--color-cameo) 20%, transparent)
+  );
+}
+.candle span::after {
+  position: absolute;
+  top: 0;
+  right: 1px;
+  width: 1px;
+  height: 8px;
+  border-radius: 0 0 2px 2px;
+  background: color-mix(in srgb, var(--color-text) 50%, transparent);
+  content: "";
+}
+.candleOne {
+  top: 29%;
+  left: 12%;
+  opacity: 0.5;
+}
+.candleTwo {
+  top: 57%;
+  right: 10%;
+  opacity: 0.32;
+  animation-delay: -4s;
+  scale: 0.65;
+}
+.mist {
+  position: absolute;
+  right: -15%;
+  bottom: -5%;
+  left: -15%;
+  height: 32%;
+  background:
+    radial-gradient(
+      ellipse at 22% 65%,
+      color-mix(in srgb, var(--color-accent) 9%, transparent),
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse at 72% 75%,
+      color-mix(in srgb, var(--color-cameo) 4%, transparent),
+      transparent 48%
+    );
+  filter: blur(18px);
+  animation: mistDrift 30s ease-in-out infinite alternate;
+}
+@keyframes levitate {
+  from {
+    transform: translateY(-4px) rotate(-2deg);
+  }
+  to {
+    transform: translateY(7px) rotate(2deg);
+  }
+}
+@keyframes flicker {
+  0%,
+  100% {
+    transform: scaleY(1) rotate(-4deg);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scaleY(0.9) rotate(4deg);
+    opacity: 0.65;
+  }
+}
+@keyframes mistDrift {
+  to {
+    transform: translate3d(5%, -2%, 0);
+  }
+}
+
+/* FlyingSnitch */
+.flightPath {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform: translate(73%, 18%);
+  animation: snitchFlightMobile 24s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.snitch {
+  position: relative;
+  width: 3.5rem;
+  aspect-ratio: 1;
+  perspective: 25rem;
+  transform: rotate(-12deg);
+  filter: drop-shadow(0 0 12px #ddbfad24);
+  animation: snitchBank 24s ease-in-out infinite;
+}
+
+.wing {
+  position: absolute;
+  top: -12%;
+  width: 70%;
+  height: 70%;
+  transform-style: preserve-3d;
+}
+
+.wingLeft {
+  left: -27%;
+  transform: scaleX(-1);
+}
+
+.wingRight {
+  left: 57%;
+}
+
+.feather {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 7% 91%;
+  animation: wingbeat 160ms cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+.body {
+  position: absolute;
+  z-index: 1;
+  top: 40%;
+  left: 28%;
+  width: 44%;
+  height: auto;
+}
+
+@keyframes snitchFlightMobile {
+  0%,
+  100% {
+    transform: translate(73%, 18%);
+  }
+  20% {
+    transform: translate(79%, 42%);
+  }
+  38% {
+    transform: translate(74%, 72%);
+  }
+  50% {
+    transform: translate(39%, 81%);
+  }
+  62% {
+    transform: translate(7%, 72%);
+  }
+  78% {
+    transform: translate(7%, 43%);
+  }
+  90% {
+    transform: translate(17%, 18%);
+  }
+}
+
+@keyframes snitchFlightDesktop {
+  0%,
+  100% {
+    transform: translate(77%, 24%);
+  }
+  16% {
+    transform: translate(84%, 41%);
+  }
+  32% {
+    transform: translate(73%, 65%);
+  }
+  47% {
+    transform: translate(50%, 78%);
+  }
+  62% {
+    transform: translate(20%, 66%);
+  }
+  77% {
+    transform: translate(9%, 37%);
+  }
+  90% {
+    transform: translate(27%, 19%);
+  }
+}
+
+@keyframes snitchBank {
+  0%,
+  100% {
+    transform: rotate(-12deg) scale(0.92);
+  }
+  16% {
+    transform: rotate(18deg) scale(1);
+  }
+  32% {
+    transform: rotate(25deg) scale(0.9);
+  }
+  47% {
+    transform: rotate(-5deg) scale(0.82);
+  }
+  62% {
+    transform: rotate(-22deg) scale(0.95);
+  }
+  77% {
+    transform: rotate(12deg) scale(1);
+  }
+  90% {
+    transform: rotate(-18deg) scale(0.85);
+  }
+}
+
+@keyframes wingbeat {
+  from {
+    transform: rotateY(-25deg) rotateZ(-10deg) rotateX(12deg);
+  }
+  to {
+    transform: rotateY(64deg) rotateZ(18deg) rotateX(-22deg);
+  }
+}
+
+/* HeroSignpost */
+.signpost {
+  margin-top: 1.8rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.sign {
+  position: relative;
+  display: inline-grid;
+  width: min(14.5rem, 100%);
+  min-height: 4rem;
+  aspect-ratio: 3 / 1;
+  place-items: center;
+  padding: 0.7rem 2rem;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-gold);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 180ms ease;
+}
+
+.wood {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 5px 7px #0008);
+  pointer-events: none;
+  user-select: none;
+  transition: filter 180ms ease;
+}
+
+.register {
+  transform: rotate(-3deg);
+}
+
+.about {
+  transform: rotate(3deg);
+}
+
+.about .wood {
+  transform: scaleX(-1);
+}
+
+.label {
+  position: relative;
+  text-shadow:
+    0 1px 1px #000,
+    0 0 12px #e3bf7620;
+}
+
+.sign:hover,
+.sign:focus-visible {
+  transform: translateY(-3px) rotate(0);
+}
+
+.sign:hover .wood,
+.sign:focus-visible .wood {
+  filter: brightness(1.2) drop-shadow(0 6px 12px #000a);
+}
+
+.notice {
+  position: fixed;
+  inset: 0;
+  width: min(25rem, calc(100% - 2.5rem));
+  max-height: calc(100svh - 3rem);
+  margin: auto;
+  padding: 2rem 1.5rem;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 35%, transparent);
+  border-radius: 4px;
+  background: var(--color-cinder);
+  box-shadow:
+    0 24px 100px #0008,
+    inset 0 0 45px #826c9e0a;
+  color: var(--color-text);
   text-align: center;
 }
 
-.title {
-  font-family: var(--font-brand);
-  font-size: clamp(2.75rem, 11vw, 10rem);
-  font-weight: 400;
-  line-height: 1.1;
+.notice::backdrop {
+  background: color-mix(in srgb, var(--color-background) 78%, transparent);
+  backdrop-filter: blur(5px);
 }
 
-.subtitle {
-  max-width: 35rem;
+.noticeStar {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: var(--color-gold);
+  font-size: 1.5rem;
+}
+
+.noticeLabel {
+  margin-bottom: 1rem;
   color: var(--color-text-muted);
-  font-size: clamp(0.75rem, 2vw, 1rem);
-  letter-spacing: 0.12em;
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
+}
+
+.notice h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 5vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.noticeCopy {
+  margin-top: 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+.dismiss {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding: 0.5rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-gold);
+  font-size: 0.75rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+@media (min-width: 768px) {
+  .hero {
+    min-height: max(47rem, 100svh);
+    padding: 9rem 4rem 6rem;
+  }
+  .frame {
+    inset: 1.25rem;
+    mask-size: 3rem 3rem;
+  }
+  .identity {
+    transform: translateY(0.75rem);
+  }
+  .mark {
+    width: clamp(7rem, 18svh, 10.5rem);
+    margin-bottom: 1.8rem;
+  }
+  .title {
+    font-size: clamp(5rem, 7.6vw, 7.5rem);
+    margin-bottom: 1rem;
+  }
+  .descriptor {
+    max-width: none;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+  }
+  .sky {
+    object-position: center 42%;
+    opacity: 0.31;
+  }
+  .moon {
+    top: 3%;
+    right: 9%;
+  }
+  .castle {
+    width: 60rem;
+    height: 34rem;
+    bottom: -5rem;
+    left: -24rem;
+    opacity: 0.33;
+  }
+  .constellations {
+    opacity: 0.17;
+  }
+  .candleOne {
+    top: 28%;
+    left: 21%;
+  }
+  .candleTwo {
+    top: 51%;
+    right: 18%;
+  }
+  .flightPath {
+    transform: translate(77%, 24%);
+    animation-name: snitchFlightDesktop;
+  }
+
+  .snitch {
+    width: clamp(5rem, 7.5vw, 7.5rem);
+  }
+  .signpost {
+    margin-top: 2rem;
+  }
+
+  .actions {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .sign {
+    width: 16.25rem;
+    font-size: 1rem;
+  }
+
+  .notice {
+    padding: 2.5rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .identity {
+    transform: none;
+  }
+  .sky {
+    transform: scale(1.18);
+  }
+  .moon,
+  .castle,
+  .cloudsBack,
+  .cloudsFront {
+    transform: none;
+  }
+  .candle,
+  .candle i,
+  .mist {
+    animation: none;
+  }
+  .flightPath,
+  .snitch,
+  .feather {
+    animation: none;
+  }
+
+  .feather {
+    transform: rotateZ(-8deg);
+  }
+  .sign,
+  .wood {
+    transition: none;
+  }
+
+  .sign:hover,
+  .sign:focus-visible {
+    transform: none;
+  }
+}
+@media (min-width: 768px) and (max-height: 760px) {
+  .hero {
+    min-height: max(42rem, 100svh);
+    padding-top: 8rem;
+  }
+  .mark {
+    width: 7rem;
+    margin-bottom: 1.25rem;
+  }
+  .title {
+    font-size: clamp(5rem, 7vw, 6.5rem);
+  }
 }
