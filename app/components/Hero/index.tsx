@@ -226,10 +226,9 @@ function HeroSignpost() {
           />
           <span className={styles.label}>Register</span>
         </button>
-        <button
+        <a
           className={`${styles.sign} ${styles.about}`}
-          type="button"
-          popoverTarget="about-note"
+          href="#about"
         >
           <Image
             className={styles.wood}
@@ -241,34 +240,7 @@ function HeroSignpost() {
             sizes="(min-width: 768px) 260px, 232px"
           />
           <span className={styles.label}>Explore</span>
-        </button>
-      </div>
-      <div
-        className={styles.notice}
-        id="about-note"
-        popover="auto"
-        role="dialog"
-        aria-labelledby="about-title"
-        aria-describedby="about-description"
-      >
-        <span className={styles.noticeStar} aria-hidden="true">
-          ✦
-        </span>
-        <p className={styles.noticeLabel}>About Exodia</p>
-        <h2 id="about-title">Where curiosity becomes creation.</h2>
-        <p className={styles.noticeCopy} id="about-description">
-          A technical learning gala for curious minds. Discover new ideas, build
-          with your peers, and find the people who turn a question into a
-          possibility.
-        </p>
-        <button
-          className={styles.dismiss}
-          type="button"
-          popoverTarget="about-note"
-          popoverTargetAction="hide"
-        >
-          Back to the magic <span aria-hidden="true">↗</span>
-        </button>
+        </a>
       </div>
       <div
         className={styles.notice}

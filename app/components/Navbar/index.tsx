@@ -18,18 +18,23 @@ export default function Navbar() {
             unoptimized
           />
         </a>
-        <button
-          className={styles.register}
-          type="button"
-          popoverTarget="registration-note"
-        >
-          Register
-          <span className={styles.arrow} aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M7 17 17 7M7 7h10v10" />
-            </svg>
-          </span>
-        </button>
+        <div className={styles.actions}>
+          <a className={styles.aboutLink} href="#about">
+            About
+          </a>
+          <button
+            className={styles.register}
+            type="button"
+            popoverTarget="registration-note"
+          >
+            Register
+            <span className={styles.arrow} aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M7 17 17 7M7 7h10v10" />
+              </svg>
+            </span>
+          </button>
+        </div>
       </nav>
     </header>
   );

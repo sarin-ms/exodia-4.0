@@ -10,14 +10,20 @@
   background: var(--color-void);
   color: var(--color-text);
   opacity: 1;
-  transition: opacity var(--reveal-duration) ease-in-out,
+  transition:
+    opacity var(--reveal-duration) ease-in-out,
     visibility var(--reveal-duration);
 }
 
 .atmosphere {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 48%, color-mix(in srgb, var(--color-accent) 25%, var(--color-void)), var(--color-background) 48%, var(--color-void) 85%);
+  background: radial-gradient(
+    ellipse at 50% 48%,
+    color-mix(in srgb, var(--color-accent) 25%, var(--color-void)),
+    var(--color-background) 48%,
+    var(--color-void) 85%
+  );
 }
 
 .atmosphere span {
@@ -31,10 +37,22 @@
   opacity: 0.35;
 }
 
-.atmosphere span:nth-child(2) { top: 38%; left: 78%; }
-.atmosphere span:nth-child(3) { top: 69%; left: 29%; }
-.atmosphere span:nth-child(4) { top: 75%; left: 87%; }
-.atmosphere span:nth-child(5) { top: 19%; left: 61%; }
+.atmosphere span:nth-child(2) {
+  top: 38%;
+  left: 78%;
+}
+.atmosphere span:nth-child(3) {
+  top: 69%;
+  left: 29%;
+}
+.atmosphere span:nth-child(4) {
+  top: 75%;
+  left: 87%;
+}
+.atmosphere span:nth-child(5) {
+  top: 19%;
+  left: 61%;
+}
 
 .traveler {
   position: absolute;
@@ -53,7 +71,6 @@
   animation: flyAcross var(--flight-duration) linear both;
 }
 
-/* The cape pulls a full-height black curtain behind Harry as he crosses. */
 .capeWake {
   position: absolute;
   inset-block: 0;
@@ -107,10 +124,26 @@
   animation: magicDust 850ms ease-out infinite;
 }
 
-.magicTrail i:nth-child(2) { top: 65%; left: 80%; animation-delay: -170ms; }
-.magicTrail i:nth-child(3) { top: 58%; left: 84%; animation-delay: -340ms; }
-.magicTrail i:nth-child(4) { top: 63%; left: 79%; animation-delay: -510ms; }
-.magicTrail i:nth-child(5) { top: 60%; left: 83%; animation-delay: -680ms; }
+.magicTrail i:nth-child(2) {
+  top: 65%;
+  left: 80%;
+  animation-delay: -170ms;
+}
+.magicTrail i:nth-child(3) {
+  top: 58%;
+  left: 84%;
+  animation-delay: -340ms;
+}
+.magicTrail i:nth-child(4) {
+  top: 63%;
+  left: 79%;
+  animation-delay: -510ms;
+}
+.magicTrail i:nth-child(5) {
+  top: 60%;
+  left: 83%;
+  animation-delay: -680ms;
+}
 
 .status {
   position: absolute;
@@ -139,31 +172,67 @@
 }
 
 @keyframes flyAcross {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(calc(-100vw - var(--wizard-width) - var(--wake-edge)), 0, 0); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(
+      calc(-100vw - var(--wizard-width) - var(--wake-edge)),
+      0,
+      0
+    );
+  }
 }
 
 @keyframes flightSwoop {
-  0% { transform: translateY(-37%) rotate(5deg); }
-  45% { transform: translateY(-59%) rotate(-3deg); }
-  100% { transform: translateY(-46%) rotate(2deg); }
+  0% {
+    transform: translateY(-37%) rotate(5deg);
+  }
+  45% {
+    transform: translateY(-59%) rotate(-3deg);
+  }
+  100% {
+    transform: translateY(-46%) rotate(2deg);
+  }
 }
 
 @keyframes magicDust {
-  0% { transform: translate(0, 0) scale(1); opacity: 0; }
-  20% { opacity: 0.65; }
-  100% { transform: translate(50px, 9px) scale(0.15); opacity: 0; }
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate(50px, 9px) scale(0.15);
+    opacity: 0;
+  }
 }
 
 @keyframes statusFade {
-  0%, 15% { opacity: 0; }
-  35%, 75% { opacity: 0.65; }
-  100% { opacity: 0; }
+  0%,
+  15% {
+    opacity: 0;
+  }
+  35%,
+  75% {
+    opacity: 0.65;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes heroReveal {
-  from { opacity: 0; transform: translateY(8px) scale(1.015); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(1.015);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* The page stays usable with scripting disabled or if hydration fails. */
@@ -179,27 +248,44 @@
   }
 
   .content[data-revealed="true"] {
-    animation: heroReveal var(--reveal-duration) cubic-bezier(0.2, 0.65, 0.3, 1) both;
+    animation: heroReveal var(--reveal-duration) cubic-bezier(0.2, 0.65, 0.3, 1)
+      both;
   }
 }
 
 @keyframes failOpen {
-  to { visibility: hidden; pointer-events: none; }
+  to {
+    visibility: hidden;
+    pointer-events: none;
+  }
 }
 
 @keyframes revealContent {
-  to { visibility: visible; }
+  to {
+    visibility: visible;
+  }
 }
 
 @media (min-width: 768px) {
-  .status { bottom: 3rem; }
+  .status {
+    bottom: 3rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .screen { transition: none; }
-  .atmosphere, .traveler { display: none; }
-  .status { animation: none; }
-  .content[data-revealed="true"] { animation: none; }
+  .screen {
+    transition: none;
+  }
+  .atmosphere,
+  .traveler {
+    display: none;
+  }
+  .status {
+    animation: none;
+  }
+  .content[data-revealed="true"] {
+    animation: none;
+  }
 }
 
 .wizard {
@@ -208,8 +294,12 @@
   height: auto;
   overflow: visible;
   color: var(--color-void);
-  filter: drop-shadow(0 -1px 0 color-mix(in srgb, var(--color-cameo) 32%, transparent))
-    drop-shadow(0 0 12px color-mix(in srgb, var(--color-accent) 20%, transparent));
+  filter: drop-shadow(
+      0 -1px 0 color-mix(in srgb, var(--color-cameo) 32%, transparent)
+    )
+    drop-shadow(
+      0 0 12px color-mix(in srgb, var(--color-accent) 20%, transparent)
+    );
 }
 
 .rider {
@@ -257,27 +347,48 @@
 }
 
 @keyframes flying {
-  0%, 100% { transform: translate(7px, 7px) rotate(-4deg); }
-  50% { transform: translate(-7px, -9px) rotate(-7deg); }
+  0%,
+  100% {
+    transform: translate(7px, 7px) rotate(-4deg);
+  }
+  50% {
+    transform: translate(-7px, -9px) rotate(-7deg);
+  }
 }
 
 @keyframes capeBillow {
-  from { transform: skewY(-5deg) scaleY(0.94); }
-  to { transform: skewY(4deg) scaleY(1.035); }
+  from {
+    transform: skewY(-5deg) scaleY(0.94);
+  }
+  to {
+    transform: skewY(4deg) scaleY(1.035);
+  }
 }
 
 @keyframes capeFlutter {
-  from { transform: skewY(4deg) scaleY(1.03); }
-  to { transform: skewY(-5deg) scaleY(0.93); }
+  from {
+    transform: skewY(4deg) scaleY(1.03);
+  }
+  to {
+    transform: skewY(-5deg) scaleY(0.93);
+  }
 }
 
 @keyframes scarfFlutter {
-  from { transform: skewY(-5deg) scaleY(0.85); }
-  to { transform: skewY(6deg) scaleY(1.1); }
+  from {
+    transform: skewY(-5deg) scaleY(0.85);
+  }
+  to {
+    transform: skewY(6deg) scaleY(1.1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rider, .capeBack, .capeHem, .capeFold, .scarf {
+  .rider,
+  .capeBack,
+  .capeHem,
+  .capeFold,
+  .scarf {
     animation: none;
   }
 
@@ -287,6 +398,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .screen { display: none; }
-  .content[data-revealed="false"] { visibility: visible; animation: none; }
+  .screen {
+    display: none;
+  }
+  .content[data-revealed="false"] {
+    visibility: visible;
+    animation: none;
+  }
 }

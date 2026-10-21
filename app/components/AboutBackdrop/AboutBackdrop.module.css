@@ -1,0 +1,106 @@
+.backdrop {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--color-background);
+}
+
+.haze {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 92% 8%, color-mix(in srgb, var(--color-accent) 28%, transparent), transparent 56%),
+    radial-gradient(ellipse at 100% 80%, color-mix(in srgb, var(--color-plum) 36%, transparent), transparent 50%),
+    radial-gradient(ellipse at 12% 95%, color-mix(in srgb, var(--color-accent) 13%, transparent), transparent 52%);
+}
+
+.source {
+  position: absolute;
+  top: -18rem;
+  right: -8rem;
+  width: 38rem;
+  height: 32rem;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--color-cameo) 22%, transparent), color-mix(in srgb, var(--color-accent) 12%, transparent) 36%, transparent 68%);
+}
+
+.rays {
+  position: absolute;
+  inset: -20% -35% -15% -20%;
+  transform-origin: 74% 0;
+  background: conic-gradient(
+    from 164deg at 74% 0,
+    transparent 0deg,
+    color-mix(in srgb, var(--color-cameo) 8%, transparent) 5deg,
+    transparent 8deg 13deg,
+    color-mix(in srgb, var(--color-accent) 22%, transparent) 17deg,
+    transparent 23deg 29deg,
+    color-mix(in srgb, var(--color-cameo) 12%, transparent) 32deg,
+    transparent 35deg 42deg,
+    color-mix(in srgb, var(--color-accent) 18%, transparent) 46deg,
+    transparent 53deg
+  );
+  filter: blur(9px);
+  mask-image: linear-gradient(to bottom, transparent, black 16%, black 45%, transparent 95%);
+}
+
+.veil {
+  position: absolute;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  opacity: 0.42;
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  mask-image: linear-gradient(110deg, black, transparent 35%, black 75%);
+}
+
+.stars span {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--color-cameo);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color-cameo) 45%, transparent);
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, var(--color-background), transparent 12%, transparent 85%, var(--color-background)),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-background) 75%, transparent), transparent 95%);
+}
+
+@media (min-width: 900px) {
+  .haze {
+    background:
+      radial-gradient(ellipse at 86% 12%, color-mix(in srgb, var(--color-accent) 32%, transparent), transparent 52%),
+      radial-gradient(ellipse at 100% 90%, color-mix(in srgb, var(--color-plum) 40%, transparent), transparent 50%),
+      radial-gradient(ellipse at 10% 100%, color-mix(in srgb, var(--color-accent) 17%, transparent), transparent 45%);
+  }
+
+  .source {
+    top: -23rem;
+    right: -3rem;
+    width: 60rem;
+    height: 45rem;
+  }
+
+  .rays {
+    inset: -20% -10% -15% -10%;
+  }
+
+  .veil {
+    opacity: 0.62;
+  }
+
+  .vignette {
+    background:
+      linear-gradient(to bottom, var(--color-background), transparent 12%, transparent 80%, var(--color-background)),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-background) 90%, transparent), color-mix(in srgb, var(--color-background) 50%, transparent) 32%, transparent 70%);
+  }
+}

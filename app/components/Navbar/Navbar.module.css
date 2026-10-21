@@ -21,6 +21,25 @@
   align-items: center;
   text-decoration: none;
 }
+.actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
+}
+.aboutLink {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  color: var(--color-cameo);
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.aboutLink:hover {
+  color: var(--color-gold);
+}
 .brand img {
   display: block;
   width: 32px;
