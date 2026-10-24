@@ -5,7 +5,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./StacksMotion.module.css";
 
-const READING_TIME = 6.5;
+const CHAPTER_HOLD = 0.6;
+const PAGE_TURN = 1;
 
 export default function StacksMotion() {
   const markerRef = useRef<HTMLSpanElement>(null);
@@ -14,304 +15,499 @@ export default function StacksMotion() {
     const section = markerRef.current?.closest("section");
     if (!section) return;
     const book = section.querySelector<HTMLElement>("[data-book]");
+    const stage = section.querySelector<HTMLElement>("[data-book-stage]");
     const shell = section.querySelector<HTMLElement>("[data-spellbook]");
-    const spreads = Array.from(section.querySelectorAll<HTMLElement>("[data-book-spread]"));
-    const choices = Array.from(section.querySelectorAll<HTMLInputElement>('input[name="stack-chapter"]'));
-    const chapters = section.querySelector<HTMLElement>("[data-book-chapters]");
-    const leaf = section.querySelector<HTMLElement>("[data-book-leaf]");
+    const spreads = Array.from(
+      section.querySelectorAll<HTMLElement>("[data-book-spread]"),
+    );
+    const choices = Array.from(
+      section.querySelectorAll<HTMLAnchorElement>("[data-book-choice]"),
+    );
     const shadow = section.querySelector<HTMLElement>("[data-book-shadow]");
-    const slices = Array.from(section.querySelectorAll<HTMLElement>("[data-book-slice]"));
-    const fronts = Array.from(section.querySelectorAll<HTMLElement>("[data-slice-front] [data-slice-content]"));
-    const backs = Array.from(section.querySelectorAll<HTMLElement>("[data-slice-back] [data-slice-content]"));
-    const previous = section.querySelector<HTMLButtonElement>('[data-book-step="-1"]');
-    const next = section.querySelector<HTMLButtonElement>('[data-book-step="1"]');
-    const status = section.querySelector<HTMLElement>("[data-book-status]");
-    const autoplay = section.querySelector<HTMLButtonElement>("[data-book-auto]");
-    const autoIcon = section.querySelector<HTMLElement>("[data-auto-icon]");
-    const autoLabel = section.querySelector<HTMLElement>("[data-auto-label]");
-    const progress = section.querySelector<HTMLElement>("[data-book-progress]");
-    if (!book || !shell || !leaf || !shadow || !chapters || !previous || !next || !status || !autoplay || !autoIcon || !autoLabel || !progress || !slices.length || fronts.length !== slices.length || backs.length !== slices.length || spreads.length !== choices.length) return;
+    const curlShadow = section.querySelector<HTMLElement>(
+      "[data-book-curl-shadow]",
+    );
+    const curlShadowBand = section.querySelector<HTMLElement>(
+      "[data-book-curl-shadow-band]",
+    );
+    const ribbon = section.querySelector<HTMLElement>("[data-book-ribbon]");
+    const ribbonBody = section.querySelector<SVGPathElement>("[data-book-ribbon-body]");
+    const ribbonWeave = section.querySelector<SVGPathElement>("[data-book-ribbon-weave]");
+    const ribbonEdge = section.querySelector<SVGPathElement>("[data-book-ribbon-edge]");
+    const turns = Array.from(
+      section.querySelectorAll<HTMLElement>("[data-book-leaf]"),
+    ).map((leaf) => ({
+      leaf,
+      slices: Array.from(
+        leaf.querySelectorAll<HTMLElement>("[data-book-slice]"),
+      ),
+      fronts: Array.from(
+        leaf.querySelectorAll<HTMLElement>(
+          "[data-slice-front] [data-slice-content]",
+        ),
+      ),
+      backs: Array.from(
+        leaf.querySelectorAll<HTMLElement>(
+          "[data-slice-back] [data-slice-content]",
+        ),
+      ),
+      frontShades: Array.from(
+        leaf.querySelectorAll<HTMLElement>("[data-slice-front-shade]"),
+      ),
+      backShades: Array.from(
+        leaf.querySelectorAll<HTMLElement>("[data-slice-back-shade]"),
+      ),
+    }));
+    if (
+      !book ||
+      !stage ||
+      !shell ||
+      !shadow ||
+      !curlShadow ||
+      !curlShadowBand ||
+      !ribbon ||
+      !ribbonBody ||
+      !ribbonWeave ||
+      !ribbonEdge ||
+      spreads.length < 2 ||
+      spreads.length !== choices.length ||
+      turns.length !== spreads.length - 1 ||
+      turns.some(
+        (turn) =>
+          !turn.slices.length ||
+          turn.fronts.length !== turn.slices.length ||
+          turn.backs.length !== turn.slices.length ||
+          turn.frontShades.length !== turn.slices.length * 2 ||
+          turn.backShades.length !== turn.slices.length * 2,
+      )
+    )
+      return;
 
     gsap.registerPlugin(ScrollTrigger);
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const desktop = window.matchMedia("(min-width: 900px)");
     const media = gsap.matchMedia();
-    media.add("(prefers-reduced-motion: no-preference)", () => {
-      section.querySelectorAll<HTMLElement>("[data-book-reveal]").forEach((element, index) => {
-        gsap.from(element, {
-          y: 18, opacity: 0, duration: 0.85, delay: Math.min(index * 0.09, 0.18), ease: "power2.out",
-          scrollTrigger: { trigger: element, start: "top 97%", once: true },
-        });
-      });
-    }, section);
-
-    let current = Math.max(0, choices.findIndex(choice => choice.checked));
-    let transition: gsap.core.Timeline | null = null;
-    let clock: gsap.core.Tween | null = null;
-    let progressTween: gsap.core.Tween | null = null;
-    let userPaused = reducedMotion.matches;
-    let inView = false;
-    let hovering = false;
-    let focused = false;
-    let touching = false;
     let disposed = false;
+    let viewportWidth = document.documentElement.clientWidth;
+    const resize = new ResizeObserver(() => {
+      const width = document.documentElement.clientWidth;
+      if (width === viewportWidth) return;
+      viewportWidth = width;
+      ScrollTrigger.refresh();
+    });
+    resize.observe(document.documentElement);
 
-    const updateControls = (index: number, announce: boolean) => {
-      previous.disabled = index === 0;
-      next.disabled = index === choices.length - 1;
-      status.setAttribute("aria-live", announce ? "polite" : "off");
-      status.textContent = `${String(index + 1).padStart(2, "0")} / ${String(choices.length).padStart(2, "0")}`;
-      status.setAttribute("aria-label", `Chapter ${index + 1} of ${choices.length}: ${spreads[index].querySelector("h3")?.textContent}`);
-    };
-    const stopClock = () => {
-      clock?.kill();
-      progressTween?.kill();
-      clock = null;
-      progressTween = null;
-      gsap.set(progress, { scaleX: 0 });
-      section.dataset.autoRunning = "false";
-    };
-    const scheduleTurn = () => {
-      stopClock();
-      if (disposed) return;
-      autoplay.setAttribute("aria-pressed", String(!userPaused));
-      autoplay.setAttribute("aria-label", userPaused ? "Start automatic page turns" : "Pause automatic page turns");
-      autoIcon.textContent = userPaused ? "▶" : "Ⅱ";
-      autoLabel.textContent = userPaused ? "Paused" : "Auto turn";
-      if (userPaused || !inView || hovering || focused || touching || document.hidden || transition) return;
-      section.dataset.autoRunning = "true";
-      progressTween = gsap.to(progress, { scaleX: 1, duration: READING_TIME, ease: "none" });
-      clock = gsap.delayedCall(READING_TIME, () => {
-        clock = null;
-        turnTo((current + 1) % choices.length, false);
-      });
-    };
-
-    const copyPage = (element: HTMLElement, isDesktop: boolean) => {
-      const copy = element.cloneNode(true) as HTMLElement;
-      copy.removeAttribute("id");
-      copy.removeAttribute("aria-labelledby");
-      copy.removeAttribute("data-book-spread");
-      copy.querySelectorAll("[id]").forEach(node => node.removeAttribute("id"));
-      copy.setAttribute("aria-hidden", "true");
-      copy.inert = true;
-      if (!isDesktop) {
-        copy.style.display = "flex";
-        copy.style.height = "100%";
-        copy.style.minHeight = "0";
-      }
-      copy.querySelectorAll("img").forEach(image => { image.loading = "eager"; });
-      return copy;
-    };
-
-    const turnTo = (index: number, announce = true) => {
-      if (index < 0 || index >= choices.length || disposed) return;
-      transition?.progress(1);
-      stopClock();
-      if (index === current) {
-        scheduleTurn();
-        return;
-      }
-      const old = spreads[current];
-      const incoming = spreads[index];
-      const forward = index > current;
-      const direction = forward ? 1 : -1;
-      const isDesktop = desktop.matches;
-      choices[index].checked = true;
-      updateControls(index, announce);
-      if (reducedMotion.matches) {
-        current = index;
-        scheduleTurn();
-        return;
-      }
-
-      const oldPage = isDesktop ? old.querySelector<HTMLElement>(forward ? "[data-book-right]" : "[data-book-left]") : old;
-      const newPage = isDesktop ? incoming.querySelector<HTMLElement>(forward ? "[data-book-left]" : "[data-book-right]") : incoming;
-      if (!oldPage || !newPage) return;
-      const activeSlices = slices.slice(0, isDesktop ? slices.length : 6);
-      const pageWidth = book.clientWidth / (isDesktop ? 2 : 1);
-      const sliceWidth = pageWidth / activeSlices.length;
-      const height = book.clientHeight;
-      // Each strip samples the same full-size page; its hinge follows the paper's curve.
-      slices.forEach((slice, i) => { slice.style.display = i < activeSlices.length ? "block" : "none"; });
-      activeSlices.forEach((slice, i) => {
-        slice.style.width = `${sliceWidth + 0.7}px`;
-        slice.style.left = forward ? "0px" : `${-sliceWidth - 0.7}px`;
-        slice.style.transformOrigin = forward ? "left center" : "right center";
-        fronts[i].style.width = `${pageWidth}px`;
-        fronts[i].style.left = `${-(forward ? i : activeSlices.length - 1 - i) * sliceWidth}px`;
-        backs[i].style.width = `${pageWidth}px`;
-        backs[i].style.left = `${-(forward ? activeSlices.length - 1 - i : i) * sliceWidth}px`;
-        fronts[i].replaceChildren(copyPage(oldPage, isDesktop));
-        backs[i].replaceChildren(copyPage(newPage, isDesktop));
-      });
-      old.setAttribute("aria-hidden", "true");
-      old.inert = true;
-      if (isDesktop) {
-        old.style.display = "grid";
-        old.style.gridTemplateColumns = "repeat(2, minmax(0, 1fr))";
-      } else {
-        old.style.display = "flex";
-        old.style.position = "absolute";
-        old.style.inset = "0";
-      }
-      old.style.zIndex = "2";
-      incoming.style.zIndex = "1";
-      leaf.style.left = isDesktop ? "50%" : forward ? "0%" : "100%";
-      leaf.style.width = `${pageWidth}px`;
-      leaf.style.height = `${height}px`;
-      shadow.style.left = forward ? "0%" : "50%";
-      shadow.style.transformOrigin = forward ? "right center" : "left center";
-      shadow.style.background = forward ? "" : "linear-gradient(90deg, var(--book-ink), transparent)";
-      section.dataset.bookTurning = "true";
-      const state = { progress: 0 };
-      const renderCurve = () => {
-        const p = state.progress;
-        const bend = Math.sin(Math.PI * p);
-        let x = 0;
-        let z = 0;
-        activeSlices.forEach((slice, i) => {
-          const alongPage = (i + 0.5) / activeSlices.length;
-          const angle = -direction * (180 * p + 42 * bend * (alongPage - 0.18));
-          const radians = angle * Math.PI / 180;
-          slice.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${angle}deg)`;
-          slice.style.setProperty("--bend-shade", String(Math.abs(Math.sin(radians)) * 0.22));
-          x += direction * sliceWidth * Math.cos(radians);
-          z -= direction * sliceWidth * Math.sin(radians);
+    const preload = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        book.querySelectorAll("img").forEach((image) => {
+          image.loading = "eager";
         });
-        shadow.style.opacity = String(bend * 0.28);
-        shadow.style.transform = `scaleX(${0.15 + bend * 0.85})`;
-      };
-      const finish = () => {
-        leaf.hidden = true;
-        fronts.forEach(front => front.replaceChildren());
-        backs.forEach(back => back.replaceChildren());
-        slices.forEach(slice => slice.removeAttribute("style"));
-        leaf.removeAttribute("style");
-        shadow.removeAttribute("style");
-        old.style.removeProperty("display");
-        old.style.removeProperty("grid-template-columns");
-        old.style.removeProperty("position");
-        old.style.removeProperty("inset");
-        old.style.removeProperty("z-index");
-        incoming.style.removeProperty("z-index");
-        oldPage.style.removeProperty("visibility");
-        old.removeAttribute("aria-hidden");
-        old.inert = false;
-        delete section.dataset.bookTurning;
-        current = index;
-        transition = null;
-        if (!isDesktop) ScrollTrigger.refresh();
-        scheduleTurn();
-      };
-      renderCurve();
-      const pending = gsap.timeline({ paused: true, onComplete: finish });
-      transition = pending;
-      pending.to(state, { progress: 1, duration: isDesktop ? 1.65 : 1.25, ease: "power2.inOut", onUpdate: renderCurve });
-      const copiedImages = [...fronts, ...backs].flatMap(face => Array.from(face.querySelectorAll<HTMLImageElement>("img")));
-      void Promise.allSettled(copiedImages.map(image => image.decode())).then(() => {
-        if (disposed || transition !== pending) return;
-        oldPage.style.visibility = "hidden";
-        leaf.hidden = false;
-        pending.play();
-      });
-    };
+        preload.disconnect();
+      },
+      { rootMargin: "100% 0px" },
+    );
+    preload.observe(section);
 
-    const selectedIndex = () => choices.findIndex(choice => choice.checked);
-    const onChoice = (event: Event) => {
-      if (event.target instanceof HTMLInputElement) {
-        const index = choices.indexOf(event.target);
-        if (index >= 0) turnTo(index);
-      }
-    };
-    const onPrevious = () => turnTo(selectedIndex() - 1);
-    const onNext = () => turnTo(selectedIndex() + 1);
-    const onToggleAuto = () => { userPaused = !userPaused; scheduleTurn(); };
-    const onKey = (event: KeyboardEvent) => {
-      if (event.target instanceof HTMLInputElement || event.altKey || event.ctrlKey || event.metaKey) return;
-      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-        event.preventDefault();
-        turnTo(selectedIndex() + (event.key === "ArrowRight" ? 1 : -1));
-      }
-    };
-    const onEnter = (event: PointerEvent) => { if (event.pointerType === "mouse") { hovering = true; scheduleTurn(); } };
-    const onLeave = () => { hovering = false; scheduleTurn(); };
-    const blocksPlayback = (target: EventTarget | null) => target instanceof Node && target !== section && target !== autoplay && section.contains(target);
-    const onFocusIn = (event: FocusEvent) => { focused = blocksPlayback(event.target); scheduleTurn(); };
-    const onFocusOut = (event: FocusEvent) => { focused = blocksPlayback(event.relatedTarget); scheduleTurn(); };
-    let pointerStart: { x: number; y: number } | null = null;
-    const onPointerDown = (event: PointerEvent) => {
-      if (event.pointerType === "touch" && event.isPrimary) {
-        pointerStart = { x: event.clientX, y: event.clientY };
-        touching = true;
-        scheduleTurn();
-      }
-    };
-    const onPointerUp = (event: PointerEvent) => {
-      touching = false;
-      if (pointerStart) {
-        const dx = event.clientX - pointerStart.x;
-        const dy = event.clientY - pointerStart.y;
-        pointerStart = null;
-        if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-          turnTo(selectedIndex() + (dx < 0 ? 1 : -1));
-          return;
-        }
-      }
-      scheduleTurn();
-    };
-    const cancelPointer = () => { pointerStart = null; touching = false; scheduleTurn(); };
-    const completeTurn = () => { transition?.progress(1); };
-    const onVisibility = () => { if (document.hidden) completeTurn(); scheduleTurn(); };
-    const onPreference = () => { completeTurn(); if (reducedMotion.matches) userPaused = true; scheduleTurn(); };
-    const visibility = new IntersectionObserver(([entry]) => {
-      inView = entry.isIntersecting && entry.intersectionRatio >= 0.5;
-      if (!inView) completeTurn();
-      if (entry.isIntersecting) book.querySelectorAll("img").forEach(image => { image.loading = "eager"; });
-      scheduleTurn();
-    }, { threshold: [0, 0.5] });
-    visibility.observe(shell);
-    chapters.addEventListener("change", onChoice);
-    previous.addEventListener("click", onPrevious);
-    next.addEventListener("click", onNext);
-    autoplay.addEventListener("click", onToggleAuto);
-    section.addEventListener("keydown", onKey);
-    section.addEventListener("focusin", onFocusIn);
-    section.addEventListener("focusout", onFocusOut);
-    shell.addEventListener("pointerenter", onEnter);
-    shell.addEventListener("pointerleave", onLeave);
-    book.addEventListener("pointerdown", onPointerDown);
-    book.addEventListener("pointerup", onPointerUp);
-    book.addEventListener("pointercancel", cancelPointer);
-    window.addEventListener("resize", completeTurn);
-    document.addEventListener("visibilitychange", onVisibility);
-    reducedMotion.addEventListener("change", onPreference);
-    section.dataset.bookReady = "true";
-    updateControls(current, false);
-    scheduleTurn();
+    media.add(
+      {
+        reducedMotion: "(prefers-reduced-motion: reduce)",
+        desktop: "(min-width: 900px)",
+        mobile: "(max-width: 899px)",
+      },
+      (context) => {
+        if (context.conditions?.reducedMotion) return;
+        const isDesktop = Boolean(context.conditions?.desktop);
+        const sliceCount = isDesktop ? 8 : 10;
+        const duration =
+          spreads.length * CHAPTER_HOLD + (spreads.length - 1) * PAGE_TURN;
+        const preparedTurns = turns.map((turn) => ({
+          ...turn,
+          activeSlices: turn.slices.slice(0, sliceCount),
+        }));
+        const pages = spreads.map((spread) =>
+          spread.querySelector<HTMLElement>("[data-book-right]"),
+        );
+        let scene = -1;
+        let selectedChapter = -1;
+        let sliceWidth = 0;
+        let pageWidth = 0;
+        let stageOffset = 0;
+        let stageBottom = 0;
+        let ribbonProgress = -1;
+        let ribbonWidth = 14;
+        let ribbonLength = 44;
+        const restingRibbon = ribbonBody.getAttribute("d");
+        const restingRibbonEdge = ribbonEdge.getAttribute("d");
+
+        const selectChapter = (index: number) => {
+          if (selectedChapter === index) return;
+          selectedChapter = index;
+          choices.forEach((choice, i) => {
+            if (i === index) choice.setAttribute("aria-current", "true");
+            else choice.removeAttribute("aria-current");
+          });
+          spreads.forEach((spread, i) => {
+            spread.setAttribute("aria-hidden", String(i !== index));
+            spread.inert = i !== index;
+          });
+        };
+
+        const copyPage = (element: HTMLElement, showThrough = false) => {
+          const copy = element.cloneNode(true) as HTMLElement;
+          copy.removeAttribute("id");
+          copy.removeAttribute("aria-labelledby");
+          copy.removeAttribute("data-book-spread");
+          copy.removeAttribute("style");
+          copy
+            .querySelectorAll("[id]")
+            .forEach((node) => node.removeAttribute("id"));
+          copy.setAttribute("aria-hidden", "true");
+          copy.inert = true;
+          copy.style.visibility = "visible";
+          if (showThrough) copy.dataset.bookShowthrough = "true";
+          if (!isDesktop) {
+            copy.style.display = "flex";
+            copy.style.height = "100%";
+            copy.style.minHeight = "0";
+          }
+          copy.querySelectorAll("img").forEach((image) => {
+            image.loading = "eager";
+          });
+          return copy;
+        };
+
+        section.dataset.bookReady = "true";
+        // Stable viewport units keep mobile browser chrome from changing the scroll distance.
+        section.style.setProperty(
+          "--book-scroll-distance",
+          `${(spreads.length - 1) * 135}svh`,
+        );
+
+        // Build both leaves once. Scrolling only changes transforms and visibility.
+        preparedTurns.forEach((turn, index) => {
+          const oldPage = isDesktop ? pages[index] : spreads[index];
+          const newPage = isDesktop
+            ? spreads[index + 1].querySelector<HTMLElement>("[data-book-left]")
+            : spreads[index + 1];
+          if (!oldPage || !newPage) return;
+          turn.slices.forEach((slice, i) => {
+            slice.style.display = i < sliceCount ? "block" : "none";
+            slice.style.left = "0px";
+            slice.style.transformOrigin = "left center";
+          });
+          turn.activeSlices.forEach((_, i) => {
+            turn.fronts[i].replaceChildren(copyPage(oldPage));
+            turn.backs[i].replaceChildren(
+              copyPage(isDesktop ? newPage : oldPage, !isDesktop),
+            );
+          });
+        });
+
+        const measure = () => {
+          ribbonWidth = ribbon.offsetWidth;
+          ribbonLength = ribbon.offsetHeight;
+          ribbonProgress = -1;
+          const stageHeight = stage.offsetHeight;
+          const stageTop = Math.min(0, window.innerHeight - stageHeight);
+          stageOffset = -stageTop;
+          stageBottom = stageHeight + stageTop;
+          section.style.setProperty("--book-stage-height", `${stageHeight}px`);
+          section.style.setProperty("--book-stage-top", `${stageTop}px`);
+          pageWidth = book.clientWidth / (isDesktop ? 2 : 1);
+          const pageHeight = book.clientHeight;
+          sliceWidth = pageWidth / sliceCount;
+          preparedTurns.forEach((turn) => {
+            turn.leaf.style.left = isDesktop ? "50%" : "0%";
+            turn.leaf.style.width = `${pageWidth}px`;
+            turn.leaf.style.height = `${pageHeight}px`;
+            turn.activeSlices.forEach((slice, i) => {
+              slice.style.width = `${sliceWidth + 0.7}px`;
+              turn.fronts[i].style.width = `${pageWidth}px`;
+              turn.fronts[i].style.left = `${-i * sliceWidth}px`;
+              turn.backs[i].style.width = `${pageWidth}px`;
+              turn.backs[i].style.left =
+                `${-(sliceCount - 1 - i) * sliceWidth}px`;
+            });
+          });
+        };
+
+        const setScene = (chapter: number, turning: boolean) => {
+          const nextScene = chapter * 2 + (turning ? 1 : 0);
+          if (scene === nextScene) return;
+          scene = nextScene;
+          spreads.forEach((spread) => {
+            spread.style.visibility = "hidden";
+            spread.style.removeProperty("z-index");
+          });
+          pages.forEach((page) => page?.style.removeProperty("visibility"));
+          preparedTurns.forEach((turn) => {
+            turn.leaf.hidden = true;
+          });
+          shadow.style.opacity = "0";
+          curlShadow.style.opacity = "0";
+          if (turning) {
+            spreads[chapter].style.visibility = isDesktop
+              ? "visible"
+              : "hidden";
+            spreads[chapter].style.zIndex = "2";
+            spreads[chapter + 1].style.visibility = "visible";
+            spreads[chapter + 1].style.zIndex = "1";
+            if (isDesktop && pages[chapter])
+              pages[chapter].style.visibility = "hidden";
+            preparedTurns[chapter].leaf.hidden = false;
+            section.dataset.bookTurning = "true";
+          } else {
+            spreads[chapter].style.visibility = "visible";
+            delete section.dataset.bookTurning;
+          }
+        };
+
+        const renderMobileTurn = (chapter: number, progress: number) => {
+          const leaf = preparedTurns[chapter];
+          const radius = pageWidth * 0.2;
+          const arcLength = Math.PI * radius;
+          const fold = pageWidth - (pageWidth + arcLength) * progress;
+          const hingeAngle =
+            Math.PI * gsap.utils.clamp(0, 1, -fold / arcLength);
+          const bend = Math.sin(Math.PI * progress);
+          let x = 0;
+          let y = 0;
+          let z = 0;
+          let crest = 0;
+          let previousAngle = hingeAngle;
+
+          // Integrate a cylindrical curl: paper stays flat until the fold reaches it.
+          // Each strip spans the chord between adjacent points, keeping edges joined.
+          leaf.activeSlices.forEach((slice, i) => {
+            const distance = (i + 1) * sliceWidth;
+            const angle =
+              Math.PI * gsap.utils.clamp(0, 1, (distance - fold) / arcLength);
+            const flat = Math.min(distance, Math.max(0, fold));
+            const folded = Math.max(
+              0,
+              distance - Math.max(0, fold + arcLength),
+            );
+            const nextX =
+              flat + radius * (Math.sin(angle) - Math.sin(hingeAngle)) - folded;
+            const nextZ = radius * (Math.cos(hingeAngle) - Math.cos(angle));
+            const nextY = 2 * bend * (Math.cos(hingeAngle) - Math.cos(angle));
+            const dx = nextX - x;
+            const dz = nextZ - z;
+            const chord = Math.hypot(dx, dz);
+            const rotation = Math.atan2(dz, dx);
+            const shear = (Math.atan2(nextY - y, chord) * 180) / Math.PI;
+            slice.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${(-rotation * 180) / Math.PI}deg) skewY(${shear}deg) scaleX(${chord / sliceWidth})`;
+            const startShade = Math.abs(Math.sin(previousAngle));
+            const endShade = Math.abs(Math.sin(angle));
+            leaf.frontShades[i * 2].style.opacity = String(startShade * 0.17);
+            leaf.frontShades[i * 2 + 1].style.opacity = String(endShade * 0.17);
+            leaf.backShades[i * 2].style.opacity = String(
+              0.06 + endShade * 0.19,
+            );
+            leaf.backShades[i * 2 + 1].style.opacity = String(
+              0.06 + startShade * 0.19,
+            );
+            crest = Math.max(crest, nextX);
+            x = nextX;
+            y = nextY;
+            z = nextZ;
+            previousAngle = angle;
+          });
+          curlShadow.style.opacity = String(bend * 0.75);
+          curlShadowBand.style.transform = `translate3d(${crest - pageWidth * 0.25}px, 0, 0)`;
+        };
+
+        const renderRibbon = (progress: number) => {
+          if (ribbonProgress === progress) return;
+          ribbonProgress = progress;
+          const smoothStep = (value: number) => {
+            const t = gsap.utils.clamp(0, 1, value);
+            return t * t * (3 - 2 * t);
+          };
+          // Lift the free end before the sheet reaches the binding, hold it above
+          // the head of the book, then lower it after the sheet has passed.
+          const lift = smoothStep(progress / 0.2) *
+            (1 - smoothStep((progress - 0.76) / 0.24));
+          const endX = 1 + (isDesktop ? 33 : 21) * lift;
+          const endY = ribbonLength * (1 - lift) - (isDesktop ? 22 : 12) * lift;
+          const controlX = endX - 1 - 7 * lift;
+          const controlY = ribbonLength * 0.72 * (1 - lift) + 10 * lift;
+          const dx = endX - controlX;
+          const dy = endY - controlY;
+          const tangentLength = Math.hypot(dx, dy);
+          const halfWidth = ribbonWidth / 2;
+          const normalX = dy / tangentLength * halfWidth;
+          const normalY = -dx / tangentLength * halfWidth;
+          const notchX = endX - dx / tangentLength * 5;
+          const notchY = endY - dy / tangentLength * 5;
+          const point = (x: number, y: number) => `${x.toFixed(2)} ${y.toFixed(2)}`;
+          const rootControlY = ribbonLength * 0.2;
+          const leftCurve = `M${point(-halfWidth, 0)}C${point(-halfWidth, rootControlY)} ${point(controlX - normalX, controlY - normalY)} ${point(endX - normalX, endY - normalY)}`;
+          const rightCurve = `M${point(halfWidth, 0)}C${point(halfWidth, rootControlY)} ${point(controlX + normalX, controlY + normalY)} ${point(endX + normalX, endY + normalY)}`;
+          const outline = `${leftCurve}L${point(notchX, notchY)}L${point(endX + normalX, endY + normalY)}C${point(controlX + normalX, controlY + normalY)} ${point(halfWidth, rootControlY)} ${point(halfWidth, 0)}Z`;
+          ribbonBody.setAttribute("d", outline);
+          ribbonWeave.setAttribute("d", outline);
+          ribbonEdge.setAttribute("d", rightCurve);
+        };
+
+        const render = (progress: number) => {
+          const time = progress * duration;
+          const chapter = Math.min(
+            spreads.length - 1,
+            Math.floor(time / (CHAPTER_HOLD + PAGE_TURN)),
+          );
+          const turn = gsap.utils.clamp(
+            0,
+            1,
+            (time - chapter * (CHAPTER_HOLD + PAGE_TURN) - CHAPTER_HOLD) /
+              PAGE_TURN,
+          );
+          const turning = chapter < spreads.length - 1 && turn > 0;
+          setScene(chapter, turning);
+          selectChapter(chapter + (turning && turn >= 0.5 ? 1 : 0));
+          renderRibbon(turning ? turn : 0);
+          if (!turning) return;
+          if (!isDesktop) {
+            renderMobileTurn(chapter, turn);
+            return;
+          }
+          const bend = Math.sin(Math.PI * turn);
+          let x = 0;
+          let z = 0;
+          preparedTurns[chapter].activeSlices.forEach((slice, i) => {
+            const alongPage = (i + 0.5) / sliceCount;
+            const angle = -(180 * turn + 42 * bend * (alongPage - 0.18));
+            const radians = (angle * Math.PI) / 180;
+            slice.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${angle}deg)`;
+            x += sliceWidth * Math.cos(radians);
+            z -= sliceWidth * Math.sin(radians);
+          });
+          shadow.style.opacity = String(bend * 0.28);
+          shadow.style.transform = `scaleX(${0.15 + bend * 0.85})`;
+        };
+
+        measure();
+        render(0);
+        const playhead = { progress: 0 };
+        const animation = gsap.to(playhead, {
+          progress: 1,
+          duration: 1,
+          ease: "none",
+          paused: true,
+          onUpdate: () => render(playhead.progress),
+        });
+        const scroll = ScrollTrigger.create({
+          trigger: section,
+          // CSS sticky holds the book independently of JavaScript's animation frames.
+          start: () => `top+=${stageOffset} top`,
+          end: () => `bottom ${stageBottom}px`,
+          animation,
+          scrub: 0.2,
+          onRefreshInit: measure,
+          onRefresh: (self) => {
+            scene = -1;
+            animation.progress(self.progress, true);
+            render(playhead.progress);
+          },
+        });
+
+        const goToChapter = (index: number) => {
+          const readingPoint =
+            (index * (CHAPTER_HOLD + PAGE_TURN) + CHAPTER_HOLD / 2) / duration;
+          window.scrollTo({
+            top: scroll.start + readingPoint * (scroll.end - scroll.start),
+            behavior: "smooth",
+          });
+        };
+        const onChoice = (event: MouseEvent) => {
+          if (
+            event.button !== 0 ||
+            event.altKey ||
+            event.ctrlKey ||
+            event.metaKey ||
+            event.shiftKey
+          )
+            return;
+          const index = choices.indexOf(
+            event.currentTarget as HTMLAnchorElement,
+          );
+          if (index < 0) return;
+          event.preventDefault();
+          goToChapter(index);
+        };
+        const onKey = (event: KeyboardEvent) => {
+          if (
+            event.target !== shell ||
+            event.altKey ||
+            event.ctrlKey ||
+            event.metaKey
+          )
+            return;
+          if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+            event.preventDefault();
+            goToChapter(
+              gsap.utils.clamp(
+                0,
+                spreads.length - 1,
+                selectedChapter + (event.key === "ArrowRight" ? 1 : -1),
+              ),
+            );
+          }
+        };
+        choices.forEach((choice) => choice.addEventListener("click", onChoice));
+        shell.addEventListener("keydown", onKey);
+
+        return () => {
+          choices.forEach((choice) =>
+            choice.removeEventListener("click", onChoice),
+          );
+          shell.removeEventListener("keydown", onKey);
+          scroll.kill();
+          animation.kill();
+          spreads.forEach((spread) => {
+            spread.removeAttribute("style");
+            spread.removeAttribute("aria-hidden");
+            spread.inert = false;
+          });
+          pages.forEach((page) => page?.style.removeProperty("visibility"));
+          choices.forEach((choice) => choice.removeAttribute("aria-current"));
+          preparedTurns.forEach((turn) => {
+            turn.leaf.hidden = true;
+            turn.leaf.removeAttribute("style");
+            turn.slices.forEach((slice) => slice.removeAttribute("style"));
+            [...turn.frontShades, ...turn.backShades].forEach((shade) =>
+              shade.removeAttribute("style"),
+            );
+            [...turn.fronts, ...turn.backs].forEach((face) => {
+              face.replaceChildren();
+              face.removeAttribute("style");
+            });
+          });
+          shadow.removeAttribute("style");
+          curlShadow.removeAttribute("style");
+          curlShadowBand.removeAttribute("style");
+          if (restingRibbon) {
+            ribbonBody.setAttribute("d", restingRibbon);
+            ribbonWeave.setAttribute("d", restingRibbon);
+          }
+          if (restingRibbonEdge) ribbonEdge.setAttribute("d", restingRibbonEdge);
+          section.style.removeProperty("--book-scroll-distance");
+          section.style.removeProperty("--book-stage-height");
+          section.style.removeProperty("--book-stage-top");
+          delete section.dataset.bookReady;
+          delete section.dataset.bookTurning;
+        };
+      },
+      section,
+    );
+
+    void document.fonts.ready.then(() => {
+      if (!disposed) ScrollTrigger.refresh();
+    });
 
     return () => {
       disposed = true;
-      completeTurn();
-      stopClock();
-      visibility.disconnect();
-      chapters.removeEventListener("change", onChoice);
-      previous.removeEventListener("click", onPrevious);
-      next.removeEventListener("click", onNext);
-      autoplay.removeEventListener("click", onToggleAuto);
-      section.removeEventListener("keydown", onKey);
-      section.removeEventListener("focusin", onFocusIn);
-      section.removeEventListener("focusout", onFocusOut);
-      shell.removeEventListener("pointerenter", onEnter);
-      shell.removeEventListener("pointerleave", onLeave);
-      book.removeEventListener("pointerdown", onPointerDown);
-      book.removeEventListener("pointerup", onPointerUp);
-      book.removeEventListener("pointercancel", cancelPointer);
-      window.removeEventListener("resize", completeTurn);
-      document.removeEventListener("visibilitychange", onVisibility);
-      reducedMotion.removeEventListener("change", onPreference);
-      delete section.dataset.bookReady;
-      delete section.dataset.autoRunning;
+      resize.disconnect();
+      preload.disconnect();
       media.revert();
     };
   }, []);
