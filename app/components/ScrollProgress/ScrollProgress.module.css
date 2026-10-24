@@ -1,0 +1,77 @@
+.progress {
+  --scroll-progress: 0;
+  position: fixed;
+  z-index: 40;
+  inset: 0 0 auto;
+  height: 2px;
+  background: color-mix(in srgb, var(--color-gold) 10%, transparent);
+  color: var(--color-gold);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.progress[data-ready="true"] {
+  opacity: 1;
+}
+
+.progress[hidden] {
+  display: none;
+}
+
+.trail {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(var(--scroll-progress));
+  transform-origin: left;
+  background: linear-gradient(
+    90deg,
+    var(--color-plum),
+    var(--color-gold) 75%,
+    var(--color-paper-light)
+  );
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-gold) 45%, transparent);
+}
+
+.spark {
+  position: absolute;
+  top: 50%;
+  left: clamp(4px, calc(var(--scroll-progress) * 100%), calc(100% - 4px));
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%);
+  clip-path: polygon(
+    50% 0,
+    62% 38%,
+    100% 50%,
+    62% 62%,
+    50% 100%,
+    38% 62%,
+    0 50%,
+    38% 38%
+  );
+  background: var(--color-paper-light);
+  opacity: clamp(0, calc(var(--scroll-progress) * 50), 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spark {
+    display: none;
+  }
+
+  .trail {
+    box-shadow: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .trail {
+    background: Highlight;
+    forced-color-adjust: none;
+  }
+}
+
+@media print {
+  .progress {
+    display: none;
+  }
+}

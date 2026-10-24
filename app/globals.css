@@ -17,6 +17,16 @@ html {
   background: var(--color-background);
 }
 
+html,
+body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   min-width: min(320px, 100%);
   margin: 0;
