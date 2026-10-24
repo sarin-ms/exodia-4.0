@@ -1,0 +1,333 @@
+.gallery {
+  --photo-gap: 24px;
+  position: relative;
+  width: 100%;
+  margin-top: 1.75rem;
+}
+.scene {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+}
+.row {
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0.25rem 1.5rem 0.75rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+}
+.row::-webkit-scrollbar {
+  display: none;
+}
+.gallery[data-gallery-native-auto="true"] .row {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+.card {
+  flex: 0 0 auto;
+  width: clamp(14rem, 74vw, 20rem);
+  min-width: 0;
+  scroll-snap-align: center;
+}
+.photoLink {
+  display: block;
+  border-radius: 5px;
+  outline-offset: 5px;
+  text-decoration: none;
+  -webkit-user-drag: none;
+}
+.photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-cameo) 22%, transparent);
+  border-radius: 5px;
+  background: var(--color-cinder);
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--color-void) 30%, transparent);
+  transition:
+    border-color 300ms ease,
+    box-shadow 300ms ease,
+    transform 400ms ease;
+}
+.thumbnail {
+  object-fit: cover;
+  transition: transform 650ms ease;
+}
+.caption {
+  position: absolute;
+  z-index: 1;
+  inset: auto 0 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.625rem;
+  min-height: 45%;
+  padding: 1.25rem 0.875rem 0.875rem;
+  background: linear-gradient(
+    transparent,
+    color-mix(in srgb, var(--color-background) 86%, transparent)
+  );
+  color: var(--color-paper-light);
+}
+.photoNumber {
+  padding-bottom: 0.125rem;
+  color: var(--color-gold);
+  font-size: 0.4375rem;
+  letter-spacing: 0.1em;
+}
+.photoTitle {
+  font-size: 0.6875rem;
+  line-height: 1.4;
+}
+.expandIcon {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--color-gold);
+  font-size: 1rem;
+  line-height: 1;
+}
+.photoLink:hover .photo,
+.photoLink:focus-visible .photo {
+  border-color: color-mix(in srgb, var(--color-gold) 70%, transparent);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--color-void) 50%, transparent);
+}
+.photoLink:hover .thumbnail,
+.photoLink:focus-visible .thumbnail {
+  transform: scale(1.035);
+}
+.lightbox button {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.lightbox button:hover {
+  color: var(--color-gold);
+}
+.lightbox {
+  position: fixed;
+  width: min(92vw, 80rem);
+  max-width: none;
+  max-height: 95svh;
+  margin: auto;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+}
+.lightbox::backdrop {
+  background: color-mix(in srgb, var(--color-void) 92%, transparent);
+  backdrop-filter: blur(12px);
+}
+.lightboxContent {
+  width: 100%;
+}
+.lightboxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.lightboxHeader > p {
+  color: var(--color-gold);
+  font-size: 0.5625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.lightbox .close {
+  font-size: 2rem;
+  font-weight: 300;
+  line-height: 1;
+}
+.lightboxFigure {
+  margin: 0;
+}
+.lightboxStage {
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  height: min(62svh, 50rem);
+  min-height: 0;
+  place-items: center;
+  overflow: hidden;
+}
+.fullImage {
+  grid-area: 1 / 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: opacity 180ms ease;
+}
+.imagePending {
+  opacity: 0;
+}
+.loadingPhoto {
+  grid-area: 1 / 1;
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+}
+.lightboxCaption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.lightboxCaption h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: -0.035em;
+}
+.lightboxCaption > p {
+  flex-shrink: 0;
+  color: var(--color-gold);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+}
+.lightboxCaption > p > span {
+  color: var(--color-text-muted);
+}
+.lightboxNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-cameo) 22%, transparent);
+}
+.lightboxNav > button {
+  gap: 0.75rem;
+  font-size: 0.6875rem;
+}
+.lightboxNav > button > span {
+  font-size: 1.25rem;
+}
+.lightboxNav > p {
+  display: none;
+  color: var(--color-text-muted);
+  font-size: 0.5625rem;
+}
+@media (min-width: 600px) {
+  .row {
+    padding-right: 2.5rem;
+    padding-left: 2.5rem;
+  }
+  .card {
+    width: 20rem;
+  }
+  .caption {
+    padding: 1.25rem;
+  }
+  .photoTitle {
+    font-size: 0.8125rem;
+  }
+  .lightboxNav > p {
+    display: block;
+  }
+  .lightboxStage {
+    height: min(70svh, 50rem);
+  }
+}
+@media (min-width: 900px) {
+  .gallery {
+    margin-top: 2rem;
+  }
+  .gallery[data-gallery-enhanced="true"] .scene {
+    display: block;
+    height: clamp(23rem, 62svh, 38rem);
+    overflow: clip;
+    perspective: 1500px;
+    isolation: isolate;
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-void) 7%,
+      var(--color-void) 93%,
+      transparent
+    );
+    cursor: grab;
+    touch-action: pan-y pinch-zoom;
+  }
+  .gallery[data-gallery-enhanced="true"] .row {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 50%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    transform-style: preserve-3d;
+    scroll-snap-type: none;
+  }
+  .gallery[data-gallery-enhanced="true"] .row + .row {
+    top: 50%;
+  }
+  .gallery[data-gallery-enhanced="true"] .card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: clamp(15rem, min(26vw, 37svh), 23rem);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .gallery[data-gallery-enhanced="true"] .row:first-child .card {
+    width: clamp(16rem, min(30vw, 40svh), 25rem);
+  }
+  .gallery[data-gallery-enhanced="true"] .photoLink {
+    user-select: none;
+    cursor: grab;
+  }
+  .gallery[data-gallery-dragging="true"] .scene,
+  .gallery[data-gallery-dragging="true"] .photoLink {
+    cursor: grabbing;
+  }
+  .gallery[data-gallery-enhanced="true"] .photo {
+    box-shadow: 0 16px 40px
+      color-mix(in srgb, var(--color-void) 45%, transparent);
+  }
+  .gallery[data-gallery-enhanced="true"] .photoLink:hover .photo {
+    transform: translateY(-3px);
+  }
+  .caption {
+    padding: 2rem 1rem 1rem;
+  }
+  .photoNumber {
+    font-size: 0.4375rem;
+  }
+  .photoTitle {
+    font-size: 0.75rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .photo,
+  .thumbnail {
+    transition: none;
+  }
+  .fullImage {
+    transition: none;
+  }
+}

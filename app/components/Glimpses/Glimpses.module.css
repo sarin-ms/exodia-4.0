@@ -1,0 +1,90 @@
+.glimpses {
+  position: relative;
+  display: grid;
+  min-height: 100svh;
+  align-content: center;
+  isolation: isolate;
+  overflow: clip;
+  padding: 3rem 0 2.5rem;
+  background: var(--color-background);
+}
+.glimpses:focus {
+  outline: none;
+}
+.atmosphere {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  mask-image: var(--section-atmosphere-mask);
+  background:
+    radial-gradient(
+      ellipse at 50% 54%,
+      color-mix(in srgb, var(--color-plum) 55%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse at 85% 25%,
+      color-mix(in srgb, var(--color-accent) 10%, transparent),
+      transparent 45%
+    );
+}
+.atmosphere::after {
+  position: absolute;
+  inset: 0;
+  background: url("/assets/stack/paper-grain.webp");
+  opacity: 0.045;
+  content: "";
+}
+.header {
+  padding: 0 1.5rem;
+  text-align: center;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.875rem;
+  color: var(--color-gold);
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.eyebrow > span {
+  width: 1.75rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--color-gold) 45%, transparent);
+}
+.heading {
+  margin-top: 0.625rem;
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: -0.055em;
+  line-height: 1.1;
+}
+.heading > span {
+  color: var(--color-gold);
+}
+.subtitle {
+  margin-top: 0.75rem;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+@media (min-width: 900px) {
+  .glimpses {
+    padding: clamp(1.75rem, 4svh, 3rem) 0;
+  }
+  .eyebrow {
+    font-size: 0.5625rem;
+  }
+  .heading {
+    font-size: clamp(2.75rem, 7svh, 4.5rem);
+  }
+  .subtitle {
+    margin-top: 0.625rem;
+    font-size: 0.8125rem;
+  }
+}
