@@ -12,6 +12,14 @@
   --color-paper: #e7dbc2;
   --color-paper-light: #f4eedf;
   --color-paper-edge: #b7a180;
+  --section-blend-distance: clamp(4rem, 14svh, 9rem);
+  --section-atmosphere-mask: linear-gradient(
+    to bottom,
+    transparent,
+    #000 min(var(--section-blend-distance), 25%),
+    #000 max(calc(100% - var(--section-blend-distance)), 75%),
+    transparent
+  );
   --font-brand: "Exodia Spin Cycle", sans-serif;
   --font-heading: "GC Palioka", "Rubik Variable", "Rubik", sans-serif;
   --font-body: "Rubik Variable", "Rubik", sans-serif;

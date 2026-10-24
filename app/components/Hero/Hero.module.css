@@ -101,6 +101,7 @@
   overflow: hidden;
   background: var(--color-background);
   z-index: 0;
+  mask-image: var(--section-atmosphere-mask);
 }
 
 .sky {
@@ -312,6 +313,7 @@
   z-index: 0;
   inset: 0;
   pointer-events: none;
+  mask-image: var(--section-atmosphere-mask);
 }
 .particles,
 .decorations {
