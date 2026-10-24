@@ -151,14 +151,6 @@ function HeroAtmosphere() {
         />
       </div>
       <div className={styles.decorations} aria-hidden="true">
-        <div className={`${styles.candle} ${styles.candleOne}`}>
-          <i />
-          <span />
-        </div>
-        <div className={`${styles.candle} ${styles.candleTwo}`}>
-          <i />
-          <span />
-        </div>
         <FlyingSnitch />
         <div className={styles.mist} />
       </div>

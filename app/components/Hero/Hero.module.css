@@ -324,60 +324,6 @@
 .particles {
   opacity: 0.55;
 }
-.candle {
-  position: absolute;
-  display: flex;
-  width: 9px;
-  align-items: center;
-  flex-direction: column;
-  animation: levitate 9s ease-in-out infinite alternate;
-}
-.candle i {
-  width: 3px;
-  height: 8px;
-  margin-bottom: 3px;
-  border-radius: 70% 30% 60% 40%;
-  background: var(--color-text);
-  box-shadow:
-    0 0 8px color-mix(in srgb, var(--color-text) 65%, transparent),
-    0 0 24px color-mix(in srgb, var(--color-cameo) 20%, transparent);
-  transform-origin: center bottom;
-  animation: flicker 4s ease-in-out infinite alternate;
-}
-.candle span {
-  position: relative;
-  width: 5px;
-  height: 28px;
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--color-accent) 30%, transparent),
-    color-mix(in srgb, var(--color-cameo) 70%, transparent) 45%,
-    color-mix(in srgb, var(--color-cameo) 20%, transparent)
-  );
-}
-.candle span::after {
-  position: absolute;
-  top: 0;
-  right: 1px;
-  width: 1px;
-  height: 8px;
-  border-radius: 0 0 2px 2px;
-  background: color-mix(in srgb, var(--color-text) 50%, transparent);
-  content: "";
-}
-.candleOne {
-  top: 29%;
-  left: 12%;
-  opacity: 0.5;
-}
-.candleTwo {
-  top: 57%;
-  right: 10%;
-  opacity: 0.32;
-  animation-delay: -4s;
-  scale: 0.65;
-}
 .mist {
   position: absolute;
   right: -15%;
@@ -397,25 +343,6 @@
     );
   filter: blur(18px);
   animation: mistDrift 30s ease-in-out infinite alternate;
-}
-@keyframes levitate {
-  from {
-    transform: translateY(-4px) rotate(-2deg);
-  }
-  to {
-    transform: translateY(7px) rotate(2deg);
-  }
-}
-@keyframes flicker {
-  0%,
-  100% {
-    transform: scaleY(1) rotate(-4deg);
-    opacity: 0.85;
-  }
-  50% {
-    transform: scaleY(0.9) rotate(4deg);
-    opacity: 0.65;
-  }
 }
 @keyframes mistDrift {
   to {
@@ -748,14 +675,6 @@
   .constellations {
     opacity: 0.17;
   }
-  .candleOne {
-    top: 28%;
-    left: 21%;
-  }
-  .candleTwo {
-    top: 51%;
-    right: 18%;
-  }
   .flightPath {
     transform: translate(77%, 24%);
     animation-name: snitchFlightDesktop;
@@ -796,8 +715,6 @@
   .cloudsFront {
     transform: none;
   }
-  .candle,
-  .candle i,
   .mist {
     animation: none;
   }
