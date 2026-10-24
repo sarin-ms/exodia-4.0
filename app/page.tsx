@@ -1,6 +1,7 @@
 import About from "@/app/components/About";
 import Hero from "@/app/components/Hero";
 import Navbar from "@/app/components/Navbar";
+import Stacks from "@/app/components/Stacks";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <main id="main">
         <Hero />
         <About />
+        <Stacks />
       </main>
     </>
   );

@@ -22,6 +22,9 @@ export default function Navbar() {
           <a className={styles.aboutLink} href="#about">
             About
           </a>
+          <a className={styles.aboutLink} href="#stacks">
+            Stacks
+          </a>
           <button
             className={styles.register}
             type="button"
