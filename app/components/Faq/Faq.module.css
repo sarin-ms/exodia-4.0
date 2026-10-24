@@ -1,0 +1,160 @@
+.faq {
+  position: relative;
+  display: grid;
+  min-height: 100svh;
+  align-content: center;
+  isolation: isolate;
+  overflow: clip;
+  padding: clamp(3.5rem, 7svh, 6rem) 0;
+  background: var(--color-background);
+}
+.faq:focus {
+  outline: none;
+}
+.atmosphere {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  mask-image: var(--section-atmosphere-mask);
+  background:
+    radial-gradient(
+      ellipse at 7% 70%,
+      color-mix(in srgb, var(--color-plum) 32%, transparent),
+      transparent 54%
+    ),
+    radial-gradient(
+      ellipse at 90% 45%,
+      color-mix(in srgb, var(--color-accent) 8%, transparent),
+      transparent 60%
+    );
+}
+.atmosphere::after {
+  position: absolute;
+  inset: 0;
+  background: url("/assets/stack/paper-grain.webp");
+  opacity: 0.035;
+  content: "";
+}
+.inner {
+  display: grid;
+  width: min(100% - 3rem, 74rem);
+  gap: 2.75rem;
+  margin: 0 auto;
+}
+.introduction {
+  position: relative;
+  min-width: 0;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-gold);
+  font-size: 0.5625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.eyebrow > span {
+  display: block;
+  width: 1.75rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--color-gold) 55%, transparent);
+}
+.heading {
+  margin-top: 1.25rem;
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 9vw, 4rem);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: -0.055em;
+  line-height: 1.08;
+}
+.headingLine {
+  display: block;
+  overflow: clip;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.headingLine > span {
+  display: inline-block;
+}
+.headingAccent {
+  color: var(--color-gold);
+}
+.description {
+  margin-top: 1.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.85;
+}
+.footnote {
+  display: none;
+}
+.questionMark {
+  display: none;
+  padding-left: 300px;
+}
+@media (min-width: 600px) {
+  .inner {
+    width: min(100% - 5rem, 74rem);
+  }
+  .heading {
+    font-size: clamp(3rem, 7vw, 4rem);
+  }
+}
+@media (min-width: 900px) {
+  .inner {
+    width: min(100% - 8rem, 74rem);
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.5fr);
+    align-items: start;
+    gap: clamp(3rem, 6vw, 6rem);
+  }
+  .introduction {
+    padding-top: 1.25rem;
+  }
+  .heading {
+    margin-top: 1.75rem;
+    font-size: clamp(2.75rem, 4.5vw, 4rem);
+  }
+  .description {
+    margin-top: 1.75rem;
+  }
+  .footnote {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: clamp(2rem, 6svh, 4rem);
+  }
+  .spark {
+    width: 2.125rem;
+    height: 2.125rem;
+    flex-shrink: 0;
+    overflow: visible;
+    color: var(--color-gold);
+    stroke: currentColor;
+    stroke-width: 0.85;
+  }
+  .footnote > p {
+    font-size: 0.6875rem;
+    line-height: 1.7;
+  }
+  .footnote > p > span {
+    color: var(--color-text-muted);
+  }
+  .questionMark {
+    position: absolute;
+    z-index: -1;
+    top: -3rem;
+    left: -3.75rem;
+    display: block;
+    color: var(--color-cameo);
+    font-family: var(--font-heading);
+    font-size: 31rem;
+    font-weight: 400;
+    line-height: 1;
+    opacity: 0.025;
+    pointer-events: none;
+    user-select: none;
+  }
+}

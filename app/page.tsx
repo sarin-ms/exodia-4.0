@@ -1,4 +1,5 @@
 import About from "@/app/components/About";
+import Faq from "@/app/components/Faq";
 import Hero from "@/app/components/Hero";
 import Glimpses from "@/app/components/Glimpses";
 import Navbar from "@/app/components/Navbar";
@@ -13,6 +14,7 @@ export default function Home() {
         <About />
         <Stacks />
         <Glimpses />
+        <Faq />
       </main>
     </>
   );
