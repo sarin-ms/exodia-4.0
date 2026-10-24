@@ -1,15 +1,13 @@
 .header {
   position: absolute;
   z-index: 10;
-  top: 0;
-  right: 0;
-  left: 0;
-  padding: 1.75rem 1.6rem 0;
+  inset: 0 0 auto;
+  padding: calc(env(safe-area-inset-top) + 1.5rem) 1.25rem 0;
 }
 .navbar {
   display: flex;
   width: min(100%, 90rem);
-  min-height: 44px;
+  min-height: 48px;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -17,16 +15,26 @@
 }
 .brand {
   display: inline-flex;
-  min-height: 44px;
+  min-width: 44px;
+  min-height: 48px;
   align-items: center;
   text-decoration: none;
 }
+.brand img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(
+    0 0 10px color-mix(in srgb, var(--color-cameo) 14%, transparent)
+  );
+}
 .actions {
-  display: flex;
+  display: none;
   align-items: center;
   gap: clamp(1rem, 3vw, 2rem);
 }
 .aboutLink {
+  position: relative;
   display: inline-flex;
   min-height: 48px;
   align-items: center;
@@ -36,15 +44,26 @@
   letter-spacing: 0.12em;
   text-decoration: none;
   text-transform: uppercase;
+  transition: color 180ms ease;
 }
-.aboutLink:hover {
+.aboutLink::after {
+  position: absolute;
+  inset: auto 0 0.5rem;
+  height: 1px;
+  transform: scaleX(0);
+  transform-origin: right;
+  background: var(--color-gold);
+  content: "";
+  transition: transform 240ms ease;
+}
+.aboutLink:hover,
+.aboutLink:focus-visible {
   color: var(--color-gold);
 }
-.brand img {
-  display: block;
-  width: 32px;
-  height: 32px;
-  filter: drop-shadow(0 0 10px #ddbfad22);
+.aboutLink:hover::after,
+.aboutLink:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 .skipLink {
   position: fixed;
@@ -60,78 +79,385 @@
   transform: none;
 }
 .register {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
+  min-width: 166px;
   min-height: 48px;
   align-items: center;
-  justify-content: center;
-  gap: 1.1rem;
-  padding: 0.5rem 0.6rem 0.5rem 1.25rem;
-  border: 1px solid color-mix(in srgb, var(--color-gold) 45%, transparent);
+  justify-content: space-between;
+  gap: 1.25rem;
+  overflow: hidden;
+  padding: 0.4375rem 0.4375rem 0.4375rem 1.0625rem;
+  border: 1px solid
+    color-mix(in srgb, var(--color-paper-light) 40%, var(--color-gold));
   border-radius: 999px;
-  background: linear-gradient(120deg, #e3bf7614, #171422b3);
+  background: linear-gradient(
+    120deg,
+    var(--color-paper) -25%,
+    var(--color-gold) 65%,
+    color-mix(in srgb, var(--color-gold) 82%, var(--color-plum))
+  );
   box-shadow:
-    inset 0 1px 0 #e3bf7612,
-    0 4px 20px #0002;
-  color: var(--color-gold);
+    inset 0 1px 0 color-mix(in srgb, var(--color-paper-light) 55%, transparent),
+    0 3px 16px color-mix(in srgb, var(--color-void) 20%, transparent);
+  color: var(--color-cinder);
   font-family: var(--font-body);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
+  line-height: 1;
   text-transform: uppercase;
   cursor: pointer;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
-    background 180ms ease,
-    border-color 180ms ease;
+    color 240ms ease,
+    box-shadow 300ms ease,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* The arrow's plum disc grows into the button's hover surface. */
+.register::before {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: 0.4375rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-plum);
+  content: "";
+  transform: translateY(-50%);
+  transition: transform 550ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.register::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 25%,
+    color-mix(in srgb, var(--color-paper-light) 24%, transparent) 48%,
+    transparent 70%
+  );
+  content: "";
+  pointer-events: none;
+  transform: translateX(-130%);
+}
+.registerLabel {
+  white-space: nowrap;
 }
 .arrow {
+  position: relative;
   display: grid;
-  width: 27px;
-  height: 27px;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--color-gold) 25%, transparent);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 30%, transparent);
   border-radius: 50%;
-  background: color-mix(in srgb, var(--color-gold) 7%, transparent);
+  color: var(--color-gold);
+  transition: border-color 300ms ease;
 }
 .arrow svg {
-  width: 15px;
-  height: 15px;
+  grid-area: 1 / 1;
+  width: 17px;
+  height: 17px;
   stroke: currentColor;
-  stroke-width: 1.3;
-  transition: transform 180ms ease;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
 }
-.register:hover,
+.arrow .arrowCopy {
+  transform: translate(-150%, 150%);
+  opacity: 0;
+}
+.register:is(:hover, :focus-visible) {
+  color: var(--color-gold);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--color-paper-light) 12%, transparent),
+    0 5px 24px color-mix(in srgb, var(--color-gold) 14%, transparent);
+  transform: translateY(-2px);
+}
+.register:is(:hover, :focus-visible)::before {
+  transform: translateY(-50%) scale(24);
+}
+.register:is(:hover, :focus-visible)::after {
+  transform: translateX(130%);
+  transition: transform 750ms ease;
+}
+.register:is(:hover, :focus-visible) .arrow {
+  border-color: color-mix(in srgb, var(--color-gold) 60%, transparent);
+}
+.register:is(:hover, :focus-visible) .arrow svg {
+  transform: translate(150%, -150%);
+  opacity: 0;
+}
+.register:is(:hover, :focus-visible) .arrow .arrowCopy {
+  transform: none;
+  opacity: 1;
+}
 .register:focus-visible {
-  border-color: var(--color-gold);
+  outline: 2px solid var(--color-gold);
+  outline-offset: 4px;
+}
+.register:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 100ms;
+}
+.menuToggle {
+  display: inline-flex;
+  min-width: 108px;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.875rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 32%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-background) 70%, transparent);
+  color: var(--color-gold);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    border-color 250ms ease,
+    background 250ms ease;
+}
+.menuToggle:hover,
+.navbar:has(.mobileMenu:popover-open) .menuToggle {
+  border-color: color-mix(in srgb, var(--color-gold) 70%, transparent);
   background: var(--color-surface);
 }
-.register:hover .arrow svg {
-  transform: translate(1px, -1px);
+.toggleLabel {
+  display: grid;
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
-@media (max-width: 380px) {
-  .header {
-    padding-right: 1rem;
-    padding-left: 1rem;
-  }
-  .navbar {
-    gap: 0.75rem;
-  }
-  .actions {
-    gap: 0.625rem;
-  }
-  .register {
-    gap: 0.6rem;
-    padding-right: 0.4rem;
-    padding-left: 0.75rem;
-  }
+.openLabel,
+.closeLabel {
+  grid-area: 1 / 1;
+  transition:
+    transform 250ms ease,
+    opacity 180ms ease;
 }
-@media (prefers-reduced-motion: reduce) {
-  .register,
-  .arrow svg {
-    transition: none;
+.closeLabel {
+  transform: translateY(5px);
+  opacity: 0;
+}
+.hamburger {
+  position: relative;
+  width: 20px;
+  height: 16px;
+}
+.hamburger span {
+  position: absolute;
+  left: 0;
+  width: 20px;
+  height: 1px;
+  border-radius: 1px;
+  background: currentColor;
+  transition:
+    transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease;
+}
+.hamburger span:nth-child(1) {
+  top: 1px;
+}
+.hamburger span:nth-child(2) {
+  top: 7px;
+  width: 14px;
+}
+.hamburger span:nth-child(3) {
+  top: 13px;
+}
+.navbar:has(.mobileMenu:popover-open) .hamburger span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.navbar:has(.mobileMenu:popover-open) .hamburger span:nth-child(2) {
+  transform: translateX(6px);
+  opacity: 0;
+}
+.navbar:has(.mobileMenu:popover-open) .hamburger span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+.navbar:has(.mobileMenu:popover-open) .openLabel {
+  transform: translateY(-5px);
+  opacity: 0;
+}
+.navbar:has(.mobileMenu:popover-open) .closeLabel {
+  transform: none;
+  opacity: 1;
+}
+.mobileMenu {
+  position: fixed;
+  inset: calc(env(safe-area-inset-top) + 5.5rem) 1.25rem auto;
+  width: auto;
+  max-height: calc(100svh - env(safe-area-inset-top) - 7rem);
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-gold) 35%, transparent)
+    transparent;
+  padding: clamp(1.25rem, 5vw, 2rem);
+  border: 1px solid color-mix(in srgb, var(--color-gold) 26%, transparent);
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(
+      ellipse at 100% 0%,
+      color-mix(in srgb, var(--color-accent) 18%, transparent),
+      transparent 65%
+    ),
+    color-mix(in srgb, var(--color-background) 97%, transparent);
+  box-shadow:
+    0 24px 80px color-mix(in srgb, var(--color-void) 45%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-cameo) 5%, transparent);
+  color: var(--color-text);
+  opacity: 0;
+  transform: translateY(-12px) scale(0.98);
+  transform-origin: top right;
+  transition:
+    opacity 220ms ease,
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    display 400ms allow-discrete,
+    overlay 400ms allow-discrete;
+}
+.mobileMenu:popover-open {
+  opacity: 1;
+  transform: none;
+}
+.mobileMenu::backdrop {
+  /* Keep the logo and Close control readable above the dimmed page. */
+  clip-path: inset(calc(env(safe-area-inset-top) + 5.25rem) 0 0);
+  background: transparent;
+  transition:
+    background 300ms ease,
+    display 400ms allow-discrete,
+    overlay 400ms allow-discrete;
+}
+.mobileMenu:popover-open::backdrop {
+  background: color-mix(in srgb, var(--color-background) 55%, transparent);
+}
+.menuHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
+.menuEyebrow {
+  color: var(--color-text-muted);
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.menuStar {
+  color: var(--color-gold);
+  font-size: 1.25rem;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mobileMenu:popover-open .menuStar {
+  transform: rotate(90deg);
+}
+.menuLinks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.menuItem {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+.mobileMenu:popover-open .menuItem {
+  opacity: 1;
+  transform: none;
+  transition-duration: 350ms;
+}
+.mobileMenu:popover-open .menuItem:nth-child(1) {
+  transition-delay: 60ms;
+}
+.mobileMenu:popover-open .menuItem:nth-child(2) {
+  transition-delay: 110ms;
+}
+.mobileMenu:popover-open .menuItem:nth-child(3) {
+  transition-delay: 160ms;
+}
+.mobileMenu:popover-open .menuItem:nth-child(4) {
+  transition-delay: 210ms;
+}
+.menuLink {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr auto;
+  min-height: 66px;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-cameo) 12%, transparent);
+  font-size: clamp(1.375rem, 5.5vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+.linkNumber {
+  color: var(--color-gold);
+  font-size: 0.5625rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+.linkArrow {
+  color: var(--color-gold);
+  font-size: 1.25rem;
+  transition: transform 220ms ease;
+}
+.menuLink:hover,
+.menuLink:focus-visible {
+  color: var(--color-gold);
+}
+.menuLink:hover .linkArrow,
+.menuLink:focus-visible .linkArrow {
+  transform: translate(3px, -3px);
+}
+.menuFooter {
+  display: grid;
+  gap: 1.25rem;
+  padding-top: 1.5rem;
+}
+.menuFooter p {
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.03em;
+}
+.menuFooter .register {
+  justify-content: space-between;
+}
+.menuFooter .register:is(:hover, :focus-visible)::before {
+  transform: translateY(-50%) scale(50);
+}
+@starting-style {
+  .mobileMenu:popover-open {
+    transform: translateY(-12px) scale(0.98);
+    opacity: 0;
   }
-  .register:hover .arrow svg {
-    transform: none;
+  .mobileMenu:popover-open::backdrop {
+    background: transparent;
+  }
+  .mobileMenu:popover-open .menuItem {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .mobileMenu:popover-open .menuStar {
+    transform: rotate(0);
   }
 }
 @media (min-width: 768px) {
@@ -141,5 +467,39 @@
   .brand img {
     width: 40px;
     height: 40px;
+  }
+  .actions {
+    display: flex;
+  }
+  .menuToggle,
+  .mobileMenu {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aboutLink,
+  .aboutLink::after,
+  .register,
+  .register::before,
+  .register::after,
+  .arrow,
+  .arrow svg,
+  .menuToggle,
+  .openLabel,
+  .closeLabel,
+  .hamburger span,
+  .mobileMenu,
+  .mobileMenu::backdrop,
+  .menuStar,
+  .menuItem,
+  .menuLink,
+  .linkArrow {
+    transition: none;
+  }
+  .register:is(:hover, :focus-visible, :active) {
+    transform: none;
+  }
+  .register::after {
+    display: none;
   }
 }
