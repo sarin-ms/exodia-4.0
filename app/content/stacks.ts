@@ -24,7 +24,7 @@ export const stacks = [
   {
     id: "godot",
     number: "03",
-    title: "Godot",
+    title: "Game Development",
     category: "Worlds waiting to be built",
     description:
       "Give your imagination a world to play in. Explore scenes, nodes, and signals to bring a game of your own to life.",
@@ -33,4 +33,3 @@ export const stacks = [
     image: "/assets/stack/godot.webp",
   },
 ] as const;
-

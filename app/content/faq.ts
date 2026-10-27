@@ -9,7 +9,7 @@ export const faq = [
     id: "learning-stacks",
     question: "What can I explore at Exodia 4.0?",
     answer:
-      "This chapter brings three stacks: Agentic AI, Embedded Systems, and Godot. Explore intelligent agents, connect code with hardware, or bring a game world to life.",
+      "This chapter brings three stacks: Agentic AI, Embedded Systems, and Game Development. Explore intelligent agents, connect code with hardware, or bring a game world to life.",
   },
   {
     id: "prior-experience",
