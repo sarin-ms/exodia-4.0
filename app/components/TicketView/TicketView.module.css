@@ -1,0 +1,150 @@
+.page {
+  width: min(42rem, 100%);
+  margin: auto;
+  padding: 2rem 1.25rem 4rem;
+}
+.back {
+  display: inline-block;
+  margin-bottom: 2rem;
+  color: var(--color-gold);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+.ticket {
+  overflow: hidden;
+  border: 1px solid var(--color-accent);
+  border-radius: 1rem;
+  background: var(--color-paper-light);
+  color: var(--color-cinder);
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.5rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+.header > div {
+  display: grid;
+  gap: 0.4rem;
+}
+.brand {
+  font-family: var(--font-brand);
+  font-size: 2rem;
+  line-height: 1;
+}
+.header small {
+  font-size: 0.48rem;
+  letter-spacing: 0.16em;
+}
+.star {
+  margin-left: auto;
+  font-size: 2.5rem;
+  color: var(--color-gold);
+}
+.identity,
+.stack {
+  padding: 1.7rem 1.5rem;
+}
+.identity > span,
+.stack > span {
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+}
+.identity h1 {
+  margin: 0.7rem 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  line-height: 1.2;
+  font-weight: 450;
+  overflow-wrap: anywhere;
+}
+.identity p,
+.stack p {
+  font-size: 0.8rem;
+}
+.stack {
+  border-top: 1px dashed var(--color-paper-edge);
+}
+.stack h2 {
+  margin: 0.6rem 0;
+  font-family: var(--font-heading);
+  font-size: 1.65rem;
+  font-weight: 450;
+}
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin: 0;
+  padding: 1.5rem;
+  border-top: 1px dashed var(--color-paper-edge);
+}
+.details dt {
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+}
+.details dd {
+  margin: 0.6rem 0 0;
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+.footer {
+  padding: 1rem 1.5rem;
+  background: var(--color-cinder);
+  color: var(--color-text-muted);
+  font-size: 0.64rem;
+}
+.actions {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+.actions button {
+  min-height: 3rem;
+  border: 0;
+  border-radius: 0.45rem;
+  background: var(--color-text);
+  color: var(--color-cinder);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.actions a {
+  color: var(--color-gold);
+  font-size: 0.75rem;
+}
+.actions p {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+}
+.message {
+  padding: 2rem 0;
+  color: var(--color-text-muted);
+}
+.message h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--color-text);
+}
+.message p {
+  margin: 1rem 0;
+}
+@media print {
+  .back,
+  .actions {
+    display: none;
+  }
+  .page {
+    width: 100%;
+    max-width: 38rem;
+    padding: 0;
+  }
+  .ticket {
+    break-inside: avoid;
+    print-color-adjust: exact;
+  }
+}

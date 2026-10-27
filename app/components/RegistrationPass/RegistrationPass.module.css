@@ -1,0 +1,134 @@
+.pass {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  border-radius: 1.1rem;
+  background: var(--color-cinder);
+  box-shadow: 0 1.5rem 4rem
+    color-mix(in srgb, var(--color-void) 20%, transparent);
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.35rem;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-accent) 25%, transparent);
+  color: var(--color-text);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+}
+.top > :last-child {
+  color: var(--color-text-muted);
+}
+.art {
+  position: relative;
+  overflow: hidden;
+  min-height: 18rem;
+  padding: 1.8rem;
+  background:
+    radial-gradient(
+      ellipse at 70% 20%,
+      color-mix(in srgb, var(--color-accent) 38%, transparent),
+      transparent 65%
+    ),
+    var(--color-surface);
+}
+.art p {
+  position: relative;
+  z-index: 1;
+  margin-top: 1.5rem;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 450;
+  letter-spacing: -0.055em;
+  line-height: 1.08;
+}
+.mark {
+  position: relative;
+  z-index: 1;
+  width: 3.3rem;
+  height: auto;
+}
+.orbit,
+.orbitInner {
+  position: absolute;
+  width: 20rem;
+  height: 20rem;
+  border: 1px solid color-mix(in srgb, var(--color-text) 18%, transparent);
+  border-radius: 50%;
+  right: -9rem;
+  top: -2rem;
+  transform: rotate(-30deg) scaleX(0.7);
+}
+.orbitInner {
+  width: 15rem;
+  height: 15rem;
+  right: -6rem;
+  top: 0.5rem;
+}
+.spark {
+  position: absolute;
+  top: 3rem;
+  right: 4.1rem;
+  color: var(--color-gold);
+  font-size: 3rem;
+}
+.vertical {
+  position: absolute;
+  right: 1.2rem;
+  bottom: 1.7rem;
+  writing-mode: vertical-rl;
+  color: var(--color-text-muted);
+  font-size: 0.53rem;
+  letter-spacing: 0.2em;
+}
+.stub {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 1.35rem;
+  background: var(--color-paper-light);
+  color: var(--color-cinder);
+}
+.stub > div {
+  display: grid;
+  gap: 0.4rem;
+}
+.stub span {
+  font-size: 0.48rem;
+  letter-spacing: 0.15em;
+}
+.stub strong {
+  font-size: 0.9rem;
+  font-weight: 550;
+}
+.stub small {
+  font-size: 0.62rem;
+}
+.price {
+  flex-shrink: 0;
+  text-align: right;
+}
+.price strong {
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: -0.055em;
+}
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1.35rem;
+  border-top: 1px dashed var(--color-paper-edge);
+  background: var(--color-paper-light);
+  color: var(--color-cinder);
+  font-size: 0.45rem;
+  letter-spacing: 0.1em;
+}
+.bottom > :last-child {
+  font-size: 1.2rem;
+  line-height: 1;
+}

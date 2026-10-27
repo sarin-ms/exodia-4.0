@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import Particles from "@/app/components/Particles";
 import styles from "./Hero.module.css";
 
@@ -202,10 +203,9 @@ function HeroSignpost() {
   return (
     <div className={styles.signpost}>
       <div className={styles.actions} role="group" aria-label="Explore Exodia">
-        <button
+        <Link
           className={`${styles.sign} ${styles.register}`}
-          type="button"
-          popoverTarget="registration-note"
+          href="/register"
         >
           <Image
             className={styles.wood}
@@ -217,7 +217,7 @@ function HeroSignpost() {
             sizes="(min-width: 768px) 260px, 232px"
           />
           <span className={styles.label}>Register</span>
-        </button>
+        </Link>
         <a
           className={`${styles.sign} ${styles.about}`}
           href="#about"
@@ -233,32 +233,6 @@ function HeroSignpost() {
           />
           <span className={styles.label}>Explore</span>
         </a>
-      </div>
-      <div
-        className={styles.notice}
-        id="registration-note"
-        popover="auto"
-        role="dialog"
-        aria-labelledby="registration-title"
-        aria-describedby="registration-description"
-      >
-        <span className={styles.noticeStar} aria-hidden="true">
-          ✦
-        </span>
-        <p className={styles.noticeLabel}>Exodia 4.0</p>
-        <h2 id="registration-title">Registration coming soon</h2>
-        <p className={styles.noticeCopy} id="registration-description">
-          Registration isn’t open yet. Check back here for updates on your next
-          extraordinary adventure.
-        </p>
-        <button
-          className={styles.dismiss}
-          type="button"
-          popoverTarget="registration-note"
-          popoverTargetAction="hide"
-        >
-          Back to the magic <span aria-hidden="true">↗</span>
-        </button>
       </div>
     </div>
   );

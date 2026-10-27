@@ -1,6 +1,6 @@
 # Exodia 4.0
 
-All Kerala Techinal Learning Gala
+All Kerala Technical Learning Gala
 
 ## Stack
 
@@ -27,6 +27,19 @@ bun run start
 
 `bun run start` serves an existing production build.
 
+## Registration configuration
+
+The frontend connects to `https://api.exodiacec.in` by default. To use a local
+registration API, set `NEXT_PUBLIC_REGISTRATION_API_URL` in an ignored
+`.env.local` file. This value is included in the browser bundle, so it must be a
+public API URL without credentials. Production builds use HTTPS and reject
+loopback API addresses.
+
+The registration service runs separately. The optional `api:*` and `db:*`
+commands require the local, ignored `worker/` directory; they are not needed to
+install, build, or run this frontend. Keep backend secrets, local databases,
+planning files, and generated output out of Git.
+
 ## Folder and file conventions
 
 ```text
@@ -43,6 +56,7 @@ app/
 public/
   fonts/
     spin-cycle.ttf           # original brand font
-scripts/
-  check-structure.ts
 ```
+
+When the ignored local `scripts/check-structure.ts` helper is available, run it
+with `bun scripts/check-structure.ts` before committing.

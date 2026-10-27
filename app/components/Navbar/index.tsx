@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import styles from "./Navbar.module.css";
 
@@ -102,12 +103,7 @@ export default function Navbar() {
 
 function RegisterButton({ onClick }: { onClick?: () => void }) {
   return (
-    <button
-      className={styles.register}
-      type="button"
-      popoverTarget="registration-note"
-      onClick={onClick}
-    >
+    <Link className={styles.register} href="/register" onClick={onClick}>
       <span className={styles.registerLabel}>Register</span>
       <span className={styles.arrow} aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none">
@@ -117,6 +113,6 @@ function RegisterButton({ onClick }: { onClick?: () => void }) {
           <path d="M7 17 17 7M7 7h10v10" />
         </svg>
       </span>
-    </button>
+    </Link>
   );
 }

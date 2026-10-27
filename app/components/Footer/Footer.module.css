@@ -213,6 +213,7 @@
   justify-content: flex-end;
 }
 .join {
+  text-decoration: none;
   position: relative;
   display: flex;
   width: 7.25rem;

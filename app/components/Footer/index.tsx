@@ -1,4 +1,5 @@
 import FooterMotion from "@/app/components/FooterMotion";
+import Link from "next/link";
 import Magnet from "@/app/components/Magnet";
 import { footerContact, footerSocials } from "@/app/content/footer";
 import styles from "./Footer.module.css";
@@ -55,22 +56,21 @@ export default function Footer() {
           </div>
           <div className={styles.action} data-footer-reveal>
             <Magnet maxOffset={6}>
-              <button
+              <Link
                 className={styles.join}
-                type="button"
-                popoverTarget="registration-note"
-                aria-label="Get Exodia registration updates"
+                href="/register"
+                aria-label="Register for Exodia 4.0"
               >
                 <span className={styles.joinCopy}>
-                  <span className={styles.joinStatus}>Opening soon</span>
-                  <span className={styles.joinLabel}>Get updates</span>
+                  <span className={styles.joinStatus}>Your next chapter</span>
+                  <span className={styles.joinLabel}>Register</span>
                 </span>
                 <span className={styles.joinArrow} aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none">
                     <path d="M5 19L19 5M5 5H19V19" />
                   </svg>
                 </span>
-              </button>
+              </Link>
             </Magnet>
           </div>
         </div>

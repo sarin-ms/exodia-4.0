@@ -27,7 +27,7 @@ export const faq = [
     id: "registration",
     question: "How do I register?",
     answer:
-      "Registration for Exodia 4.0 isn’t open yet. The Register button on this website will carry the latest registration updates when they’re available.",
+      "Follow the Register button, fill in your student details, and choose one learning stack. Registration costs ₹799 per student. Review your details and pay securely through Razorpay when sales open. Your registration is confirmed after payment verification.",
   },
   {
     id: "event-logistics",

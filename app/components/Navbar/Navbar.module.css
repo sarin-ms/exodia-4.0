@@ -79,6 +79,7 @@
   transform: none;
 }
 .register {
+  text-decoration: none;
   position: relative;
   isolation: isolate;
   display: inline-flex;

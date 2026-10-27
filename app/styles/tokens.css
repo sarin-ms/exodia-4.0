@@ -12,6 +12,7 @@
   --color-paper: #e7dbc2;
   --color-paper-light: #f4eedf;
   --color-paper-edge: #b7a180;
+  --color-error: #f0a6a6;
   --section-blend-distance: clamp(4rem, 14svh, 9rem);
   --section-atmosphere-mask: linear-gradient(
     to bottom,
