@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     ".cache/**",
     "planning/**",
+    ".wrangler/**",
+    "worker/.wrangler/**",
   ]),
 ]);
 

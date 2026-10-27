@@ -2,7 +2,7 @@
   "name": "exodia-4.0",
   "version": "0.1.0",
   "private": true,
-  "author": { "name": "Sarin MS", "email": "sarinms777@gmail.com" },
+  "author": { "name": "Sarin MS" },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
