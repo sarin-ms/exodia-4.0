@@ -27,7 +27,7 @@ export default function Hero() {
         />
         <h1 className={styles.title} id="hero-title" aria-label="Exodia 4.0">
           <span className={styles.wordmark}>
-            exodia
+            <span className={styles.titleText}>exodia</span>
             <Image
               className={styles.sortingHat}
               src="/images/hero/sorting-hat.png"
@@ -39,7 +39,7 @@ export default function Hero() {
               loading="eager"
             />
           </span>{" "}
-          <span>4.0</span>
+          <span className={styles.titleText}>4.0</span>
         </h1>
         <p className={styles.descriptor}>All Kerala Technical Learning Gala</p>
         <HeroSignpost />

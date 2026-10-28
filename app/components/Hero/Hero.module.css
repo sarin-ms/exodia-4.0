@@ -43,17 +43,8 @@
   max-width: 100%;
   margin: 0 auto 1.15rem;
   padding-top: 0.28em;
-  background: linear-gradient(
-    105deg,
-    #a890b9 2%,
-    var(--color-text) 35%,
-    #f3dcc7 52%,
-    var(--color-cameo) 74%,
-    #a890b9 100%
-  );
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
   color: var(--color-text);
+  -webkit-text-fill-color: currentColor;
   font-family: var(--font-brand);
   font-size: clamp(2.5rem, 13.4vw, 7.5rem);
   font-weight: 400;
@@ -61,10 +52,28 @@
   line-height: 1.12;
   letter-spacing: -0.025em;
   white-space: nowrap;
-  filter: drop-shadow(0 3px 18px #0d0c1a);
 }
 .title span {
   font: inherit;
+}
+.titleText {
+  display: inline-block;
+}
+/* Clip each text run itself: Safari can lose text clipped through positioned children. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .titleText {
+    background: linear-gradient(
+      105deg,
+      #a890b9 2%,
+      var(--color-text) 35%,
+      #f3dcc7 52%,
+      var(--color-cameo) 74%,
+      #a890b9 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 .wordmark {
   position: relative;
