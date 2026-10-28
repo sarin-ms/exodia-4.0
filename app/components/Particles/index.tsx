@@ -522,6 +522,7 @@ export default function Particles({
       .createElement("canvas")
       .getContext("2d", { willReadFrequently: true });
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileQuery = window.matchMedia("(max-width: 899px), (pointer: coarse)");
     let reduce = motionQuery.matches;
     const cache = new Map<string, number[]>();
     const parse = (value: string): number[] => {
@@ -913,6 +914,11 @@ export default function Particles({
     const frame = (now: number) => {
       raf = 0;
       if (contextLost || !visible || document.hidden) return;
+      // Keep decorative particles at 30fps on phones, leaving time for native scrolling.
+      if (mobileQuery.matches && last && now - last < 1000 / 30 - 1) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
       const s = settingsRef.current;
       const dt = last ? clamp((now - last) / 1000, 0.0005, 0.05) : 1 / 60;
       last = now;
@@ -960,7 +966,10 @@ export default function Particles({
       const s = settingsRef.current;
       const width = Math.max(1, container.clientWidth);
       const height = Math.max(1, container.clientHeight);
-      const ratio = Math.min(s.dpr || window.devicePixelRatio || 1, 2);
+      const ratio = Math.min(
+        s.dpr || window.devicePixelRatio || 1,
+        mobileQuery.matches ? 1 : 2,
+      );
       view.width = width;
       view.height = height;
       canvas.width = Math.max(1, Math.round(width * ratio));
@@ -987,14 +996,16 @@ export default function Particles({
     };
 
     const onPointerMove = (event: PointerEvent) => {
+      if (!settingsRef.current.mouse) return;
       locate(event);
       if (!settingsRef.current.paused) wake();
     };
 
     const onPointerDown = (event: PointerEvent) => {
       const s = settingsRef.current;
+      if (!s.clickBurst || s.paused || reduce) return;
       locate(event);
-      if (!pointer.inside || !s.clickBurst || s.paused || reduce) return;
+      if (!pointer.inside) return;
       bursts.push({ x: pointer.x, y: pointer.y, age: 0 });
       if (bursts.length > MAX_BURSTS) bursts.shift();
       wake();
@@ -1019,6 +1030,7 @@ export default function Particles({
       wake();
     };
     motionQuery.addEventListener("change", onMotionChange);
+    mobileQuery.addEventListener("change", resize);
 
     const onContextLost = (event: Event) => {
       event.preventDefault();
@@ -1066,6 +1078,7 @@ export default function Particles({
       delete canvas.dataset.ready;
       canvas.removeEventListener("webglcontextlost", onContextLost);
       motionQuery.removeEventListener("change", onMotionChange);
+      mobileQuery.removeEventListener("change", resize);
       resizeObserver.disconnect();
       intersection.disconnect();
       window.removeEventListener("pointermove", onPointerMove);

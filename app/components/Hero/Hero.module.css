@@ -244,7 +244,7 @@
 }
 
 @supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
+  @media (min-width: 900px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
     .sky,
     .moon,
     .castle,
@@ -350,8 +350,6 @@
       color-mix(in srgb, var(--color-cameo) 4%, transparent),
       transparent 48%
     );
-  filter: blur(18px);
-  animation: mistDrift 30s ease-in-out infinite alternate;
 }
 @keyframes mistDrift {
   to {
@@ -374,7 +372,6 @@
   aspect-ratio: 1;
   perspective: 25rem;
   transform: rotate(-12deg);
-  filter: drop-shadow(0 0 12px #ddbfad24);
   animation: snitchBank 24s ease-in-out infinite;
 }
 
@@ -638,6 +635,16 @@
     font-size: 1rem;
   }
 
+}
+@media (min-width: 900px) and (pointer: fine) {
+  .mist {
+    filter: blur(18px);
+    animation: mistDrift 30s ease-in-out infinite alternate;
+  }
+
+  .snitch {
+    filter: drop-shadow(0 0 12px #ddbfad24);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .identity {

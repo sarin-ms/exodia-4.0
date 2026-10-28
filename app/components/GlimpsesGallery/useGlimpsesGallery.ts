@@ -178,6 +178,7 @@ export default function useGlimpsesGallery(
         );
       }
       measure();
+      syncTicker();
     };
     const tick = (_time: number, delta: number) => {
       if (
@@ -212,6 +213,11 @@ export default function useGlimpsesGallery(
           lane.element.scrollLeft = lane.scrollPosition;
         });
       }
+    };
+    const syncTicker = () => {
+      if (inView && !document.hidden && !reducedMotion.matches)
+        gsap.ticker.add(tick);
+      else gsap.ticker.remove(tick);
     };
     const onFocus = (event: FocusEvent) => {
       const target = event.target;
@@ -383,7 +389,9 @@ export default function useGlimpsesGallery(
     const intersection = new IntersectionObserver(
       ([entry]) => {
         inView = entry.isIntersecting;
-        if (entry.isIntersecting)
+        syncTicker();
+        // Transformed desktop cards need preloading; native rows can load nearby images lazily.
+        if (entry.isIntersecting && enhanced)
           scene.querySelectorAll("img").forEach((image) => {
             image.loading = "eager";
           });
@@ -394,7 +402,7 @@ export default function useGlimpsesGallery(
     configure();
     intersection.observe(scene);
     resize.observe(scene);
-    gsap.ticker.add(tick);
+    document.addEventListener("visibilitychange", syncTicker);
     enhancedMedia.addEventListener("change", configure);
     reducedMotion.addEventListener("change", configure);
     hoverMedia.addEventListener("change", configure);
@@ -418,6 +426,7 @@ export default function useGlimpsesGallery(
     return () => {
       stopTweens();
       gsap.ticker.remove(tick);
+      document.removeEventListener("visibilitychange", syncTicker);
       intersection.disconnect();
       resize.disconnect();
       enhancedMedia.removeEventListener("change", configure);

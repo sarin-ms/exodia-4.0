@@ -116,7 +116,8 @@ export default function StacksMotion() {
       (context) => {
         if (context.conditions?.reducedMotion) return;
         const isDesktop = Boolean(context.conditions?.desktop);
-        const sliceCount = isDesktop ? 8 : 10;
+        // Each strip clones both page faces and updates five styles during a turn.
+        const sliceCount = isDesktop ? 8 : 6;
         const duration =
           spreads.length * CHAPTER_HOLD + (spreads.length - 1) * PAGE_TURN;
         const preparedTurns = turns.map((turn) => ({
