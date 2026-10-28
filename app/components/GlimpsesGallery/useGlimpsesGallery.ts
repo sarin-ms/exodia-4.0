@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 interface Lane {
   element: HTMLOListElement;
   cards: HTMLElement[];
+  cardSizes: { width: number; height: number }[];
   phase: number;
   step: number;
   cycle: number;
@@ -38,6 +39,7 @@ export default function useGlimpsesGallery(
       cards: Array.from(
         element.querySelectorAll<HTMLElement>("[data-glimpse-card]"),
       ),
+      cardSizes: [],
       phase: 0,
       step: 1,
       cycle: 1,
@@ -60,6 +62,7 @@ export default function useGlimpsesGallery(
     let nativeAuto = false;
     let nativeBusyUntil = 0;
     let inView = false;
+    let sceneHalfWidth = 1;
     let hovering =
       hoverMedia.matches && links.some((link) => link.matches(":hover"));
     let keyboardFocused = false;
@@ -98,18 +101,18 @@ export default function useGlimpsesGallery(
       ((((position + cycle / 2) % cycle) + cycle) % cycle) - cycle / 2;
     const render = () => {
       if (!enhanced) return;
-      const halfWidth = scene.clientWidth / 2;
       lanes.forEach((lane, row) => {
         lane.cards.forEach((card, index) => {
+          const size = lane.cardSizes[index];
           const x = wrap(
             (index - (lane.cards.length - 1) / 2) * lane.step + lane.phase,
             lane.cycle,
           );
-          const normal = Math.max(-1.4, Math.min(1.4, x / halfWidth));
+          const normal = Math.max(-1.4, Math.min(1.4, x / sceneHalfWidth));
           const bow = normal * normal;
           const y = (row === 0 ? -32 : 32) * bow;
           const z = -105 * bow;
-          card.style.transform = `translate3d(${x - card.offsetWidth / 2}px, ${y - card.offsetHeight / 2}px, ${z}px) rotateX(${row === 0 ? -7 : 7}deg) rotateY(${-normal * 22}deg) rotateZ(${normal * (row === 0 ? -1.8 : 1.8)}deg)`;
+          card.style.transform = `translate3d(${x - size.width / 2}px, ${y - size.height / 2}px, ${z}px) rotateX(${row === 0 ? -7 : 7}deg) rotateY(${-normal * 22}deg) rotateZ(${normal * (row === 0 ? -1.8 : 1.8)}deg)`;
         });
       });
     };
@@ -148,9 +151,14 @@ export default function useGlimpsesGallery(
         Number.parseFloat(
           getComputedStyle(root).getPropertyValue("--photo-gap"),
         ) || 24;
+      sceneHalfWidth = Math.max(1, scene.clientWidth / 2);
       lanes.forEach((lane, row) => {
+        lane.cardSizes = lane.cards.map((card) => ({
+          width: card.offsetWidth,
+          height: card.offsetHeight,
+        }));
         const oldStep = lane.step;
-        lane.step = (lane.cards[0]?.offsetWidth || 280) + gap;
+        lane.step = (lane.cardSizes[0]?.width || 280) + gap;
         lane.phase =
           oldStep === 1
             ? row === 1
