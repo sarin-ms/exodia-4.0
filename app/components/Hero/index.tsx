@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import Particles from "@/app/components/Particles";
 import styles from "./Hero.module.css";
@@ -23,6 +23,7 @@ export default function Hero() {
           width={346}
           height={346}
           loading="eager"
+          fetchPriority="high"
           unoptimized
         />
         <h1 className={styles.title} id="hero-title" aria-label="Exodia 4.0">
@@ -37,6 +38,7 @@ export default function Hero() {
               height={1254}
               sizes="(max-width: 767px) 14vw, 120px"
               loading="eager"
+              fetchPriority="low"
             />
           </span>{" "}
           <span className={styles.titleText}>4.0</span>
@@ -49,6 +51,22 @@ export default function Hero() {
 }
 
 function HeroScenery() {
+  const { props: mobileCastle } = getImageProps({
+    src: "/images/hero/academy-castle-mobile.webp",
+    alt: "",
+    width: 1000,
+    height: 563,
+    sizes: "672px",
+  });
+  const { props: desktopCastle } = getImageProps({
+    src: "/images/hero/academy-castle.webp",
+    alt: "",
+    width: 1671,
+    height: 941,
+    sizes: "960px",
+    loading: "eager",
+    fetchPriority: "high",
+  });
   return (
     <>
       <div className={styles.landscape} aria-hidden="true">
@@ -59,6 +77,7 @@ function HeroScenery() {
           fill
           sizes="100vw"
           loading="eager"
+          fetchPriority="low"
         />
         <div className={styles.moon}>
           <Image
@@ -68,22 +87,17 @@ function HeroScenery() {
             height={1254}
             sizes="(max-width: 767px) 180px, 350px"
             loading="eager"
+            fetchPriority="low"
           />
         </div>
         <div className={styles.moonlight} />
         <picture className={styles.castle}>
           <source
             media="(max-width: 767px)"
-            srcSet="/images/hero/academy-castle-mobile.webp"
+            srcSet={mobileCastle.srcSet}
+            sizes={mobileCastle.sizes}
           />
-          <Image
-            src="/images/hero/academy-castle.webp"
-            alt=""
-            width={1671}
-            height={941}
-            loading="eager"
-            unoptimized
-          />
+          <img {...desktopCastle} alt="" />
         </picture>
         <div className={styles.cloudsBack}>
           <Image
@@ -92,6 +106,7 @@ function HeroScenery() {
             fill
             sizes="85vw"
             loading="eager"
+            fetchPriority="low"
           />
         </div>
         <div className={styles.cloudsFront}>
@@ -101,6 +116,7 @@ function HeroScenery() {
             fill
             sizes="135vw"
             loading="eager"
+            fetchPriority="low"
           />
         </div>
         <svg
@@ -172,6 +188,7 @@ function FlyingSnitch() {
             height={1254}
             sizes="(max-width: 767px) 64px, 128px"
             loading="eager"
+            fetchPriority="low"
           />
         </div>
         <div className={`${styles.wing} ${styles.wingRight}`}>
@@ -183,6 +200,7 @@ function FlyingSnitch() {
             height={1254}
             sizes="(max-width: 767px) 64px, 128px"
             loading="eager"
+            fetchPriority="low"
           />
         </div>
         <Image
@@ -193,6 +211,7 @@ function FlyingSnitch() {
           height={1254}
           sizes="(max-width: 767px) 32px, 64px"
           loading="eager"
+          fetchPriority="low"
         />
       </div>
     </div>

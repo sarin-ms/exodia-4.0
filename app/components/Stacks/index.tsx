@@ -101,9 +101,8 @@ export default function Stacks() {
                           src={stack.image}
                           alt=""
                           fill
-                          sizes="(min-width: 900px) 430px, 75vw"
-                          loading={index === 0 ? "eager" : "lazy"}
-                          unoptimized
+                          sizes="(min-width: 900px) 430px, (min-width: 600px) 312px, (max-height: 780px) 192px, 264px"
+                          loading="lazy"
                         />
                       </div>
                       <p className={styles.plateCaption}>{stack.category}</p>

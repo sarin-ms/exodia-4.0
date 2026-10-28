@@ -95,10 +95,9 @@ export default function GlimpsesGallery({ photos }: GlimpsesGalleryProps) {
                         src={photo.thumbnail}
                         alt={photo.alt}
                         fill
-                        sizes="(min-width: 900px) 370px, 80vw"
-                        loading={index === 2 ? "eager" : "lazy"}
+                        sizes="(min-width: 900px) 400px, (min-width: 433px) 320px, 74vw"
+                        loading="lazy"
                         draggable={false}
-                        unoptimized
                       />
                       <figcaption className={styles.caption}>
                         <span className={styles.photoNumber}>
