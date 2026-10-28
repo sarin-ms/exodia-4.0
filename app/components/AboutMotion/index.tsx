@@ -3,12 +3,15 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import useNearViewport from "@/app/hooks/useNearViewport";
 import styles from "./AboutMotion.module.css";
 
 export default function AboutMotion() {
   const markerRef = useRef<HTMLSpanElement>(null);
+  const near = useNearViewport(markerRef, "15% 0px");
 
   useEffect(() => {
+    if (!near) return;
     const section = markerRef.current?.closest("section");
     if (!section) return;
 
@@ -126,7 +129,7 @@ export default function AboutMotion() {
     );
 
     return () => media.revert();
-  }, []);
+  }, [near]);
 
   return <span className={styles.marker} ref={markerRef} aria-hidden="true" />;
 }

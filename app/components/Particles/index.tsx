@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
+import useNearViewport from "@/app/hooks/useNearViewport";
 import styles from "./Particles.module.css";
 
 // Adapted from React Bits Particles by David Haz. See /THIRD-PARTY-NOTICES.md.
@@ -408,6 +409,7 @@ export default function Particles({
   style,
 }: ParticlesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const near = useNearViewport(containerRef, "0px");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wakeRef = useRef<(() => void) | null>(null);
   const palette = (
@@ -450,6 +452,7 @@ export default function Particles({
   const settingsRef = useRef(settings);
 
   useEffect(() => {
+    if (!near) return;
     const container = containerRef.current;
     const canvas = canvasRef.current;
     // A canvas is visible only after a successful frame, including on effect replay.
@@ -464,12 +467,7 @@ export default function Particles({
     if (!container || !canvas || !gl || gl.isContextLost()) return undefined;
 
     const dots = link(gl, PARTICLE_VERTEX, PARTICLE_FRAGMENT);
-    const lines = link(gl, LINE_VERTEX, LINE_FRAGMENT);
-    if (!dots || !lines) {
-      if (dots) gl.deleteProgram(dots.program);
-      if (lines) gl.deleteProgram(lines.program);
-      return undefined;
-    }
+    if (!dots) return undefined;
 
     const corners = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, corners);
@@ -501,22 +499,31 @@ export default function Particles({
     attach(randomBuffer, 2, 4);
     attach(colorBuffer, 3, 3);
 
-    const lineBuffer = gl.createBuffer();
-    const lineData = new Float32Array(MAX_LINES * 8);
-    const lineVao = gl.createVertexArray();
-    gl.bindVertexArray(lineVao);
-    gl.bindBuffer(gl.ARRAY_BUFFER, corners);
-    gl.enableVertexAttribArray(0);
-    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ARRAY_BUFFER, lineBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, lineData.byteLength, gl.DYNAMIC_DRAW);
-    gl.enableVertexAttribArray(1);
-    gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 32, 0);
-    gl.vertexAttribDivisor(1, 1);
-    gl.enableVertexAttribArray(2);
-    gl.vertexAttribPointer(2, 4, gl.FLOAT, false, 32, 16);
-    gl.vertexAttribDivisor(2, 1);
-    gl.bindVertexArray(null);
+    let lines: Program | null = null;
+    let lineBuffer: WebGLBuffer | null = null;
+    let lineVao: WebGLVertexArrayObject | null = null;
+    let lineData = new Float32Array(0);
+    const prepareConnections = () => {
+      if (lines) return;
+      lines = link(gl, LINE_VERTEX, LINE_FRAGMENT);
+      if (!lines) return;
+      lineData = new Float32Array(MAX_LINES * 8);
+      lineBuffer = gl.createBuffer();
+      lineVao = gl.createVertexArray();
+      gl.bindVertexArray(lineVao);
+      gl.bindBuffer(gl.ARRAY_BUFFER, corners);
+      gl.enableVertexAttribArray(0);
+      gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, lineBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, lineData.byteLength, gl.DYNAMIC_DRAW);
+      gl.enableVertexAttribArray(1);
+      gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 32, 0);
+      gl.vertexAttribDivisor(1, 1);
+      gl.enableVertexAttribArray(2);
+      gl.vertexAttribPointer(2, 4, gl.FLOAT, false, 32, 16);
+      gl.vertexAttribDivisor(2, 1);
+      gl.bindVertexArray(null);
+    };
 
     const probe = document
       .createElement("canvas")
@@ -844,7 +851,8 @@ export default function Particles({
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
-      if (s.connections) {
+      if (s.connections) prepareConnections();
+      if (s.connections && lines) {
         const lineCount = buildLines(s, matrix);
         if (lineCount) {
           gl.useProgram(lines.program);
@@ -1091,7 +1099,7 @@ export default function Particles({
       );
       document.removeEventListener("visibilitychange", onVisibility);
       gl.deleteProgram(dots.program);
-      gl.deleteProgram(lines.program);
+      if (lines) gl.deleteProgram(lines.program);
       [corners, positionBuffer, randomBuffer, colorBuffer, lineBuffer].forEach(
         (buffer) => gl.deleteBuffer(buffer),
       );
@@ -1100,7 +1108,7 @@ export default function Particles({
       // React Strict Mode reuses this canvas after cleanup. Delete our GPU
       // resources above, but leave its context available for the next setup.
     };
-  }, []);
+  }, [near]);
 
   useEffect(() => {
     settingsRef.current = settings;

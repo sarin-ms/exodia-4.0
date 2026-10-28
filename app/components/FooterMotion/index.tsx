@@ -3,12 +3,15 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import useNearViewport from "@/app/hooks/useNearViewport";
 import styles from "./FooterMotion.module.css";
 
 export default function FooterMotion() {
   const markerRef = useRef<HTMLSpanElement>(null);
+  const near = useNearViewport(markerRef);
 
   useEffect(() => {
+    if (!near) return;
     const footer = markerRef.current?.closest("footer");
     if (!footer) return;
     gsap.registerPlugin(ScrollTrigger);
@@ -97,7 +100,7 @@ export default function FooterMotion() {
       footer,
     );
     return () => media.revert();
-  }, []);
+  }, [near]);
 
   return <span ref={markerRef} className={styles.marker} aria-hidden="true" />;
 }

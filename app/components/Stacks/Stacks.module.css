@@ -841,6 +841,45 @@
     font-size: 0.6875rem;
   }
 }
+/* Reserve the enhanced book's geometry before its motion code enters the viewport. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .stacks {
+    min-height: calc(
+      var(--book-stage-height, 100svh) + var(--book-scroll-distance, 270svh)
+    );
+  }
+  .stage {
+    position: sticky;
+    top: var(--book-stage-top, 0px);
+  }
+  .stacks:not([data-book-ready]) .book {
+    gap: 0;
+  }
+  .stacks:not([data-book-ready]) .spread {
+    grid-area: 1 / 1;
+    visibility: hidden;
+  }
+  .stacks:not([data-book-ready]) .spread:first-of-type {
+    visibility: visible;
+  }
+  .stacks:not([data-book-ready]) .cover,
+  .stacks:not([data-book-ready]) .pageEdges,
+  .stacks:not([data-book-ready]) .ribbon,
+  .stacks:not([data-book-ready]) .bookShell::before {
+    display: block;
+  }
+  @media (min-width: 900px) {
+    .stacks:not([data-book-ready]) .book {
+      height: clamp(25rem, 64svh, 34rem);
+    }
+    .stacks:not([data-book-ready]) .bookShell {
+      transform: perspective(2500px) rotateX(6deg) rotateZ(-0.7deg);
+    }
+    .stacks:not([data-book-ready]) .spine {
+      display: block;
+    }
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .chapterLabel {
     transition: none;

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import useNearViewport from "@/app/hooks/useNearViewport";
 import styles from "./StacksMotion.module.css";
 
 const CHAPTER_HOLD = 0.6;
@@ -10,8 +11,10 @@ const PAGE_TURN = 1;
 
 export default function StacksMotion() {
   const markerRef = useRef<HTMLSpanElement>(null);
+  const near = useNearViewport(markerRef);
 
   useEffect(() => {
+    if (!near) return;
     const section = markerRef.current?.closest("section");
     if (!section) return;
     const book = section.querySelector<HTMLElement>("[data-book]");
@@ -85,7 +88,6 @@ export default function StacksMotion() {
 
     gsap.registerPlugin(ScrollTrigger);
     const media = gsap.matchMedia();
-    let disposed = false;
     let viewportWidth = document.documentElement.clientWidth;
     const resize = new ResizeObserver(() => {
       const width = document.documentElement.clientWidth;
@@ -94,18 +96,6 @@ export default function StacksMotion() {
       ScrollTrigger.refresh();
     });
     resize.observe(document.documentElement);
-
-    const preload = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        book.querySelectorAll("img").forEach((image) => {
-          image.loading = "eager";
-        });
-        preload.disconnect();
-      },
-      { rootMargin: "100% 0px" },
-    );
-    preload.observe(section);
 
     media.add(
       {
@@ -120,7 +110,8 @@ export default function StacksMotion() {
         const sliceCount = isDesktop ? 8 : 6;
         const duration =
           spreads.length * CHAPTER_HOLD + (spreads.length - 1) * PAGE_TURN;
-        const preparedTurns = turns.map((turn) => ({
+        // Reuse one turning leaf instead of cloning every chapter during startup.
+        const preparedTurns = turns.slice(0, 1).map((turn) => ({
           ...turn,
           activeSlices: turn.slices.slice(0, sliceCount),
         }));
@@ -129,6 +120,7 @@ export default function StacksMotion() {
         );
         let scene = -1;
         let selectedChapter = -1;
+        let preparedChapter = -1;
         let sliceWidth = 0;
         let pageWidth = 0;
         let stageOffset = 0;
@@ -142,6 +134,9 @@ export default function StacksMotion() {
         const selectChapter = (index: number) => {
           if (selectedChapter === index) return;
           selectedChapter = index;
+          spreads[index].querySelectorAll("img").forEach((image) => {
+            image.loading = "eager";
+          });
           choices.forEach((choice, i) => {
             if (i === index) choice.setAttribute("aria-current", "true");
             else choice.removeAttribute("aria-current");
@@ -170,10 +165,24 @@ export default function StacksMotion() {
             copy.style.height = "100%";
             copy.style.minHeight = "0";
           }
-          copy.querySelectorAll("img").forEach((image) => {
-            image.loading = "eager";
-          });
           return copy;
+        };
+
+        const prepareTurn = (index: number) => {
+          if (preparedChapter === index) return;
+          preparedChapter = index;
+          const turn = preparedTurns[0];
+          const oldPage = isDesktop ? pages[index] : spreads[index];
+          const newPage = isDesktop
+            ? spreads[index + 1].querySelector<HTMLElement>("[data-book-left]")
+            : spreads[index + 1];
+          if (!oldPage || !newPage) return;
+          turn.activeSlices.forEach((_, i) => {
+            turn.fronts[i].replaceChildren(copyPage(oldPage));
+            turn.backs[i].replaceChildren(
+              copyPage(isDesktop ? newPage : oldPage, !isDesktop),
+            );
+          });
         };
 
         section.dataset.bookReady = "true";
@@ -183,25 +192,14 @@ export default function StacksMotion() {
           `${(spreads.length - 1) * 135}svh`,
         );
 
-        // Build both leaves once. Scrolling only changes transforms and visibility.
-        preparedTurns.forEach((turn, index) => {
-          const oldPage = isDesktop ? pages[index] : spreads[index];
-          const newPage = isDesktop
-            ? spreads[index + 1].querySelector<HTMLElement>("[data-book-left]")
-            : spreads[index + 1];
-          if (!oldPage || !newPage) return;
+        preparedTurns.forEach((turn) => {
           turn.slices.forEach((slice, i) => {
             slice.style.display = i < sliceCount ? "block" : "none";
             slice.style.left = "0px";
             slice.style.transformOrigin = "left center";
           });
-          turn.activeSlices.forEach((_, i) => {
-            turn.fronts[i].replaceChildren(copyPage(oldPage));
-            turn.backs[i].replaceChildren(
-              copyPage(isDesktop ? newPage : oldPage, !isDesktop),
-            );
-          });
         });
+        prepareTurn(0);
 
         const measure = () => {
           ribbonWidth = ribbon.offsetWidth;
@@ -246,6 +244,7 @@ export default function StacksMotion() {
           shadow.style.opacity = "0";
           curlShadow.style.opacity = "0";
           if (turning) {
+            prepareTurn(chapter);
             spreads[chapter].style.visibility = isDesktop
               ? "visible"
               : "hidden";
@@ -254,7 +253,7 @@ export default function StacksMotion() {
             spreads[chapter + 1].style.zIndex = "1";
             if (isDesktop && pages[chapter])
               pages[chapter].style.visibility = "hidden";
-            preparedTurns[chapter].leaf.hidden = false;
+            preparedTurns[0].leaf.hidden = false;
             section.dataset.bookTurning = "true";
           } else {
             spreads[chapter].style.visibility = "visible";
@@ -262,8 +261,8 @@ export default function StacksMotion() {
           }
         };
 
-        const renderMobileTurn = (chapter: number, progress: number) => {
-          const leaf = preparedTurns[chapter];
+        const renderMobileTurn = (progress: number) => {
+          const leaf = preparedTurns[0];
           const radius = pageWidth * 0.2;
           const arcLength = Math.PI * radius;
           const fold = pageWidth - (pageWidth + arcLength) * progress;
@@ -366,15 +365,18 @@ export default function StacksMotion() {
           setScene(chapter, turning);
           selectChapter(chapter + (turning && turn >= 0.5 ? 1 : 0));
           renderRibbon(turning ? turn : 0);
-          if (!turning) return;
+          if (!turning) {
+            prepareTurn(Math.min(chapter, spreads.length - 2));
+            return;
+          }
           if (!isDesktop) {
-            renderMobileTurn(chapter, turn);
+            renderMobileTurn(turn);
             return;
           }
           const bend = Math.sin(Math.PI * turn);
           let x = 0;
           let z = 0;
-          preparedTurns[chapter].activeSlices.forEach((slice, i) => {
+          preparedTurns[0].activeSlices.forEach((slice, i) => {
             const alongPage = (i + 0.5) / sliceCount;
             const angle = -(180 * turn + 42 * bend * (alongPage - 0.18));
             const radians = (angle * Math.PI) / 180;
@@ -501,17 +503,17 @@ export default function StacksMotion() {
       section,
     );
 
-    void document.fonts.ready.then(() => {
-      if (!disposed) ScrollTrigger.refresh();
-    });
+    // A global refresh during native smooth scrolling cancels anchor navigation.
+    // Refresh only for fonts that actually finish after this section initializes.
+    const onFontsLoaded = () => ScrollTrigger.refresh();
+    document.fonts.addEventListener("loadingdone", onFontsLoaded);
 
     return () => {
-      disposed = true;
+      document.fonts.removeEventListener("loadingdone", onFontsLoaded);
       resize.disconnect();
-      preload.disconnect();
       media.revert();
     };
-  }, []);
+  }, [near]);
 
   return <span className={styles.marker} ref={markerRef} aria-hidden="true" />;
 }
