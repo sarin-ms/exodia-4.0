@@ -171,6 +171,12 @@
   pointer-events: none;
 }
 
+/* The wizard is offscreen after its flight; stop only its invisible inner loops. */
+.screen:is([data-phase="covered"], [data-phase="revealing"])
+  :is(.rider, .capeBack, .capeHem, .capeFold, .scarf, .magicTrail i) {
+  animation-play-state: paused;
+}
+
 @keyframes flyAcross {
   from {
     transform: translate3d(0, 0, 0);

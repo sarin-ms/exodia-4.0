@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  memo,
   useEffect,
   useState,
   type CSSProperties,
@@ -20,6 +21,8 @@ type Phase = "waiting" | "flying" | "covered" | "revealing" | "complete";
 type LoadingScreenProps = Readonly<{
   children: ReactNode;
 }>;
+
+const MemoizedFlyingWizard = memo(FlyingWizard);
 
 export default function LoadingScreen({
   children,
@@ -142,7 +145,7 @@ export default function LoadingScreen({
               </svg>
             </div>
             <div className={styles.flyer}>
-              <FlyingWizard />
+              <MemoizedFlyingWizard />
               <div className={styles.magicTrail}>
                 <i />
                 <i />
@@ -163,6 +166,7 @@ export default function LoadingScreen({
       <div
         className={styles.content}
         data-revealed={isRevealed}
+        data-motion-ready={isComplete}
         style={motionStyle}
       >
         {children}
