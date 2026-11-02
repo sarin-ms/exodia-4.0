@@ -12,6 +12,7 @@
   font-size: 12px;
   text-decoration: none;
 }
+.lookupAgain { display: block; min-height: 44px; margin-top: 1rem; padding: 0; border: 0; background: transparent; color: var(--color-gold); font: inherit; font-size: var(--font-size-label); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 .intro{
   margin-bottom: clamp(24px, 4vw, 40px);
 }
@@ -29,6 +30,7 @@
   line-height: 1.2;
   letter-spacing: -0.045em;
 }
+.intro h1:focus { outline: none; }
 .actions{
   display: flex;
   flex-wrap: wrap;

@@ -476,6 +476,7 @@ export default function useRegistrationForm(apiUrl: string) {
         if (error.fields) {
           setErrors(error.fields);
           setStep(["name", "email", "phone", "gender"].some((field) => error.fields?.[field as keyof StudentDetails]) ? 0 : 1);
+          requestAnimationFrame(() => errorRef.current?.focus());
         }
         void loadCatalogue();
       } else if (error instanceof RequestError && error.status === 403) {

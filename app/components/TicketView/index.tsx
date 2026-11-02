@@ -3,17 +3,43 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import TicketPass from "@/app/components/TicketPass";
+import TicketLookup from "@/app/components/TicketLookup";
 import type { TicketDetails } from "@/app/lib/registration";
+import type { RecoveredTicket } from "@/app/lib/ticket-lookup";
 import styles from "./TicketView.module.css";
 
 export default function TicketView({ apiUrl }: { apiUrl: string }) {
   const [ticket, setTicket] = useState<TicketDetails | null>(null);
   const [error, setError] = useState("");
+  const [lookupVisible, setLookupVisible] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadNotice, setDownloadNotice] = useState("");
   const exportStage = useRef<HTMLDivElement>(null);
   const downloadInFlight = useRef(false);
   const fullSizeDialog = useRef<HTMLDialogElement>(null);
+  const ticketHeading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (ticket) ticketHeading.current?.focus();
+  }, [ticket]);
+
+  function openRecoveredTicket(entry: RecoveredTicket) {
+    if (!/^[a-f0-9]{64}$/.test(entry.token)) return;
+    try {
+      sessionStorage.setItem("exodia-ticket-token", entry.token);
+      window.history.replaceState(null, "", window.location.pathname);
+    } catch { /* The verified pass remains usable without browser storage. */ }
+    setError("");
+    setLookupVisible(false);
+    setTicket(entry.ticket);
+  }
+
+  function findAnotherTicket() {
+    try { sessionStorage.removeItem("exodia-ticket-token"); } catch { /* Storage is optional. */ }
+    setTicket(null);
+    setError("");
+    setDownloadNotice("");
+    setLookupVisible(true);
+  }
 
   async function downloadTicket() {
     const node = exportStage.current?.firstElementChild;
@@ -57,10 +83,11 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
         const token =
           new URLSearchParams(window.location.hash.slice(1)).get("token") ??
           savedToken;
-        if (!token || !/^[a-f0-9]{64}$/.test(token))
-          throw new Error(
-            "Open the private ticket link from your confirmation email or registration page.",
-          );
+        if (!token) {
+          setLookupVisible(true);
+          return;
+        }
+        if (!/^[a-f0-9]{64}$/.test(token)) throw new Error("This ticket link is incomplete. Find your pass using your registration email.");
         try {
           sessionStorage.setItem("exodia-ticket-token", token);
           window.history.replaceState(null, "", window.location.pathname);
@@ -79,12 +106,14 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
           );
         setTicket(result);
       } catch (failure) {
-        if (!controller.signal.aborted)
+        if (!controller.signal.aborted) {
+          setLookupVisible(true);
           setError(
             failure instanceof Error
               ? failure.message
               : "Your ticket could not be retrieved.",
           );
+        }
       }
     };
     void load();
@@ -95,12 +124,8 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
       <Link className={styles.back} href="/">
         ← Back to Exodia
       </Link>
-      {error ? (
-        <div className={styles.message} role="alert">
-          <h1>Your ticket link</h1>
-          <p>{error}</p>
-          <Link href="/#contact">Contact the Exodia team ↗</Link>
-        </div>
+      {!ticket && lookupVisible ? (
+        <TicketLookup apiUrl={apiUrl} onOpen={openRecoveredTicket} notice={error} />
       ) : !ticket ? (
         <p className={styles.message} role="status">
           Opening your pass…
@@ -109,7 +134,7 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
         <>
           <header className={styles.intro}>
             <span>Registration confirmed</span>
-            <h1>Your next chapter, booked.</h1>
+            <h1 ref={ticketHeading} tabIndex={-1}>Your next chapter, booked.</h1>
           </header>
           <TicketPass ticket={ticket} />
           <div className={styles.actions}>
@@ -154,6 +179,7 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
             confirmation email. Schedule and venue details will be shared by
             the Exodia team.
           </p>
+          <button type="button" className={styles.lookupAgain} onClick={findAnotherTicket}>Find another ticket</button>
         </>
       )}
     </main>

@@ -647,6 +647,13 @@
   text-align: center;
   line-height: 1.8;
 }
+.footnote a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-gold);
+  text-underline-offset: 3px;
+}
 
 .textButton {
   display: inline-flex;

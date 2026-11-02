@@ -72,6 +72,7 @@ export default function Footer() {
                 </span>
               </Link>
             </Magnet>
+            <Link className={styles.ticketLink} href="/ticket">Find your ticket ↗</Link>
           </div>
         </div>
 

@@ -287,7 +287,8 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
                 </button>
               </div>
               <p className={styles.footnote}>
-                We’ll send your verification code and pass to this email.
+                One event per email address and mobile number. Already registered?{" "}
+                <Link href="/ticket">Find your ticket ↗</Link>
               </p>
             </form>
           )}
