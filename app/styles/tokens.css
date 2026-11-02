@@ -24,4 +24,7 @@
   --font-brand: "Exodia Spin Cycle", sans-serif;
   --font-heading: "GC Palioka", "Rubik Variable", "Rubik", sans-serif;
   --font-body: "Rubik Variable", "Rubik", sans-serif;
+  --font-size-caption: 0.75rem;
+  --font-size-label: 0.875rem;
+  --font-size-body: 1rem;
 }

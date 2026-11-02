@@ -1,0 +1,108 @@
+.field {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.field label {
+  font-size: var(--font-size-label);
+  font-weight: 450;
+}
+
+.required {
+  color: var(--color-gold);
+}
+
+.control {
+  position: relative;
+  min-width: 0;
+}
+
+.control input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 13%, transparent);
+  border-radius: 7px;
+  padding: 0.7rem 0.8rem;
+  background: var(--color-background);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-body);
+  transition: border-color 150ms;
+}
+
+.control input::placeholder {
+  color: color-mix(in srgb, var(--color-text-muted) 65%, transparent);
+}
+
+.control input:focus {
+  border-color: var(--color-gold);
+}
+
+.control input[aria-invalid="true"] {
+  border-color: var(--color-error);
+}
+
+.suggestions {
+  position: absolute;
+  z-index: 5;
+  inset-inline: 0;
+  top: calc(100% + 6px);
+  max-height: 250px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: 0.4rem;
+  list-style: none;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 30%, var(--color-surface));
+  border-radius: 9px;
+  background: var(--color-surface);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--color-void) 35%, transparent);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) transparent;
+}
+
+.suggestions button {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.65rem 0.75rem;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-label);
+  line-height: 1.5;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.suggestions button:hover,
+.suggestions button[aria-selected="true"] {
+  background: color-mix(in srgb, var(--color-gold) 10%, transparent);
+  color: var(--color-gold);
+}
+
+.hint,
+.error {
+  font-size: var(--font-size-caption);
+  line-height: 1.6;
+}
+
+.hint {
+  color: var(--color-text-muted);
+}
+
+.error {
+  color: var(--color-error);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .control input {
+    transition: none;
+  }
+}

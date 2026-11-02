@@ -1,8 +1,11 @@
 "use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
-import RegistrationPass from "@/app/components/RegistrationPass";
+import CodeSlots from "@/app/components/CodeSlots";
+import CollegeAutocomplete from "@/app/components/CollegeAutocomplete";
+import SlideCommit from "@/app/components/SlideCommit";
 import { stacks } from "@/app/content/stacks";
 import {
   formatRupees,
@@ -23,6 +26,8 @@ const labels: Record<keyof StudentDetails, string> = {
   food: "Food preference",
   stackId: "Learning stack",
 };
+const stepLabels = ["Details", "Your stack", "Review", "Your pass"];
+
 export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
   const form = useRegistrationForm(apiUrl);
   const { student, errors, checkout, step } = form;
@@ -30,13 +35,15 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
     (stack) => stack.id === student.stackId,
   )?.title;
   const confirmed = checkout?.status === "confirmed";
-  const razorpayTest = checkout?.paymentMode === "test";
+  const resendSeconds = form.verification
+    ? Math.max(0, Math.ceil(form.verification.resendAt - form.clockTime))
+    : 0;
   const rows = [
     ["Name", student.name],
-    ["College", student.college],
-    ["Year", yearLabels[student.year]],
     ["Email", student.email],
     ["Phone", student.phone],
+    ["College", student.college],
+    ["Year", yearLabels[student.year]],
     ["Gender", student.gender === "male" ? "Male" : "Female"],
     ["Food", student.food === "veg" ? "Vegetarian" : "Non-vegetarian"],
   ];
@@ -54,7 +61,9 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
   ) {
     return (
       <label className={styles.field} htmlFor={field}>
-        <span>{labels[field]}</span>
+        <span>
+          {labels[field]} <span className={styles.required}>*</span>
+        </span>
         <input
           id={field}
           name={field}
@@ -80,129 +89,240 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
       </label>
     );
   }
+  function choice(field: "gender" | "food", options: [string, string][]) {
+    return (
+      <fieldset
+        className={styles.choiceField}
+        id={field}
+        tabIndex={-1}
+        aria-describedby={errors[field] ? field + "-error" : undefined}
+      >
+        <legend>
+          {labels[field]} <span className={styles.required}>*</span>
+        </legend>
+        <div className={styles.choices}>
+          {options.map(([value, label]) => (
+            <label key={value}>
+              <input
+                type="radio"
+                name={field}
+                value={value}
+                required
+                checked={student[field] === value}
+                onChange={() => form.update(field, value)}
+              />
+              <span>
+                <span className={styles.radioDot} />
+                {label}
+              </span>
+            </label>
+          ))}
+        </div>
+        {fieldError(field)}
+      </fieldset>
+    );
+  }
+  const errorSummary = Object.values(errors).some(Boolean) && (
+    <div
+      className={styles.errorSummary}
+      ref={form.errorRef}
+      tabIndex={-1}
+      role="alert"
+    >
+      <strong>A few details need your attention.</strong>
+      <ul>
+        {Object.entries(errors)
+          .filter(([, value]) => value)
+          .map(([field, value]) => (
+            <li key={field}>
+              <a href={"#" + field}>{value}</a>
+            </li>
+          ))}
+      </ul>
+    </div>
+  );
   return (
     <div className={styles.page}>
+      <div className={styles.scenery} aria-hidden="true">
+        <Image
+          className={styles.castle}
+          src="/images/hero/academy-castle-mobile.webp"
+          alt=""
+          width={1000}
+          height={563}
+          sizes="(min-width: 1100px) 640px, 380px"
+        />
+        <span className={styles.starOne}>✦</span>
+        <span className={styles.starTwo}>✧</span>
+      </div>
       <header className={styles.header}>
         <Link className={styles.brand} href="/" aria-label="Exodia 4.0 home">
           <Image
             src="/brand/exodia-mark.svg"
             alt=""
-            width={34}
-            height={34}
+            width={32}
+            height={32}
             unoptimized
           />
           <span>
             exodia <small>4.0</small>
           </span>
         </Link>
-        <Link className={styles.back} href="/#stacks">
-          Explore the stacks <span aria-hidden="true">↗</span>
+        <span className={styles.headerLabel}>THE NEXT CHAPTER</span>
+        <Link className={styles.back} href="/">
+          Back to home <span aria-hidden="true">↗</span>
         </Link>
       </header>
       <main className={styles.main} id="main">
-        <aside className={styles.intro}>
-          <p className={styles.eyebrow}>
-            <span aria-hidden="true">✦</span> THE NEXT CHAPTER IS YOURS
-          </p>
-          <h1>
-            Come curious.
-            <br />
-            <span>Leave extraordinary.</span>
-          </h1>
-          <p className={styles.introCopy}>
-            A room full of ideas. A stack worth exploring. And a whole new
-            version of what you can build.
-          </p>
-          <div className={styles.passWrap}>
-            <RegistrationPass
-              amount={checkout?.amount ?? form.amount}
-              stackTitle={stackTitle}
+        <div className={styles.intro}>
+          <div className={styles.introText}>
+            <p className={styles.eyebrow}>
+              <span aria-hidden="true">✦</span> EXODIA 4.0 / REGISTRATION
+            </p>
+            <h1>
+              Your next chapter.
+              <br />
+              <span>A little more magical.</span>
+            </h1>
+            <p className={styles.introCopy}>
+              Come curious. Find your stack. Make something extraordinary.
+            </p>
+          </div>
+          <div className={styles.introArt} aria-hidden="true">
+            <Image
+              className={styles.hat}
+              src="/images/hero/sorting-hat.png"
+              alt=""
+              width={1254}
+              height={1254}
+              sizes="(min-width: 640px) 140px, 90px"
             />
-          </div>
-          <div className={styles.facts}>
             <span>
-              <strong>03</strong> learning stacks
-            </span>
-            <span>
-              <strong>60</strong> seats per stack
-            </span>
-            <span>
-              <strong>01</strong> next chapter
+              Every great story
+              <br />
+              starts somewhere.
             </span>
           </div>
-        </aside>
-        <section className={styles.panel} aria-label="Student registration">
-          <div className={styles.panelTop}>
-            <span>STUDENT REGISTRATION</span>
-            <span>EXODIA / 4.0</span>
-          </div>
-          <ol className={styles.steps} aria-label="Registration progress">
-            {["Details", "Verify email", "Review & pay", "Your pass"].map(
-              (label, index) => (
+        </div>
+        <div className={styles.feeSummary}>
+          <span className={styles.passLabel}>
+            <span aria-hidden="true">✧</span> Student pass{" "}
+            <small>ONE STUDENT · ONE STACK</small>
+          </span>
+          <strong>
+            {formatRupees(checkout?.amount ?? form.amount)}
+            <small> / person</small>
+          </strong>
+        </div>
+        <section
+          className={styles.panel}
+          aria-label="Student registration"
+          aria-busy={form.busy}
+        >
+          <nav className={styles.stepper} aria-label="Registration progress">
+            <ol className={styles.steps}>
+              {stepLabels.map((label, index) => (
                 <li
                   key={label}
                   data-active={step === index}
                   data-done={step > index}
-                  aria-current={step === index ? "step" : undefined}
                 >
-                  <span>{step > index ? "✓" : "0" + (index + 1)}</span>
-                  <span>{label}</span>
+                  <button
+                    type="button"
+                    disabled={index >= step || step === 3 || form.busy}
+                    aria-current={step === index ? "step" : undefined}
+                    aria-label={
+                      label +
+                      (step > index ? ", completed. Edit this step" : "")
+                    }
+                    onClick={() => form.setStep(index)}
+                  >
+                    <span className={styles.stepNumber}>
+                      {step > index ? "✓" : "0" + (index + 1)}
+                    </span>
+                    <span>{label}</span>
+                  </button>
                 </li>
-              ),
-            )}
-          </ol>
+              ))}
+            </ol>
+          </nav>
           {step === 0 && (
             <form
               className={styles.form}
               noValidate
+              aria-label="Your contact details"
+              onSubmit={(event) => {
+                event.preventDefault();
+                form.continueDetails();
+              }}
+            >
+              <div className={styles.heading}>
+                <div>
+                  <h2 ref={form.headingRef} tabIndex={-1}>
+                    Make your entry.
+                  </h2>
+                  <p>A few details to begin your Exodia story.</p>
+                </div>
+                <span className={styles.stepCounter}>
+                  01 <small>/ 04</small>
+                </span>
+              </div>
+              {errorSummary}
+
+              <div className={styles.fields}>
+                {input("name", "Your full name", "name")}
+                {input("email", "you@example.com", "email", "email")}
+                {input("phone", "98765 43210", "tel", "tel")}
+                {choice("gender", [
+                  ["male", "Male"],
+                  ["female", "Female"],
+                ])}
+              </div>
+              <div className={styles.formActions}>
+                <span className={styles.actionHint}>
+                  Next up: your college & learning stack
+                </span>
+                <button className={styles.primary} type="submit">
+                  Continue <span aria-hidden="true">→</span>
+                </button>
+              </div>
+              <p className={styles.footnote}>
+                We’ll send your verification code and pass to this email.
+              </p>
+            </form>
+          )}
+          {step === 1 && (
+            <form
+              className={styles.form}
+              noValidate
+              aria-label="College and learning stack"
               onSubmit={(event) => {
                 event.preventDefault();
                 void form.review();
               }}
             >
               <div className={styles.heading}>
-                <h2 ref={form.headingRef} tabIndex={-1}>
-                  Let’s make it official.
-                </h2>
-                <p>A few details, a stack you love, and you’re on your way.</p>
-              </div>
-              {Object.values(errors).some(Boolean) && (
-                <div
-                  className={styles.errorSummary}
-                  ref={form.errorRef}
-                  tabIndex={-1}
-                  role="alert"
-                >
-                  <strong>Check these details before continuing.</strong>
-                  <ul>
-                    {Object.entries(errors)
-                      .filter(([, value]) => value)
-                      .map(([field, value]) => (
-                        <li key={field}>
-                          <a href={"#" + field}>{value}</a>
-                        </li>
-                      ))}
-                  </ul>
+                <div>
+                  <h2 ref={form.headingRef} tabIndex={-1}>
+                    Find your kind of magic.
+                  </h2>
+                  <p>Tell us where you’re from, and what you want to build.</p>
                 </div>
-              )}
-              <div className={styles.sectionLabel}>
-                <span>01</span>
-                <h3>A little about you</h3>
-                <span>ALL FIELDS REQUIRED</span>
+                <span className={styles.stepCounter}>
+                  02 <small>/ 04</small>
+                </span>
               </div>
+              {errorSummary}
               <div className={styles.fields}>
-                {input("name", "Your full name", "name")}
-                {input(
-                  "college",
-                  "Your college or institution",
-                  "organization",
-                )}
-                {input("email", "you@example.com", "email", "email")}
-                {input("phone", "+91 98765 43210", "tel", "tel")}
-              </div>
-              <div className={styles.preferences}>
+                <CollegeAutocomplete
+                  value={student.college}
+                  onChange={(college) => form.update("college", college)}
+                  error={errors.college}
+                />
                 <label className={styles.field} htmlFor="year">
-                  <span>Year of study</span>
+                  <span>
+                    Year of study <span className={styles.required}>*</span>
+                  </span>
                   <select
                     id="year"
                     name="year"
@@ -215,7 +335,7 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
                     }
                   >
                     <option value="" disabled>
-                      Select year
+                      Select your year
                     </option>
                     {studyYears.map((year) => (
                       <option value={year} key={year}>
@@ -225,53 +345,11 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
                   </select>
                   {fieldError("year")}
                 </label>
-                {(
-                  [
-                    [
-                      "gender",
-                      [
-                        ["male", "Male"],
-                        ["female", "Female"],
-                      ],
-                    ],
-                    [
-                      "food",
-                      [
-                        ["veg", "Veg"],
-                        ["non-veg", "Non-veg"],
-                      ],
-                    ],
-                  ] as const
-                ).map(([field, options]) => (
-                  <fieldset
-                    className={styles.choiceField}
-                    id={field}
-                    tabIndex={-1}
-                    key={field}
-                    aria-describedby={
-                      errors[field] ? field + "-error" : undefined
-                    }
-                  >
-                    <legend>{labels[field]}</legend>
-                    <div className={styles.choices}>
-                      {options.map(([value, label]) => (
-                        <label key={value}>
-                          <input
-                            type="radio"
-                            name={field}
-                            value={value}
-                            required
-                            checked={student[field] === value}
-                            onChange={() => form.update(field, value)}
-                          />
-                          <span>{label}</span>
-                        </label>
-                      ))}
-                    </div>
-                    {fieldError(field)}
-                  </fieldset>
-                ))}
               </div>
+              {choice("food", [
+                ["veg", "Vegetarian"],
+                ["non-veg", "Non-vegetarian"],
+              ])}
               <fieldset
                 className={styles.stackField}
                 id="stackId"
@@ -281,10 +359,10 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
                 }
               >
                 <legend>
-                  <span>02</span> Pick your learning stack
+                  Your learning stack <span className={styles.required}>*</span>
                 </legend>
                 <p id="stack-hint">
-                  One stack. A world of possibilities. ₹799 per student.
+                  Choose one. Spend the day making it yours.
                 </p>
                 <div className={styles.stackChoices}>
                   {stacks.map((stack, index) => {
@@ -303,121 +381,47 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
                           required
                           onChange={() => form.update("stackId", stack.id)}
                         />
-                        <span className={styles.stackIcon} aria-hidden="true">
-                          {["AI", "ES", "GD"][index]}
+                        <Image
+                          className={styles.stackImage}
+                          src={stack.image}
+                          alt=""
+                          width={120}
+                          height={120}
+                          sizes="56px"
+                        />
+                        <span className={styles.stackCopy}>
+                          <small>STACK 0{index + 1}</small>
+                          <strong>{stack.title}</strong>
+                          <span>
+                            {disabled ? "Currently unavailable" : stack.motif}
+                          </span>
                         </span>
-                        <strong>{stack.title}</strong>
-                        <small>{disabled ? "Unavailable" : stack.motif}</small>
-                        <span className={styles.stackArrow} aria-hidden="true">
-                          ↗
-                        </span>
+                        <span
+                          className={styles.stackRadio}
+                          aria-hidden="true"
+                        />
                       </label>
                     );
                   })}
                 </div>
                 {fieldError("stackId")}
               </fieldset>
-              <button
-                className={styles.primary}
-                type="submit"
-                disabled={form.busy}
-              >
-                {form.busy
-                  ? "Sending your code…"
-                  : "Continue to email verification"}
-                <span aria-hidden="true">→</span>
-              </button>
-              <p className={styles.footnote}>
-                We’ll verify your email before payment and send your ticket
-                there.
-              </p>
-            </form>
-          )}
-          {step === 1 && (
-            <form
-              className={styles.form}
-              noValidate
-              onSubmit={(event) => {
-                event.preventDefault();
-                void form.confirmCode();
-              }}
-            >
-              <div className={styles.heading}>
-                <span className={styles.largeSymbol} aria-hidden="true">
-                  ✉
-                </span>
-                <h2 ref={form.headingRef} tabIndex={-1}>
-                  Check your inbox.
-                </h2>
-                <p>
-                  {form.verification
-                    ? "A six-digit code is on its way to"
-                    : "We’ll send your verification code to"}
-                  <br />
-                  <strong>{student.email}</strong>
-                </p>
-              </div>
-              {!form.catalogue?.emailReady && (
-                <p className={styles.notice}>
-                  Email verification opens soon. Please check back shortly.
-                </p>
-              )}
-              <label className={styles.field} htmlFor="verification-code">
-                <span>Verification code</span>
-                <input
-                  className={styles.codeInput}
-                  id="verification-code"
-                  name="verification-code"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  value={form.code}
-                  placeholder="000000"
-                  maxLength={6}
-                  onChange={(event) =>
-                    form.setCode(event.target.value.replace(/\D/g, ""))
-                  }
-                  required
-                  aria-describedby="code-hint"
-                />
-                <small id="code-hint">
-                  Codes expire in 10 minutes. Check your spam folder too.
-                </small>
-              </label>
-              <button
-                className={styles.primary}
-                type="submit"
-                disabled={form.busy || !form.verification}
-              >
-                {form.busy ? "Checking your code…" : "Verify email & continue"}
-                <span aria-hidden="true">→</span>
-              </button>
-              <div className={styles.inlineActions}>
+              <div className={styles.formActions}>
                 <button
                   className={styles.textButton}
                   type="button"
-                  disabled={
-                    form.busy ||
-                    !form.catalogue?.emailReady ||
-                    (!!form.verification &&
-                      form.verification.resendAt > form.clockTime)
-                  }
-                  onClick={() => {
-                    void form.sendCode();
-                  }}
-                >
-                  {form.verification &&
-                  form.verification.resendAt > form.clockTime
-                    ? "Wait a minute to resend"
-                    : form.verification
-                      ? "Resend code"
-                      : "Send verification code"}
-                </button>
-                <button
-                  className={styles.textButton}
-                  type="button"
+                  disabled={form.busy}
                   onClick={() => form.setStep(0)}
                 >
-                  Edit email ↗
+                  ← Back
+                </button>
+                <button
+                  className={styles.primary}
+                  type="submit"
+                  disabled={form.busy}
+                >
+                  {form.busy ? "Sending your code…" : "Review my registration"}
+                  <span aria-hidden="true">→</span>
                 </button>
               </div>
             </form>
@@ -425,17 +429,22 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
           {step === 2 && (
             <div className={styles.form}>
               <div className={styles.heading}>
-                <span className={styles.verifiedBadge}>✓ EMAIL VERIFIED</span>
-                <h2 ref={form.headingRef} tabIndex={-1}>
-                  One last look.
-                </h2>
-                <p>Your next chapter is almost booked.</p>
+                <div>
+                  <h2 ref={form.headingRef} tabIndex={-1}>
+                    One last look.
+                  </h2>
+                  <p>Your next chapter is almost booked.</p>
+                </div>
+                <span className={styles.stepCounter}>
+                  03 <small>/ 04</small>
+                </span>
               </div>
               <div className={styles.reviewTitle}>
                 <h3>Your details</h3>
                 <button
                   className={styles.textButton}
                   type="button"
+                  disabled={form.busy}
                   onClick={() => form.setStep(0)}
                 >
                   Edit details ↗
@@ -449,50 +458,171 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
                   </div>
                 ))}
               </dl>
+              <section
+                className={styles.verification}
+                aria-labelledby="email-verification-title"
+              >
+                <div className={styles.reviewTitle}>
+                  <h3 id="email-verification-title">Verify your email</h3>
+                  {form.emailVerified && (
+                    <span className={styles.verifiedBadge}>✓ VERIFIED</span>
+                  )}
+                </div>
+                <p>
+                  {form.emailVerified
+                    ? "Your pass will be sent to "
+                    : form.verification
+                      ? "Enter the six-digit code sent to "
+                      : "We’ll send a six-digit code to "}
+                  <strong>{student.email}</strong>.
+                </p>
+                {!form.emailVerified && (
+                  <form
+                    className={styles.otpForm}
+                    noValidate
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      void form.confirmCode();
+                    }}
+                  >
+                    {form.verification && (
+                      <>
+                        <CodeSlots
+                          value={form.code}
+                          onChange={(code) => {
+                            form.setCode(code);
+                            if (code) form.setCodeError("");
+                          }}
+                          status={form.codeError ? "error" : "idle"}
+                          disabled={form.busy}
+                          slotSize={36}
+                          gap={6}
+                          radius={9}
+                          accentColor="var(--color-gold)"
+                          inkColor="var(--color-text)"
+                          slotColor="var(--color-surface)"
+                          digitColor="var(--color-cinder)"
+                          dangerColor="var(--color-error)"
+                          ariaLabel="Six-digit email verification code"
+                          describedBy="code-hint code-error"
+                        />
+                        <small id="code-hint">
+                          Valid for 10 minutes. Check your spam folder too.
+                        </small>
+                        <button
+                          className={styles.verifyButton}
+                          type="submit"
+                          disabled={form.busy || form.code.length !== 6}
+                        >
+                          {form.busy ? "Checking code…" : "Verify email"}
+                          <span aria-hidden="true">→</span>
+                        </button>
+                      </>
+                    )}
+                    <span
+                      className={styles.fieldError}
+                      id="code-error"
+                      role="status"
+                    >
+                      {form.codeError}
+                    </span>
+                    <div className={styles.inlineActions}>
+                      <button
+                        className={styles.textButton}
+                        type="button"
+                        disabled={
+                          form.busy ||
+                          !form.catalogue?.emailReady ||
+                          resendSeconds > 0
+                        }
+                        onClick={() => {
+                          void form.sendCode();
+                        }}
+                      >
+                        {form.busy && !form.verification
+                          ? "Sending code…"
+                          : resendSeconds > 0
+                            ? "Resend in " + resendSeconds + "s"
+                            : form.verification
+                              ? "Resend code"
+                              : "Send verification code"}
+                      </button>
+                      <button
+                        className={styles.textButton}
+                        type="button"
+                        disabled={form.busy}
+                        onClick={() => form.setStep(0)}
+                      >
+                        Change email ↗
+                      </button>
+                    </div>
+                    {!form.catalogue?.emailReady && (
+                      <p className={styles.notice}>
+                        Email verification opens soon. Please check back
+                        shortly.
+                      </p>
+                    )}
+                  </form>
+                )}
+              </section>
               <div className={styles.total}>
-                <span>STUDENT PASS</span>
+                <div className={styles.reviewTitle}>
+                  <span>YOUR STUDENT PASS</span>
+                  <button
+                    className={styles.textButton}
+                    type="button"
+                    disabled={form.busy}
+                    onClick={() => form.setStep(1)}
+                  >
+                    Change stack ↗
+                  </button>
+                </div>
                 <h3>{stackTitle}</h3>
                 <p>One student · One learning stack</p>
-                <div>
+                <div className={styles.totalPrice}>
                   <span>Total payable</span>
                   <strong>{formatRupees(form.amount)}</strong>
                 </div>
               </div>
-              {(!form.catalogue?.salesOpen || !form.canPay) && (
-                <p className={styles.notice} role="status">
-                  {form.scriptFailed
-                    ? "Secure checkout couldn’t load. Refresh and try again."
-                    : form.catalogueLoading
-                      ? "Checking availability…"
-                      : !form.catalogue?.salesOpen
-                        ? (form.catalogue?.message ??
-                          "Registration opens soon.")
-                        : !form.scriptReady
-                          ? "Loading secure checkout…"
-                          : "This stack is currently unavailable. Please edit your selection."}
-                </p>
-              )}
-              <button
-                className={styles.primary}
-                type="button"
-                disabled={!form.canPay || form.busy}
-                onClick={() => {
-                  void form.pay();
-                }}
-              >
-                {form.busy
-                  ? "Preparing checkout…"
-                  : "Pay " + formatRupees(form.amount) + " securely"}
-                <span aria-hidden="true">↗</span>
-              </button>
+              {form.emailVerified &&
+                (!form.catalogue?.salesOpen || !form.canPay) && (
+                  <p className={styles.notice} role="status">
+                    {form.scriptFailed
+                      ? "Secure checkout couldn’t load. Refresh and try again."
+                      : form.catalogueLoading
+                        ? "Checking availability…"
+                        : !form.catalogue?.salesOpen
+                          ? (form.catalogue?.message ??
+                            "Registration opens soon.")
+                          : !form.scriptReady
+                            ? "Loading secure checkout…"
+                            : "This stack is currently unavailable. Please edit your selection."}
+                  </p>
+                )}
+              <div className={styles.paymentAction}>
+                <SlideCommit
+                  label={"Slide to pay " + formatRupees(form.amount)}
+                  doneLabel="Checkout opened"
+                  errorLabel="Try again"
+                  disabled={!form.canPay || form.busy}
+                  width={720}
+                  height={58}
+                  radius={12}
+                  trackColor="var(--color-surface)"
+                  handleColor="var(--color-gold)"
+                  successColor="var(--color-gold)"
+                  dangerColor="var(--color-error)"
+                  onConfirm={async () => {
+                    if (!(await form.pay()))
+                      throw new Error("Checkout could not open");
+                  }}
+                />
+              </div>
               <p className={styles.footnote}>
-                Secured by Razorpay · Your seat is held for 10 minutes.
+                {form.emailVerified
+                  ? "Secured by Razorpay · Your seat is held for 10 minutes."
+                  : "Verify your email to unlock secure checkout."}
               </p>
-              {form.catalogue?.paymentMode === "test" && (
-                <p className={styles.footnote}>
-                  Razorpay is in Test Mode. No money will be charged.
-                </p>
-              )}
             </div>
           )}
           {step === 3 && (
@@ -503,27 +633,27 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
               <div className={styles.heading}>
                 <h2 ref={form.headingRef} tabIndex={-1}>
                   {confirmed
-                    ? razorpayTest
-                      ? "Payment test complete."
-                      : "You’re on the list."
-                    : checkout?.status === "paid_exception"
-                      ? "Your booking needs a closer look."
-                      : checkout?.status === "refunded"
-                        ? "Your payment was refunded."
-                        : checkout?.status === "expired"
-                          ? "Your seat hold has ended."
-                          : "Checking your payment."}
+                    ? "You’re on the list."
+                    : !checkout
+                      ? "Let’s reconnect."
+                      : checkout?.status === "paid_exception"
+                        ? "Your booking needs a closer look."
+                        : checkout?.status === "refunded"
+                          ? "Your payment was refunded."
+                          : checkout?.status === "expired"
+                            ? "Your seat hold has ended."
+                            : "Checking your payment."}
                 </h2>
                 <p>
                   {confirmed
-                    ? razorpayTest
-                      ? "Your Razorpay test payment was verified. No money was charged."
-                      : checkout.ticketUrl
-                        ? "Your payment is verified. Your pass is ready for its next chapter."
-                        : "Your payment is verified and your registration is confirmed. Save your reference below."
-                    : checkout?.status === "paid_exception"
-                      ? "Your payment needs review. Contact the Exodia team with your reference before paying again."
-                      : "If money was debited, check your status before making another payment."}
+                    ? checkout.ticketUrl
+                      ? "Your payment is verified. Your pass is ready for its next chapter."
+                      : "Your payment is verified and your registration is confirmed. Save your reference below."
+                    : !checkout
+                      ? "We couldn’t retrieve your saved registration. Retry the connection to check its status."
+                      : checkout?.status === "paid_exception"
+                        ? "Your payment needs review. Contact the Exodia team with your reference before paying again."
+                        : "If money was debited, check your status before making another payment."}
                 </p>
               </div>
               {checkout && (
@@ -532,7 +662,6 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
                   <strong>{checkout.reference}</strong>
                   <small>
                     {formatRupees(checkout.amount)} ·{" "}
-                    {razorpayTest && "Razorpay Test · "}
                     {checkout.status.replaceAll("_", " ")}
                   </small>
                 </div>
@@ -558,7 +687,7 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
                     void form.refreshStatus();
                   }}
                 >
-                  {form.busy ? "Checking…" : "Check payment status"}
+                  {form.busy ? "Checking…" : checkout ? "Check payment status" : "Retry connection"}
                   <span aria-hidden="true">↗</span>
                 </button>
               )}
@@ -594,15 +723,54 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
             </div>
           )}
           {form.message && (
-            <p className={styles.notice} role="status" aria-live="polite">
+            <p
+              className={styles.notice + " " + styles.formNotice}
+              role="status"
+              aria-live="polite"
+            >
               {form.message}
             </p>
           )}
           <div className={styles.panelFooter}>
-            <span>A LITTLE CURIOSITY. A LITTLE MAGIC.</span>
+            <span>
+              <span aria-hidden="true">✧</span> A LITTLE CURIOSITY. A LITTLE
+              MAGIC.
+            </span>
             <Link href="/#contact">Need a hand? ↗</Link>
           </div>
         </section>
+        <div className={styles.footer}>
+          <span>EXODIA 4.0 · LEARN. BUILD. BELONG.</span>
+          <span>
+            <span aria-hidden="true">◇</span> Secured by Razorpay
+          </span>
+        </div>
+        <div className={styles.snitch} aria-hidden="true">
+          <Image
+            className={styles.snitchLeft}
+            src="/images/hero/snitch-wing.png"
+            alt=""
+            width={180}
+            height={180}
+            sizes="70px"
+          />
+          <Image
+            className={styles.snitchBody}
+            src="/images/hero/snitch-body.png"
+            alt=""
+            width={100}
+            height={100}
+            sizes="32px"
+          />
+          <Image
+            className={styles.snitchRight}
+            src="/images/hero/snitch-wing.png"
+            alt=""
+            width={180}
+            height={180}
+            sizes="70px"
+          />
+        </div>
       </main>
       {step >= 2 && (
         <Script

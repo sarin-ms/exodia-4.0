@@ -1,0 +1,212 @@
+.frame {
+  container-type: inline-size;
+  width: 100%;
+  filter: drop-shadow(0 1.5rem 2.5rem color-mix(in srgb, var(--color-void) 32%, transparent));
+}
+
+/* Every length inside the pass scales from its width; the composition never reflows. */
+.ticket {
+  --cut: 1.8cqi;
+  position: relative;
+  display: grid;
+  grid-template-columns: 74% 26%;
+  width: 100%;
+  aspect-ratio: 28 / 11;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 2.6cqi;
+  mask-image:
+    radial-gradient(circle at 0 50%, transparent var(--cut), #000 calc(var(--cut) + 0.5px)),
+    radial-gradient(circle at 100% 50%, transparent var(--cut), #000 calc(var(--cut) + 0.5px)),
+    radial-gradient(circle at 74% 0, transparent var(--cut), #000 calc(var(--cut) + 0.5px)),
+    radial-gradient(circle at 74% 100%, transparent var(--cut), #000 calc(var(--cut) + 0.5px));
+  mask-composite: intersect;
+}
+
+.main {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  background: radial-gradient(ellipse at 90% 40%, color-mix(in srgb, var(--color-accent) 30%, transparent), transparent 65%), var(--color-cinder);
+  color: var(--color-text);
+}
+
+.main::after {
+  position: absolute;
+  z-index: 3;
+  inset: 1.1cqi;
+  border: 0.08cqi solid color-mix(in srgb, var(--color-text) 15%, transparent);
+  border-right: 0;
+  border-radius: 1.6cqi 0 0 1.6cqi;
+  content: "";
+  pointer-events: none;
+}
+
+.header, .identity, .footer {
+  position: absolute;
+  z-index: 2;
+  left: 3.6cqi;
+  width: 39.5cqi;
+}
+
+.header { top: 4cqi; }
+
+.wordmark {
+  position: relative;
+  width: 30cqi;
+}
+
+.wordmark > img:first-child {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.eventType {
+  margin-top: 1.1cqi;
+  font-size: 0.8cqi;
+  line-height: 1.6;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.identity { top: 14.1cqi; }
+
+.eyebrow {
+  display: block;
+  font-size: 1cqi;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.identity h2 {
+  margin: 0.8cqi 0 0.6cqi;
+  font-family: var(--font-body);
+  font-size: var(--name-size);
+  font-weight: 450;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.identity p {
+  color: var(--color-text-muted);
+  font-size: 1.05cqi;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.year::before { margin-inline: 0.6em; content: "·"; }
+.year { text-transform: capitalize; }
+
+.footer { bottom: 3.1cqi; }
+
+.details {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5cqi;
+  padding-top: 1.6cqi;
+  border-top: 0.08cqi solid color-mix(in srgb, var(--color-text) 25%, transparent);
+}
+
+.stack { min-width: 0; max-width: 68%; }
+
+.details strong {
+  display: block;
+  margin-top: 0.45cqi;
+  font-size: 1.65cqi;
+  font-weight: 450;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.payment { flex-shrink: 0; text-align: right; }
+.payment .eyebrow { font-size: 0.75cqi; letter-spacing: 0.1em; }
+
+.motto {
+  margin-top: 2cqi;
+  color: var(--color-cameo);
+  font-family: var(--font-heading);
+  font-size: 1.05cqi;
+  font-weight: 450;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Artwork has a dedicated column, with no attendee or payment text over it. */
+.scenery {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.moon {
+  position: absolute;
+  top: 50%;
+  right: 5%;
+  width: 90%;
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  opacity: 0.9;
+  mask-image: url("/brand/exodia-mark.svg");
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+.stub {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  border-left: 0.12cqi dashed var(--color-paper-edge);
+  background: var(--color-paper-light) url("/assets/stack/paper-grain.webp") repeat;
+  background-size: 14cqi;
+  background-blend-mode: multiply;
+  color: var(--color-cinder);
+  text-align: center;
+}
+
+.admit {
+  position: absolute;
+  top: 3.2cqi;
+  left: 0;
+  width: 100%;
+  font-size: 1.3cqi;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.scan {
+  position: absolute;
+  top: 18%;
+  left: 12%;
+  display: grid;
+  justify-items: center;
+  width: 76%;
+  gap: 0.7cqi;
+}
+
+.qr { display: block; width: 100%; height: auto; color: var(--color-cinder); }
+.scan > span, .reference > span { font-size: 0.8cqi; letter-spacing: 0.12em; line-height: 1.5; text-transform: uppercase; }
+.reference { position: absolute; top: 78%; left: 4%; display: grid; gap: 0.5cqi; width: 92%; }
+.reference strong { display: block; font-size: 1.05cqi; font-weight: 450; line-height: 1.7; letter-spacing: 0.08em; white-space: nowrap; }
+.stubEnd { position: absolute; bottom: 3cqi; left: 15%; display: flex; align-items: center; gap: 0.9cqi; width: 70%; color: var(--color-plum); font-size: 1.5cqi; line-height: 1; }
+.stubEnd > span { width: 100%; height: 0.08cqi; background: var(--color-paper-edge); }
+
+@media print {
+  .frame { filter: none; }
+  .ticket { break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}

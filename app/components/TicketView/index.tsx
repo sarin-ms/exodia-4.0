@@ -1,18 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import {
-  formatRupees,
-  yearLabels,
-  type TicketDetails,
-} from "@/app/lib/registration";
+import TicketPass from "@/app/components/TicketPass";
+import type { TicketDetails } from "@/app/lib/registration";
 import styles from "./TicketView.module.css";
 
 export default function TicketView({ apiUrl }: { apiUrl: string }) {
   const [ticket, setTicket] = useState<TicketDetails | null>(null);
   const [error, setError] = useState("");
+  const [downloading, setDownloading] = useState(false);
+  const [downloadNotice, setDownloadNotice] = useState("");
+  const exportStage = useRef<HTMLDivElement>(null);
+  const downloadInFlight = useRef(false);
+  const fullSizeDialog = useRef<HTMLDialogElement>(null);
+
+  async function downloadTicket() {
+    const node = exportStage.current?.firstElementChild;
+    if (!ticket || !(node instanceof HTMLElement) || downloadInFlight.current)
+      return;
+    downloadInFlight.current = true;
+    setDownloading(true);
+    setDownloadNotice("");
+    try {
+      const { createTicketPng } = await import("@/app/lib/ticket-image");
+      const blob = await createTicketPng(node);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `exodia-ticket-${ticket.reference.replace(/[^a-z0-9-]/gi, "").toLowerCase()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      setDownloadNotice("Your PNG download has started.");
+    } catch {
+      setDownloadNotice(
+        "We couldn’t create your ticket image. Please try downloading again.",
+      );
+    } finally {
+      downloadInFlight.current = false;
+      setDownloading(false);
+    }
+  }
+
   useEffect(() => {
     const controller = new AbortController();
     const load = async () => {
@@ -76,62 +107,53 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
         </p>
       ) : (
         <>
-          <article className={styles.ticket} aria-label="Your Exodia ticket">
-            <header className={styles.header}>
-              <Image
-                src="/brand/exodia-mark.svg"
-                alt=""
-                width={48}
-                height={48}
-                unoptimized
-              />
-              <div>
-                <span className={styles.brand}>exodia</span>
-                <small>4.0 / STUDENT PASS</small>
-              </div>
-              <span className={styles.star} aria-hidden="true">
-                ✦
-              </span>
-            </header>
-            <div className={styles.identity}>
-              <span>THE NEXT CHAPTER BELONGS TO</span>
-              <h1>{ticket.name}</h1>
-              <p>
-                {ticket.college} · {yearLabels[ticket.year]}
-              </p>
-            </div>
-            <div className={styles.stack}>
-              <span>YOUR LEARNING STACK</span>
-              <h2>{ticket.stackTitle}</h2>
-              <p>One student. One stack. A world of possibilities.</p>
-            </div>
-            <dl className={styles.details}>
-              <div>
-                <dt>REGISTRATION</dt>
-                <dd>{ticket.reference}</dd>
-              </div>
-              <div>
-                <dt>
-                  {ticket.testMode
-                    ? "RAZORPAY TEST PAYMENT"
-                    : "PAYMENT VERIFIED"}
-                </dt>
-                <dd>{formatRupees(ticket.amount)}</dd>
-              </div>
-            </dl>
-            <footer className={styles.footer}>
-              {ticket.testMode
-                ? "Razorpay is in Test Mode. No money was charged."
-                : "Keep this pass handy. Schedule and venue updates will be shared by the Exodia team."}
-            </footer>
-          </article>
+          <header className={styles.intro}>
+            <span>Registration confirmed</span>
+            <h1>Your next chapter, booked.</h1>
+          </header>
+          <TicketPass ticket={ticket} />
           <div className={styles.actions}>
-            <button type="button" onClick={() => window.print()}>
-              Print / Save ticket ↗
-            </button>
+            <div className={styles.actionButtons}>
+              <button
+                type="button"
+                onClick={() => { void downloadTicket(); }}
+                disabled={downloading}
+                aria-busy={downloading}
+              >
+                {downloading ? "Preparing PNG…" : "Download ticket"}{" "}
+                <span aria-hidden="true">↓</span>
+              </button>
+              <button
+                className={styles.enlargeButton}
+                type="button"
+                onClick={() => fullSizeDialog.current?.showModal()}
+              >
+                View full size <span aria-hidden="true">↗</span>
+              </button>
+            </div>
             <Link href="/#contact">Need a hand? Contact the team</Link>
-            <p>Your private ticket link is in your confirmation email.</p>
           </div>
+          {downloadNotice && (
+            <p className={styles.downloadNotice} role="status">{downloadNotice}</p>
+          )}
+          <div className={styles.exportStage} ref={exportStage} aria-hidden="true">
+            <TicketPass ticket={ticket} exportImage />
+          </div>
+          <dialog ref={fullSizeDialog} className={styles.zoomDialog} aria-labelledby="full-ticket-title">
+            <div className={styles.zoomHeader}>
+              <h2 id="full-ticket-title">Your student pass</h2>
+              <button type="button" onClick={() => fullSizeDialog.current?.close()}>Close <span aria-hidden="true">✕</span></button>
+            </div>
+            <div className={styles.zoomCanvas} role="region" tabIndex={0} aria-label="Full size ticket. Scroll horizontally to see the whole pass.">
+              <div className={styles.zoomPass}><TicketPass ticket={ticket} /></div>
+            </div>
+            <p>Swipe or scroll across to see your whole pass.</p>
+          </dialog>
+          <p className={styles.help}>
+            Bring this pass to entry. Your private ticket link is in your
+            confirmation email. Schedule and venue details will be shared by
+            the Exodia team.
+          </p>
         </>
       )}
     </main>

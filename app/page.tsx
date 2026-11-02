@@ -3,12 +3,13 @@ import Faq from "@/app/components/Faq";
 import Footer from "@/app/components/Footer";
 import Hero from "@/app/components/Hero";
 import Glimpses from "@/app/components/Glimpses";
+import LoadingScreen from "@/app/components/LoadingScreen";
 import Navbar from "@/app/components/Navbar";
 import Stacks from "@/app/components/Stacks";
 
 export default function Home() {
   return (
-    <>
+    <LoadingScreen>
       <Navbar />
       <main id="main">
         <Hero />
@@ -18,6 +19,6 @@ export default function Home() {
         <Faq />
       </main>
       <Footer />
-    </>
+    </LoadingScreen>
   );
 }
