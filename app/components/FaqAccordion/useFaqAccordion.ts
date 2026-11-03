@@ -129,17 +129,6 @@ export default function useFaqAccordion(
           ease: "power2.out",
           scrollTrigger: { trigger: root, start: "top 90%", once: true },
         });
-        gsap.fromTo(
-          section.querySelectorAll("[data-faq-spark]"),
-          { strokeDasharray: 1, strokeDashoffset: 1 },
-          {
-            strokeDashoffset: 0,
-            duration: 1.25,
-            stagger: 0.2,
-            ease: "power2.inOut",
-            scrollTrigger: { trigger: section, start: "top 65%", once: true },
-          },
-        );
       },
       section,
     );
