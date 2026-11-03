@@ -8,7 +8,7 @@ export const stacks = [
       "Go beyond a single prompt. Explore how AI agents reason, use tools, and turn a goal into a sequence of actions.",
     topics: ["Agents", "Tool use", "Workflows"],
     motif: "Think. Plan. Act.",
-    image: "/assets/stack/agentic-ai.webp",
+    image: "/assets/stack/agentic-ai.png",
   },
   {
     id: "embedded-systems",
