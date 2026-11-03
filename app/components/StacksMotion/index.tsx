@@ -34,9 +34,15 @@ export default function StacksMotion() {
       "[data-book-curl-shadow-band]",
     );
     const ribbon = section.querySelector<HTMLElement>("[data-book-ribbon]");
-    const ribbonBody = section.querySelector<SVGPathElement>("[data-book-ribbon-body]");
-    const ribbonWeave = section.querySelector<SVGPathElement>("[data-book-ribbon-weave]");
-    const ribbonEdge = section.querySelector<SVGPathElement>("[data-book-ribbon-edge]");
+    const ribbonBody = section.querySelector<SVGPathElement>(
+      "[data-book-ribbon-body]",
+    );
+    const ribbonWeave = section.querySelector<SVGPathElement>(
+      "[data-book-ribbon-weave]",
+    );
+    const ribbonEdge = section.querySelector<SVGPathElement>(
+      "[data-book-ribbon-edge]",
+    );
     const turns = Array.from(
       section.querySelectorAll<HTMLElement>("[data-book-leaf]"),
     ).map((leaf) => ({
@@ -74,7 +80,7 @@ export default function StacksMotion() {
       !ribbonEdge ||
       spreads.length < 2 ||
       spreads.length !== choices.length ||
-      turns.length !== spreads.length - 1 ||
+      turns.length !== 1 ||
       turns.some(
         (turn) =>
           !turn.slices.length ||
@@ -110,8 +116,8 @@ export default function StacksMotion() {
         const sliceCount = isDesktop ? 8 : 6;
         const duration =
           spreads.length * CHAPTER_HOLD + (spreads.length - 1) * PAGE_TURN;
-        // Reuse one turning leaf instead of cloning every chapter during startup.
-        const preparedTurns = turns.slice(0, 1).map((turn) => ({
+        // Reuse the turning leaf across chapters.
+        const preparedTurns = turns.map((turn) => ({
           ...turn,
           activeSlices: turn.slices.slice(0, sliceCount),
         }));
@@ -325,7 +331,8 @@ export default function StacksMotion() {
           };
           // Lift the free end before the sheet reaches the binding, hold it above
           // the head of the book, then lower it after the sheet has passed.
-          const lift = smoothStep(progress / 0.2) *
+          const lift =
+            smoothStep(progress / 0.2) *
             (1 - smoothStep((progress - 0.76) / 0.24));
           const endX = 1 + (isDesktop ? 33 : 21) * lift;
           const endY = ribbonLength * (1 - lift) - (isDesktop ? 22 : 12) * lift;
@@ -335,11 +342,12 @@ export default function StacksMotion() {
           const dy = endY - controlY;
           const tangentLength = Math.hypot(dx, dy);
           const halfWidth = ribbonWidth / 2;
-          const normalX = dy / tangentLength * halfWidth;
-          const normalY = -dx / tangentLength * halfWidth;
-          const notchX = endX - dx / tangentLength * 5;
-          const notchY = endY - dy / tangentLength * 5;
-          const point = (x: number, y: number) => `${x.toFixed(2)} ${y.toFixed(2)}`;
+          const normalX = (dy / tangentLength) * halfWidth;
+          const normalY = (-dx / tangentLength) * halfWidth;
+          const notchX = endX - (dx / tangentLength) * 5;
+          const notchY = endY - (dy / tangentLength) * 5;
+          const point = (x: number, y: number) =>
+            `${x.toFixed(2)} ${y.toFixed(2)}`;
           const rootControlY = ribbonLength * 0.2;
           const leftCurve = `M${point(-halfWidth, 0)}C${point(-halfWidth, rootControlY)} ${point(controlX - normalX, controlY - normalY)} ${point(endX - normalX, endY - normalY)}`;
           const rightCurve = `M${point(halfWidth, 0)}C${point(halfWidth, rootControlY)} ${point(controlX + normalX, controlY + normalY)} ${point(endX + normalX, endY + normalY)}`;
@@ -492,7 +500,8 @@ export default function StacksMotion() {
             ribbonBody.setAttribute("d", restingRibbon);
             ribbonWeave.setAttribute("d", restingRibbon);
           }
-          if (restingRibbonEdge) ribbonEdge.setAttribute("d", restingRibbonEdge);
+          if (restingRibbonEdge)
+            ribbonEdge.setAttribute("d", restingRibbonEdge);
           section.style.removeProperty("--book-scroll-distance");
           section.style.removeProperty("--book-stage-height");
           section.style.removeProperty("--book-stage-top");

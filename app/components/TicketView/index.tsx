@@ -27,14 +27,20 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
     try {
       sessionStorage.setItem("exodia-ticket-token", entry.token);
       window.history.replaceState(null, "", window.location.pathname);
-    } catch { /* The verified pass remains usable without browser storage. */ }
+    } catch {
+      /* The verified pass remains usable without browser storage. */
+    }
     setError("");
     setLookupVisible(false);
     setTicket(entry.ticket);
   }
 
   function findAnotherTicket() {
-    try { sessionStorage.removeItem("exodia-ticket-token"); } catch { /* Storage is optional. */ }
+    try {
+      sessionStorage.removeItem("exodia-ticket-token");
+    } catch {
+      /* Storage is optional. */
+    }
     setTicket(null);
     setError("");
     setDownloadNotice("");
@@ -87,7 +93,10 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
           setLookupVisible(true);
           return;
         }
-        if (!/^[a-f0-9]{64}$/.test(token)) throw new Error("This ticket link is incomplete. Find your pass using your registration email.");
+        if (!/^[a-f0-9]{64}$/.test(token))
+          throw new Error(
+            "This ticket link is incomplete. Find your pass using your registration email.",
+          );
         try {
           sessionStorage.setItem("exodia-ticket-token", token);
           window.history.replaceState(null, "", window.location.pathname);
@@ -125,7 +134,11 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
         ← Back to Exodia
       </Link>
       {!ticket && lookupVisible ? (
-        <TicketLookup apiUrl={apiUrl} onOpen={openRecoveredTicket} notice={error} />
+        <TicketLookup
+          apiUrl={apiUrl}
+          onOpen={openRecoveredTicket}
+          notice={error}
+        />
       ) : !ticket ? (
         <p className={styles.message} role="status">
           Opening your pass…
@@ -134,14 +147,18 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
         <>
           <header className={styles.intro}>
             <span>Registration confirmed</span>
-            <h1 ref={ticketHeading} tabIndex={-1}>Your next chapter, booked.</h1>
+            <h1 ref={ticketHeading} tabIndex={-1}>
+              Your next chapter, booked.
+            </h1>
           </header>
           <TicketPass ticket={ticket} />
           <div className={styles.actions}>
             <div className={styles.actionButtons}>
               <button
                 type="button"
-                onClick={() => { void downloadTicket(); }}
+                onClick={() => {
+                  void downloadTicket();
+                }}
                 disabled={downloading}
                 aria-busy={downloading}
               >
@@ -159,27 +176,55 @@ export default function TicketView({ apiUrl }: { apiUrl: string }) {
             <Link href="/#contact">Need a hand? Contact the team</Link>
           </div>
           {downloadNotice && (
-            <p className={styles.downloadNotice} role="status">{downloadNotice}</p>
+            <p className={styles.downloadNotice} role="status">
+              {downloadNotice}
+            </p>
           )}
-          <div className={styles.exportStage} ref={exportStage} aria-hidden="true">
+          <div
+            className={styles.exportStage}
+            ref={exportStage}
+            aria-hidden="true"
+          >
             <TicketPass ticket={ticket} exportImage />
           </div>
-          <dialog ref={fullSizeDialog} className={styles.zoomDialog} aria-labelledby="full-ticket-title">
+          <dialog
+            ref={fullSizeDialog}
+            className={styles.zoomDialog}
+            aria-labelledby="full-ticket-title"
+          >
             <div className={styles.zoomHeader}>
               <h2 id="full-ticket-title">Your student pass</h2>
-              <button type="button" onClick={() => fullSizeDialog.current?.close()}>Close <span aria-hidden="true">✕</span></button>
+              <button
+                type="button"
+                onClick={() => fullSizeDialog.current?.close()}
+              >
+                Close <span aria-hidden="true">✕</span>
+              </button>
             </div>
-            <div className={styles.zoomCanvas} role="region" tabIndex={0} aria-label="Full size ticket. Scroll horizontally to see the whole pass.">
-              <div className={styles.zoomPass}><TicketPass ticket={ticket} /></div>
+            <div
+              className={styles.zoomCanvas}
+              role="region"
+              tabIndex={0}
+              aria-label="Full size ticket. Scroll horizontally to see the whole pass."
+            >
+              <div className={styles.zoomPass}>
+                <TicketPass ticket={ticket} />
+              </div>
             </div>
             <p>Swipe or scroll across to see your whole pass.</p>
           </dialog>
           <p className={styles.help}>
             Bring this pass to entry. Your private ticket link is in your
-            confirmation email. Schedule and venue details will be shared by
-            the Exodia team.
+            confirmation email. Schedule and venue details will be shared by the
+            Exodia team.
           </p>
-          <button type="button" className={styles.lookupAgain} onClick={findAnotherTicket}>Find another ticket</button>
+          <button
+            type="button"
+            className={styles.lookupAgain}
+            onClick={findAnotherTicket}
+          >
+            Find another ticket
+          </button>
         </>
       )}
     </main>

@@ -14,7 +14,7 @@ export default function Stacks() {
       <div className={styles.atmosphere} aria-hidden="true" />
       <div className={styles.stage} data-book-stage>
         <div className={styles.inner}>
-          <header className={styles.header} data-book-reveal>
+          <header className={styles.header}>
             <div>
               <p className={styles.eyebrow}>The learning collection</p>
               <h2 className={styles.heading} id="stacks-heading">
@@ -31,7 +31,6 @@ export default function Stacks() {
           <div
             className={styles.bookShell}
             data-spellbook
-            data-book-reveal
             tabIndex={0}
             role="region"
             aria-label="Stack field guide"
@@ -44,7 +43,6 @@ export default function Stacks() {
                   <article
                     className={styles.spread}
                     data-book-spread
-                    data-stack={stack.id}
                     key={stack.id}
                     id={`stack-page-${stack.id}`}
                     aria-labelledby={`stack-title-${stack.id}`}
@@ -71,7 +69,9 @@ export default function Stacks() {
                       </span>
                       <p className={styles.description}>{stack.description}</p>
                       <div className={styles.topicsBlock}>
-                        <p className={styles.topicsLabel}>Inside this chapter</p>
+                        <p className={styles.topicsLabel}>
+                          Inside this chapter
+                        </p>
                         <ul
                           className={styles.topics}
                           aria-label={`${stack.title} areas to explore`}
@@ -128,58 +128,52 @@ export default function Stacks() {
                     data-book-curl-shadow-band
                   />
                 </div>
-                {stacks.slice(0, -1).map((stack) => (
-                  <div
-                    className={styles.turningPage}
-                    data-book-leaf
-                    hidden
-                    aria-hidden="true"
-                    key={stack.id}
-                  >
-                    {Array.from({ length: 10 }, (_, index) => (
+                <div
+                  className={styles.turningPage}
+                  data-book-leaf
+                  hidden
+                  aria-hidden="true"
+                >
+                  {Array.from({ length: 8 }, (_, index) => (
+                    <div
+                      className={styles.pageSlice}
+                      data-book-slice
+                      key={index}
+                    >
+                      <div className={styles.sliceFace} data-slice-front>
+                        <div
+                          className={styles.sliceContent}
+                          data-slice-content
+                        />
+                        <span
+                          className={`${styles.sliceShade} ${styles.shadeStart}`}
+                          data-slice-front-shade
+                        />
+                        <span
+                          className={`${styles.sliceShade} ${styles.shadeEnd}`}
+                          data-slice-front-shade
+                        />
+                      </div>
                       <div
-                        className={styles.pageSlice}
-                        data-book-slice
-                        key={index}
+                        className={`${styles.sliceFace} ${styles.sliceBack}`}
+                        data-slice-back
                       >
                         <div
-                          className={`${styles.sliceFace} ${styles.sliceFront}`}
-                          data-slice-front
-                        >
-                          <div
-                            className={styles.sliceContent}
-                            data-slice-content
-                          />
-                          <span
-                            className={`${styles.sliceShade} ${styles.shadeStart}`}
-                            data-slice-front-shade
-                          />
-                          <span
-                            className={`${styles.sliceShade} ${styles.shadeEnd}`}
-                            data-slice-front-shade
-                          />
-                        </div>
-                        <div
-                          className={`${styles.sliceFace} ${styles.sliceBack}`}
-                          data-slice-back
-                        >
-                          <div
-                            className={styles.sliceContent}
-                            data-slice-content
-                          />
-                          <span
-                            className={`${styles.sliceShade} ${styles.shadeStart}`}
-                            data-slice-back-shade
-                          />
-                          <span
-                            className={`${styles.sliceShade} ${styles.shadeEnd}`}
-                            data-slice-back-shade
-                          />
-                        </div>
+                          className={styles.sliceContent}
+                          data-slice-content
+                        />
+                        <span
+                          className={`${styles.sliceShade} ${styles.shadeStart}`}
+                          data-slice-back-shade
+                        />
+                        <span
+                          className={`${styles.sliceShade} ${styles.shadeEnd}`}
+                          data-slice-back-shade
+                        />
                       </div>
-                    ))}
-                  </div>
-                ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             <div className={styles.spine} aria-hidden="true" />
@@ -190,13 +184,29 @@ export default function Stacks() {
                 focusable="false"
               >
                 <defs>
-                  <linearGradient id="stack-ribbon-color" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <linearGradient
+                    id="stack-ribbon-color"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="0%"
+                  >
                     <stop offset="0%" stopColor="var(--color-plum)" />
                     <stop offset="38%" stopColor="var(--color-accent)" />
                     <stop offset="100%" stopColor="var(--color-plum)" />
                   </linearGradient>
-                  <pattern id="stack-ribbon-weave" width="4" height="3" patternUnits="userSpaceOnUse">
-                    <path d="M0 2.5H4" stroke="var(--color-cameo)" strokeOpacity="0.13" strokeWidth="0.6" />
+                  <pattern
+                    id="stack-ribbon-weave"
+                    width="4"
+                    height="3"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <path
+                      d="M0 2.5H4"
+                      stroke="var(--color-cameo)"
+                      strokeOpacity="0.13"
+                      strokeWidth="0.6"
+                    />
                   </pattern>
                 </defs>
                 <path
@@ -219,12 +229,7 @@ export default function Stacks() {
             </div>
           </div>
 
-          <nav
-            className={styles.chapters}
-            aria-label="Stack chapters"
-            data-book-chapters
-            data-book-reveal
-          >
+          <nav className={styles.chapters} aria-label="Stack chapters">
             {stacks.map((stack) => (
               <a
                 className={styles.chapterLabel}

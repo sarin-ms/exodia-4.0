@@ -287,8 +287,8 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
                 </button>
               </div>
               <p className={styles.footnote}>
-                One event per email address and mobile number. Already registered?{" "}
-                <Link href="/ticket">Find your ticket ↗</Link>
+                One event per email address and mobile number. Already
+                registered? <Link href="/ticket">Find your ticket ↗</Link>
               </p>
             </form>
           )}
@@ -688,7 +688,11 @@ export default function RegistrationForm({ apiUrl }: { apiUrl: string }) {
                     void form.refreshStatus();
                   }}
                 >
-                  {form.busy ? "Checking…" : checkout ? "Check payment status" : "Retry connection"}
+                  {form.busy
+                    ? "Checking…"
+                    : checkout
+                      ? "Check payment status"
+                      : "Retry connection"}
                   <span aria-hidden="true">↗</span>
                 </button>
               )}

@@ -1,0 +1,32 @@
+# Dependencies and generated output
+node_modules/
+.next/
+out/
+build/
+dist/
+coverage/
+next-env.d.ts
+worker/worker-configuration.d.ts
+bun.lock
+*.tsbuildinfo
+
+# Local planning, caches, deployment state, and agent configuration
+planning/
+.cache/
+.wrangler/
+.vercel/
+.agents/
+.codex/
+.aws/
+AGENTS.md
+
+# Environment files, secrets, databases, and logs
+.env*
+.dev.vars*
+*.pem
+*.key
+*.p12
+*.pfx
+*.sqlite*
+*.db*
+*.log

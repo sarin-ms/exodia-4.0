@@ -10,7 +10,7 @@ export default function FaqAccordion({ items }: FaqAccordionProps) {
   useFaqAccordion(rootRef);
 
   return (
-    <div className={styles.accordion} ref={rootRef} data-faq-list>
+    <div className={styles.accordion} ref={rootRef}>
       <div className={styles.spotlight} data-faq-spotlight aria-hidden="true" />
       {items.map((item, index) => (
         <details

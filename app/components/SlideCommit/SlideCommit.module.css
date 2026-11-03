@@ -7,7 +7,6 @@
   --sc-on-ok: var(--color-cinder);
   --sc-on-no: var(--color-cinder);
   --sc-radius: 28px;
-  --sc-grip-r: 24px;
   --sc-pad: 4px;
   --sc-font: 14px;
 
@@ -40,8 +39,8 @@
   cursor: grabbing;
 }
 
-.root[data-phase='pending'] .track,
-.root[data-phase='done'] .track {
+.root[data-phase="pending"] .track,
+.root[data-phase="done"] .track {
   cursor: default;
 }
 
@@ -72,12 +71,12 @@
   filter: blur(2px);
 }
 
-.root[data-phase='error'] .textPlain {
+.root[data-phase="error"] .textPlain {
   opacity: 0;
   filter: blur(2px);
 }
 
-.root[data-phase='error'] .textError {
+.root[data-phase="error"] .textError {
   opacity: 1;
   filter: none;
 }
@@ -96,12 +95,12 @@
     color 200ms ease;
 }
 
-.root[data-phase='done'] .capsule {
+.root[data-phase="done"] .capsule {
   background: var(--sc-ok);
   color: var(--sc-on-ok);
 }
 
-.root[data-phase='error'] .capsule {
+.root[data-phase="error"] .capsule {
   background: var(--sc-no);
   color: var(--sc-on-no);
 }
@@ -143,11 +142,11 @@
   transition: filter 200ms ease;
 }
 
-.root[data-phase='pending'] .arrow {
+.root[data-phase="pending"] .arrow {
   filter: blur(2px);
 }
 
-.root:not([data-phase='pending']) .spin {
+.root:not([data-phase="pending"]) .spin {
   filter: blur(2px);
 }
 
@@ -156,7 +155,7 @@
   animation-play-state: paused;
 }
 
-.root[data-phase='pending'] .spinner {
+.root[data-phase="pending"] .spinner {
   animation-play-state: running;
 }
 
@@ -184,7 +183,7 @@
     animation-play-state: paused;
   }
 
-  .root[data-phase='pending'] .spinner {
+  .root[data-phase="pending"] .spinner {
     animation-play-state: running;
   }
 
@@ -200,4 +199,8 @@
   }
 }
 
-.root:focus-within { outline: 2px solid var(--color-gold); outline-offset: 4px; border-radius: var(--sc-radius); }
+.root:focus-within {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 4px;
+  border-radius: var(--sc-radius);
+}

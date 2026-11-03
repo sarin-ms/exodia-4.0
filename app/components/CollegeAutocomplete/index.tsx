@@ -21,9 +21,12 @@ export default function CollegeAutocomplete({
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const query = value.trim().toLocaleLowerCase();
-  const suggestions = query.length < 2 ? [] : colleges
-    .filter((college) => college.toLocaleLowerCase().includes(query))
-    .slice(0, 8);
+  const suggestions =
+    query.length < 2
+      ? []
+      : colleges
+          .filter((college) => college.toLocaleLowerCase().includes(query))
+          .slice(0, 8);
   const expanded = open && suggestions.length > 0;
 
   useEffect(() => {
@@ -39,10 +42,15 @@ export default function CollegeAutocomplete({
   }
 
   return (
-    <div className={styles.field} onBlur={(event) => {
-      if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
-    }}>
-      <label htmlFor="college">College <span className={styles.required}>*</span></label>
+    <div
+      className={styles.field}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
+      <label htmlFor="college">
+        College <span className={styles.required}>*</span>
+      </label>
       <div className={styles.control}>
         <input
           ref={inputRef}
@@ -58,7 +66,11 @@ export default function CollegeAutocomplete({
           aria-autocomplete="list"
           aria-expanded={expanded}
           aria-controls={expanded ? listId : undefined}
-          aria-activedescendant={expanded && activeIndex >= 0 ? `${listId}-${activeIndex}` : undefined}
+          aria-activedescendant={
+            expanded && activeIndex >= 0
+              ? `${listId}-${activeIndex}`
+              : undefined
+          }
           aria-invalid={!!error}
           aria-describedby={error ? "college-error" : "college-hint"}
           onFocus={() => setOpen(true)}
@@ -68,12 +80,19 @@ export default function CollegeAutocomplete({
             setActiveIndex(-1);
           }}
           onKeyDown={(event) => {
-            if ((event.key === "ArrowDown" || event.key === "ArrowUp") && suggestions.length) {
+            if (
+              (event.key === "ArrowDown" || event.key === "ArrowUp") &&
+              suggestions.length
+            ) {
               event.preventDefault();
               setOpen(true);
-              setActiveIndex((current) => event.key === "ArrowDown"
-                ? Math.min(current + 1, suggestions.length - 1)
-                : current <= 0 ? suggestions.length - 1 : current - 1);
+              setActiveIndex((current) =>
+                event.key === "ArrowDown"
+                  ? Math.min(current + 1, suggestions.length - 1)
+                  : current <= 0
+                    ? suggestions.length - 1
+                    : current - 1,
+              );
             } else if (event.key === "Enter" && expanded && activeIndex >= 0) {
               event.preventDefault();
               select(suggestions[activeIndex]);
@@ -85,27 +104,40 @@ export default function CollegeAutocomplete({
           }}
         />
         {expanded && (
-          <ul className={styles.suggestions} id={listId} role="listbox" aria-label="College suggestions">
+          <ul
+            className={styles.suggestions}
+            id={listId}
+            role="listbox"
+            aria-label="College suggestions"
+          >
             {suggestions.map((college, index) => (
               <li key={college} role="presentation">
                 <button
-                    ref={activeIndex === index ? activeOptionRef : undefined}
-                    type="button"
-                    role="option"
-                    id={`${listId}-${index}`}
-                    tabIndex={-1}
-                    aria-selected={activeIndex === index}
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => select(college)}
-                  >{college}</button>
+                  ref={activeIndex === index ? activeOptionRef : undefined}
+                  type="button"
+                  role="option"
+                  id={`${listId}-${index}`}
+                  tabIndex={-1}
+                  aria-selected={activeIndex === index}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => select(college)}
+                >
+                  {college}
+                </button>
               </li>
             ))}
           </ul>
         )}
       </div>
-      {error
-        ? <span className={styles.error} id="college-error">{error}</span>
-        : <span className={styles.hint} id="college-hint">Search for your college, or enter its full name.</span>}
+      {error ? (
+        <span className={styles.error} id="college-error">
+          {error}
+        </span>
+      ) : (
+        <span className={styles.hint} id="college-hint">
+          Search for your college, or enter its full name.
+        </span>
+      )}
     </div>
   );
 }

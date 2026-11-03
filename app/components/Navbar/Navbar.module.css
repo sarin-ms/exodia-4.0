@@ -239,7 +239,9 @@
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  transition: border-color 180ms ease, background 180ms ease;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease;
 }
 .menuToggle:is(:hover, :focus-visible) {
   border-color: var(--color-gold);
@@ -396,7 +398,9 @@
   stroke: var(--color-gold);
   stroke-width: 1.25;
   stroke-linecap: round;
-  transition: transform 200ms ease, border-color 200ms ease;
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease;
 }
 .menuClose:is(:hover, :focus-visible) svg {
   transform: rotate(90deg);
@@ -493,7 +497,9 @@
   opacity: 0;
   transform: translateY(-14px) rotate(18deg);
   transform-origin: 50% 85%;
-  filter: drop-shadow(3px 12px 7px color-mix(in srgb, var(--color-plum) 35%, transparent));
+  filter: drop-shadow(
+    3px 12px 7px color-mix(in srgb, var(--color-plum) 35%, transparent)
+  );
   transition:
     opacity 240ms ease,
     transform 340ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -520,7 +526,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-plum) 21%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-plum) 21%, transparent);
   text-decoration: none;
   transition: color 180ms ease;
 }

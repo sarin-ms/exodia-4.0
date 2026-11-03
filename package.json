@@ -10,6 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
+    "format": "prettier --ignore-path .prettierignore --write .",
+    "format:check": "prettier --ignore-path .prettierignore --check .",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
     "miniflare": "4.20260708.1",
+    "prettier": "3.9.10",
     "typescript": "^5",
     "wrangler": "4.110.0"
   },

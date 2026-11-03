@@ -84,7 +84,6 @@ export default function GlimpsesGallery({ photos }: GlimpsesGalleryProps) {
                   <a
                     className={styles.photoLink}
                     data-glimpse-link
-                    data-glimpse-index={index}
                     href={photo.src}
                     onClick={(event) => openPhoto(event, index)}
                     aria-label={`${String(index + 1).padStart(2, "0")} ${photo.title}. Open photo ${index + 1} of ${photos.length}`}

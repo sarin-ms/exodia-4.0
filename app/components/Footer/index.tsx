@@ -13,11 +13,6 @@ export default function Footer() {
       tabIndex={-1}
     >
       <div className={styles.atmosphere} aria-hidden="true" />
-      <span
-        className={styles.lightTrail}
-        data-footer-trail
-        aria-hidden="true"
-      />
       <div className={styles.inner}>
         <div className={styles.content}>
           <div className={styles.identity} data-footer-reveal>
@@ -72,7 +67,9 @@ export default function Footer() {
                 </span>
               </Link>
             </Magnet>
-            <Link className={styles.ticketLink} href="/ticket">Find your ticket ↗</Link>
+            <Link className={styles.ticketLink} href="/ticket">
+              Find your ticket ↗
+            </Link>
           </div>
         </div>
 

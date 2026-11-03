@@ -222,10 +222,7 @@ function HeroSignpost() {
   return (
     <div className={styles.signpost}>
       <div className={styles.actions} role="group" aria-label="Explore Exodia">
-        <Link
-          className={`${styles.sign} ${styles.register}`}
-          href="/register"
-        >
+        <Link className={`${styles.sign} ${styles.register}`} href="/register">
           <Image
             className={styles.wood}
             src="/images/hero/wooden-signboard.png"
@@ -237,10 +234,7 @@ function HeroSignpost() {
           />
           <span className={styles.label}>Register</span>
         </Link>
-        <a
-          className={`${styles.sign} ${styles.about}`}
-          href="#about"
-        >
+        <a className={`${styles.sign} ${styles.about}`} href="#about">
           <Image
             className={styles.wood}
             src="/images/hero/wooden-signboard.png"

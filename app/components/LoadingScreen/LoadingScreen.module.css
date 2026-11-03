@@ -278,22 +278,6 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .screen {
-    transition: none;
-  }
-  .atmosphere,
-  .traveler {
-    display: none;
-  }
-  .status {
-    animation: none;
-  }
-  .content[data-revealed="true"] {
-    animation: none;
-  }
-}
-
 .wizard {
   display: block;
   width: 100%;
@@ -390,24 +374,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rider,
-  .capeBack,
-  .capeHem,
-  .capeFold,
-  .scarf {
-    animation: none;
-  }
-
-  .rider {
-    transform: rotate(-5deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
   .screen {
     display: none;
   }
-  .content[data-revealed="false"] {
+  .content[data-revealed="false"],
+  .content[data-revealed="true"] {
     visibility: visible;
     animation: none;
   }

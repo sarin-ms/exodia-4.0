@@ -32,14 +32,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-'use client';
+"use client";
 
-import React, { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { animate, motion, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
+import React, {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
+import {
+  animate,
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useReducedMotion,
+  useTransform,
+} from "motion/react";
 
-import styles from './SlideCommit.module.css';
+import styles from "./SlideCommit.module.css";
 
-export type SlideCommitPhase = 'idle' | 'pending' | 'done' | 'error';
+export type SlideCommitPhase = "idle" | "pending" | "done" | "error";
 
 export interface SlideCommitProps {
   label?: ReactNode;
@@ -77,14 +91,17 @@ const MIN_PENDING = 300;
 const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1];
 const SHAKE = [0, -5, 5, -3, 3, -1, 0];
 
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value));
 const onColor = (hex: string) => {
-  const raw = hex.replace('#', '');
-  const full = raw.length === 3 ? [...raw].map(ch => ch + ch).join('') : raw.slice(0, 6);
+  const raw = hex.replace("#", "");
+  const full =
+    raw.length === 3 ? [...raw].map((ch) => ch + ch).join("") : raw.slice(0, 6);
   const n = parseInt(full, 16);
-  if (Number.isNaN(n)) return 'var(--color-cinder)';
-  const yiq = (((n >> 16) & 255) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000;
-  return yiq >= 128 ? '#111111' : '#ffffff';
+  if (Number.isNaN(n)) return "var(--color-cinder)";
+  const yiq =
+    (((n >> 16) & 255) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000;
+  return yiq >= 128 ? "#111111" : "#ffffff";
 };
 const velocityOf = (hist: Sample[]) => {
   if (hist.length < 2) return 0;
@@ -93,26 +110,47 @@ const velocityOf = (hist: Sample[]) => {
   return ((x1 - x0) / Math.max(1, t1 - t0)) * 1000;
 };
 const finePointer = () =>
-  typeof window !== 'undefined' && !!window.matchMedia?.('(hover: hover) and (pointer: fine)').matches;
+  typeof window !== "undefined" &&
+  !!window.matchMedia?.("(hover: hover) and (pointer: fine)").matches;
 
 const Spinner = ({ size }: { size: number }) => (
-  <svg className={styles.spinner} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
-    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2.4" strokeOpacity="0.25" />
-    <path d="M12 3a9 9 0 0 1 9 9" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+  <svg
+    className={styles.spinner}
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+  >
+    <circle
+      cx="12"
+      cy="12"
+      r="9"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeOpacity="0.25"
+    />
+    <path
+      d="M12 3a9 9 0 0 1 9 9"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
 export default function SlideCommit({
-  label = 'Slide to pay',
-  doneLabel = 'Paid',
-  errorLabel = 'Payment failed',
+  label = "Slide to pay",
+  doneLabel = "Paid",
+  errorLabel = "Payment failed",
   onConfirm,
   onDone,
   onError,
-  trackColor = 'var(--color-surface)',
-  handleColor = 'var(--color-gold)',
-  successColor = 'var(--color-gold)',
-  dangerColor = 'var(--color-error)',
+  trackColor = "var(--color-surface)",
+  handleColor = "var(--color-gold)",
+  successColor = "var(--color-gold)",
+  dangerColor = "var(--color-error)",
   width = 280,
   height = 56,
   radius = 28,
@@ -122,11 +160,11 @@ export default function SlideCommit({
   holdMs = 1500,
   disabled = false,
   icon,
-  className = ''
+  className = "",
 }: SlideCommitProps) {
   const instructionsId = useId();
   const reduce = useReducedMotion();
-  const [phase, setPhase] = useState<SlideCommitPhase>('idle');
+  const [phase, setPhase] = useState<SlideCommitPhase>("idle");
   const [held, setHeld] = useState(false);
   const [hot, setHot] = useState(false);
 
@@ -134,17 +172,24 @@ export default function SlideCommit({
   const capsuleRef = useRef<HTMLDivElement>(null);
   const grip = useRef<Grip | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const homeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const homeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   const run = useRef(0);
   const unwatch = useRef<(() => void) | null>(null);
-  const live = useRef<{ move: (e: MoveEvent) => void; up: (e: UpEvent) => void }>({ move: () => {}, up: () => {} });
+  const live = useRef<{
+    move: (e: MoveEvent) => void;
+    up: (e: UpEvent) => void;
+  }>({ move: () => {}, up: () => {} });
   const lastPercent = useRef(0);
 
   const [measuredWidth, setMeasuredWidth] = useState(width);
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    const observer = new ResizeObserver(([entry]) => setMeasuredWidth(entry.contentRect.width));
+    const observer = new ResizeObserver(([entry]) =>
+      setMeasuredWidth(entry.contentRect.width),
+    );
     observer.observe(track);
     return () => observer.disconnect();
   }, []);
@@ -156,8 +201,16 @@ export default function SlideCommit({
   const k = 260 + (clamp(speed, 0, 100) / 100) * 640;
   const mass = 0.9;
   const critical = 2 * Math.sqrt(k * mass);
-  const commitSpring = { type: 'spring' as const, stiffness: k, damping: critical, mass };
-  const homeSpring = { ...commitSpring, damping: critical * (1 - clamp(returnBounce, 0, 0.5)) };
+  const commitSpring = {
+    type: "spring" as const,
+    stiffness: k,
+    damping: critical,
+    mass,
+  };
+  const homeSpring = {
+    ...commitSpring,
+    damping: critical * (1 - clamp(returnBounce, 0, 0.5)),
+  };
 
   const x = useMotionValue(0);
   const anchor = useMotionValue(0);
@@ -165,30 +218,46 @@ export default function SlideCommit({
   const spin = useMotionValue(0);
   const pulse = useMotionValue(1);
   const shake = useMotionValue(0);
-  const seen = useTransform(x, v => clamp(v, 0, TRAVEL));
-  const edge = useTransform([seen, anchor], ([v, a]: number[]) => v + GRIP + clamp(a - v, 0, TRAVEL));
-  const clip = useTransform(edge, R => `inset(0 ${INNER - R}px 0 0 round ${gripR}px)`);
-  const content = useTransform([seen, edge], ([v, R]: number[]) => `translateX(${(v + R) / 2 - INNER / 2}px)`);
-  const swell = hot && !held && phase === 'idle' && !reduce ? SWELL : 1;
-  const shape = useTransform(x, v => {
+  const seen = useTransform(x, (v) => clamp(v, 0, TRAVEL));
+  const edge = useTransform(
+    [seen, anchor],
+    ([v, a]: number[]) => v + GRIP + clamp(a - v, 0, TRAVEL),
+  );
+  const clip = useTransform(
+    edge,
+    (R) => `inset(0 ${INNER - R}px 0 0 round ${gripR}px)`,
+  );
+  const content = useTransform(
+    [seen, edge],
+    ([v, R]: number[]) => `translateX(${(v + R) / 2 - INNER / 2}px)`,
+  );
+  const swell = hot && !held && phase === "idle" && !reduce ? SWELL : 1;
+  const shape = useTransform(x, (v) => {
     const q = 1 - Math.min(SQUASH_MAX, Math.max(0, -v) / SQUASH_DIV);
     return `scale(${q * swell}, ${swell / q})`;
   });
-  const origin = useTransform(seen, v => `${v}px 50%`);
+  const origin = useTransform(seen, (v) => `${v}px 50%`);
   const say = useTransform(seen, [0, TRAVEL * 0.55], [1, 0]);
   const arrow = useTransform(
     [seen, shown],
-    ([v, on]: number[]) => on * clamp(1 - (v - TRAVEL * 0.55) / (TRAVEL * 0.4), 0, 1)
+    ([v, on]: number[]) =>
+      on * clamp(1 - (v - TRAVEL * 0.55) / (TRAVEL * 0.4), 0, 1),
   );
-  const trackTransform = useTransform([shake, pulse], ([s, p]: number[]) => `translateX(${s}px) scale(${p})`);
+  const trackTransform = useTransform(
+    [shake, pulse],
+    ([s, p]: number[]) => `translateX(${s}px) scale(${p})`,
+  );
 
-  const labelText = typeof label === 'string' ? label : 'Slide to confirm';
-  useMotionValueEvent(seen, 'change', v => {
+  const labelText = typeof label === "string" ? label : "Slide to confirm";
+  useMotionValueEvent(seen, "change", (v) => {
     const percent = Math.round((v / TRAVEL) * 100);
     if (percent === lastPercent.current || !capsuleRef.current) return;
     lastPercent.current = percent;
-    capsuleRef.current.setAttribute('aria-valuenow', String(percent));
-    capsuleRef.current.setAttribute('aria-valuetext', `${labelText}, ${percent}%`);
+    capsuleRef.current.setAttribute("aria-valuenow", String(percent));
+    capsuleRef.current.setAttribute(
+      "aria-valuetext",
+      `${labelText}, ${percent}%`,
+    );
   });
 
   useEffect(
@@ -198,7 +267,7 @@ export default function SlideCommit({
       unwatch.current?.();
       run.current += 1;
     },
-    []
+    [],
   );
 
   const local = (clientX: number) => {
@@ -213,21 +282,26 @@ export default function SlideCommit({
   };
 
   const settle = () => {
-    setPhase('idle');
+    setPhase("idle");
     animate(shown, 1, { duration: 0.2, delay: 0.12 });
     if (reduce) anchor.set(0);
-    else animate(anchor, 0, { type: 'spring', duration: 0.3, bounce: 0 });
+    else animate(anchor, 0, { type: "spring", duration: 0.3, bounce: 0 });
   };
 
   const resolve = (viaKey: boolean) => {
-    setPhase('done');
+    setPhase("done");
     anchor.set(x.get());
     animate(spin, 0, { duration: 0.12 });
     if (reduce) x.set(0);
     else {
       animate(x, 0, commitSpring);
       if (!viaKey && landingDip > 0) {
-        animate(pulse, [1, 1 - landingDip, 1], { duration: 0.46, times: [0, 0.62, 1], ease: EASE_OUT, delay: 0.1 });
+        animate(pulse, [1, 1 - landingDip, 1], {
+          duration: 0.46,
+          times: [0, 0.62, 1],
+          ease: EASE_OUT,
+          delay: 0.1,
+        });
       }
     }
     onDone?.();
@@ -235,7 +309,7 @@ export default function SlideCommit({
   };
 
   const reject = (reason: unknown) => {
-    setPhase('error');
+    setPhase("error");
     onError?.(reason);
     animate(spin, 0, { duration: 0.12 });
     animate(shown, 1, { duration: 0.2, delay: 0.12 });
@@ -246,7 +320,7 @@ export default function SlideCommit({
         if (!grip.current) goHome(0);
       }, 300);
     }
-    timer.current = setTimeout(() => setPhase('idle'), Math.max(holdMs, 1500));
+    timer.current = setTimeout(() => setPhase("idle"), Math.max(holdMs, 1500));
   };
 
   const commit = (viaKey: boolean) => {
@@ -260,13 +334,13 @@ export default function SlideCommit({
       reject(reason);
       return;
     }
-    const pending = out && typeof out.then === 'function' ? out : null;
+    const pending = out && typeof out.then === "function" ? out : null;
     if (!pending) {
       animate(shown, 0, { duration: 0.12 });
       resolve(viaKey);
       return;
     }
-    setPhase('pending');
+    setPhase("pending");
     animate(shown, 0, { duration: 0.2 });
     animate(spin, 1, { duration: 0.2 });
     const t0 = performance.now();
@@ -275,19 +349,31 @@ export default function SlideCommit({
         () => {
           if (id === run.current) fn();
         },
-        Math.max(0, MIN_PENDING - (performance.now() - t0))
+        Math.max(0, MIN_PENDING - (performance.now() - t0)),
       );
     };
     pending.then(
       () => later(() => resolve(viaKey)),
-      reason => later(() => reject(reason))
+      (reason) => later(() => reject(reason)),
     );
   };
 
   const down = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (disabled || grip.current || phase === 'pending' || phase === 'done' || e.button !== 0) return;
+    if (
+      disabled ||
+      grip.current ||
+      phase === "pending" ||
+      phase === "done" ||
+      e.button !== 0
+    )
+      return;
     x.stop();
-    grip.current = { id: e.pointerId, grab: local(e.clientX) - x.get(), moved: false, hist: [] };
+    grip.current = {
+      id: e.pointerId,
+      grab: local(e.clientX) - x.get(),
+      moved: false,
+      hist: [],
+    };
     setHeld(true);
     try {
       trackRef.current?.setPointerCapture(e.pointerId);
@@ -301,13 +387,13 @@ export default function SlideCommit({
       unwatch.current?.();
       goHome(0);
     };
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
-    window.addEventListener('pointercancel', onCancel);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onCancel);
     unwatch.current = () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('pointercancel', onCancel);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
       unwatch.current = null;
     };
   };
@@ -344,20 +430,20 @@ export default function SlideCommit({
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (disabled || phase === 'pending' || phase === 'done') return;
+    if (disabled || phase === "pending" || phase === "done") return;
     const step = TRAVEL / 10;
-    if (e.key === 'End' || e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "End" || e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       commit(true);
-    } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
       e.preventDefault();
       const next = Math.min(TRAVEL, x.get() + step);
       x.set(next);
       if (next >= TRAVEL) commit(true);
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
       e.preventDefault();
       x.set(Math.max(0, x.get() - step));
-    } else if (e.key === 'Home' || e.key === 'Escape') {
+    } else if (e.key === "Home" || e.key === "Escape") {
       e.preventDefault();
       if (grip.current) up({ pointerId: grip.current.id });
       else x.set(0);
@@ -365,30 +451,29 @@ export default function SlideCommit({
   };
 
   const iconSize = Math.round(GRIP * 0.42);
-  const done = phase === 'done';
+  const done = phase === "done";
 
   return (
     <div
       className={[styles.root, className].filter(Boolean).join(" ")}
       data-phase={phase}
-      data-held={held ? '' : undefined}
-      data-disabled={disabled ? '' : undefined}
+      data-held={held ? "" : undefined}
+      data-disabled={disabled ? "" : undefined}
       style={
         {
           width: "100%",
           maxWidth: width,
           height,
-          '--sc-track': trackColor,
-          '--sc-ink': handleColor,
-          '--sc-ok': successColor,
-          '--sc-no': dangerColor,
-          '--sc-on-ink': onColor(handleColor),
-          '--sc-on-ok': onColor(successColor),
-          '--sc-on-no': onColor(dangerColor),
-          '--sc-radius': `${r}px`,
-          '--sc-grip-r': `${gripR}px`,
-          '--sc-pad': `${PAD}px`,
-          '--sc-font': 'var(--font-size-label)'
+          "--sc-track": trackColor,
+          "--sc-ink": handleColor,
+          "--sc-ok": successColor,
+          "--sc-no": dangerColor,
+          "--sc-on-ink": onColor(handleColor),
+          "--sc-on-ok": onColor(successColor),
+          "--sc-on-no": onColor(dangerColor),
+          "--sc-radius": `${r}px`,
+          "--sc-pad": `${PAD}px`,
+          "--sc-font": "var(--font-size-label)",
         } as CSSProperties
       }
     >
@@ -398,9 +483,17 @@ export default function SlideCommit({
         style={{ transform: trackTransform }}
         onPointerDown={down}
       >
-        <motion.span className={styles.label} style={{ opacity: say }} aria-hidden="true">
-          <span className={[styles.text, styles.textPlain].join(" ")}>{label}</span>
-          <span className={[styles.text, styles.textError].join(" ")}>{errorLabel}</span>
+        <motion.span
+          className={styles.label}
+          style={{ opacity: say }}
+          aria-hidden="true"
+        >
+          <span className={[styles.text, styles.textPlain].join(" ")}>
+            {label}
+          </span>
+          <span className={[styles.text, styles.textError].join(" ")}>
+            {errorLabel}
+          </span>
         </motion.span>
         <motion.div
           ref={capsuleRef}
@@ -411,28 +504,43 @@ export default function SlideCommit({
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={0}
-          aria-busy={phase === 'pending' || undefined}
+          aria-busy={phase === "pending" || undefined}
           aria-disabled={disabled || undefined}
           className={styles.capsule}
           style={{ clipPath: clip, transform: shape, transformOrigin: origin }}
-          onPointerEnter={e => {
-            if (e.pointerType === 'mouse' && finePointer()) setHot(true);
+          onPointerEnter={(e) => {
+            if (e.pointerType === "mouse" && finePointer()) setHot(true);
           }}
           onPointerLeave={() => setHot(false)}
           onKeyDown={onKeyDown}
         >
           <motion.div className={styles.content} style={{ transform: content }}>
-            <motion.span className={styles.arrow} style={{ opacity: arrow }} aria-hidden="true">
-              {icon ?? <span aria-hidden="true" style={{ fontSize: iconSize }}>→</span>}
+            <motion.span
+              className={styles.arrow}
+              style={{ opacity: arrow }}
+              aria-hidden="true"
+            >
+              {icon ?? (
+                <span aria-hidden="true" style={{ fontSize: iconSize }}>
+                  →
+                </span>
+              )}
             </motion.span>
-            <motion.span className={styles.spin} style={{ opacity: spin }} aria-hidden="true">
+            <motion.span
+              className={styles.spin}
+              style={{ opacity: spin }}
+              aria-hidden="true"
+            >
               <Spinner size={iconSize} />
             </motion.span>
             <motion.span
               className={styles.done}
               aria-hidden="true"
               initial={false}
-              animate={{ opacity: done ? 1 : 0, scale: done || reduce ? 1 : 0.95 }}
+              animate={{
+                opacity: done ? 1 : 0,
+                scale: done || reduce ? 1 : 0.95,
+              }}
               transition={{ duration: 0.2, ease: EASE_OUT }}
             >
               <span aria-hidden="true">✓</span>
@@ -440,9 +548,18 @@ export default function SlideCommit({
             </motion.span>
           </motion.div>
         </motion.div>
-        <span className={styles.sr} id={instructionsId}>Drag all the way right, use arrow keys, or press Enter to proceed to checkout.</span>
+        <span className={styles.sr} id={instructionsId}>
+          Drag all the way right, use arrow keys, or press Enter to proceed to
+          checkout.
+        </span>
         <span className={styles.sr} aria-live="polite">
-          {phase === 'pending' ? 'Working' : phase === 'done' ? doneLabel : phase === 'error' ? errorLabel : ''}
+          {phase === "pending"
+            ? "Working"
+            : phase === "done"
+              ? doneLabel
+              : phase === "error"
+                ? errorLabel
+                : ""}
         </span>
       </motion.div>
     </div>

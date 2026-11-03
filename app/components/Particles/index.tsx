@@ -529,7 +529,9 @@ export default function Particles({
       .createElement("canvas")
       .getContext("2d", { willReadFrequently: true });
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const mobileQuery = window.matchMedia("(max-width: 899px), (pointer: coarse)");
+    const mobileQuery = window.matchMedia(
+      "(max-width: 899px), (pointer: coarse)",
+    );
     let reduce = motionQuery.matches;
     const cache = new Map<string, number[]>();
     const parse = (value: string): number[] => {

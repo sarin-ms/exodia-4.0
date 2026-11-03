@@ -35,7 +35,11 @@ export default function About() {
       <div className={styles.inner}>
         <div className={styles.introduction}>
           <div className={styles.copy}>
-            <h2 className={styles.sectionTitle} id="about-heading" data-about-reveal>
+            <h2
+              className={styles.sectionTitle}
+              id="about-heading"
+              data-about-reveal
+            >
               What is Exodia
             </h2>
             <p className={styles.heading}>

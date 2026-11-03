@@ -200,7 +200,11 @@ export default function useRegistrationForm(apiUrl: string) {
           encodeURIComponent(active.registrationId ?? active.key),
       );
     } catch (error) {
-      if (error instanceof RequestError && error.status === 404 && !active.registrationId) {
+      if (
+        error instanceof RequestError &&
+        error.status === 404 &&
+        !active.registrationId
+      ) {
         // A definitive not-found response makes it safe to resume the form.
         // Failed connections and known registrations keep their checkout context.
         active.checkoutStarted = false;
@@ -315,7 +319,13 @@ export default function useRegistrationForm(apiUrl: string) {
     setErrors(found);
     setMessage("");
     if (Object.keys(found).length) {
-      setStep(["name", "email", "phone", "gender"].some((field) => found[field as keyof StudentDetails]) ? 0 : 1);
+      setStep(
+        ["name", "email", "phone", "gender"].some(
+          (field) => found[field as keyof StudentDetails],
+        )
+          ? 0
+          : 1,
+      );
       requestAnimationFrame(() => errorRef.current?.focus());
       return;
     }
@@ -475,7 +485,13 @@ export default function useRegistrationForm(apiUrl: string) {
       ) {
         if (error.fields) {
           setErrors(error.fields);
-          setStep(["name", "email", "phone", "gender"].some((field) => error.fields?.[field as keyof StudentDetails]) ? 0 : 1);
+          setStep(
+            ["name", "email", "phone", "gender"].some(
+              (field) => error.fields?.[field as keyof StudentDetails],
+            )
+              ? 0
+              : 1,
+          );
           requestAnimationFrame(() => errorRef.current?.focus());
         }
         void loadCatalogue();
@@ -539,7 +555,9 @@ export default function useRegistrationForm(apiUrl: string) {
     setCode,
     codeError,
     setCodeError,
-    emailVerified: verifiedEmail === normalizeStudent(student).email && !!verification?.verified,
+    emailVerified:
+      verifiedEmail === normalizeStudent(student).email &&
+      !!verification?.verified,
     busy,
     scriptReady,
     setScriptReady,

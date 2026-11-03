@@ -88,9 +88,6 @@
   font-size: 0.8125rem;
   line-height: 1.85;
 }
-.footnote {
-  display: none;
-}
 .questionMark {
   display: none;
   padding-left: 300px;
@@ -119,28 +116,6 @@
   }
   .description {
     margin-top: 1.75rem;
-  }
-  .footnote {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: clamp(2rem, 6svh, 4rem);
-  }
-  .spark {
-    width: 2.125rem;
-    height: 2.125rem;
-    flex-shrink: 0;
-    overflow: visible;
-    color: var(--color-gold);
-    stroke: currentColor;
-    stroke-width: 0.85;
-  }
-  .footnote > p {
-    font-size: 0.6875rem;
-    line-height: 1.7;
-  }
-  .footnote > p > span {
-    color: var(--color-text-muted);
   }
   .questionMark {
     position: absolute;

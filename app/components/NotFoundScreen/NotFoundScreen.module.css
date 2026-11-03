@@ -1,0 +1,164 @@
+.page {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100svh;
+  isolation: isolate;
+  padding: 1.5rem;
+  background:
+    radial-gradient(
+      ellipse at 50% 44%,
+      color-mix(in srgb, var(--color-plum) 40%, transparent),
+      transparent 65%
+    ),
+    var(--color-background);
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+.wordmark {
+  color: var(--color-text);
+  font-family: var(--font-brand);
+  font-size: 2rem;
+  line-height: 1;
+}
+.edition {
+  color: var(--color-gold);
+  font-size: var(--font-size-caption);
+}
+.label {
+  max-width: 10rem;
+  color: var(--color-text-muted);
+  font-size: 0.5625rem;
+  letter-spacing: 0.16em;
+  text-align: right;
+  text-transform: uppercase;
+}
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 5svh, 4rem) 0;
+  text-align: center;
+}
+.code {
+  position: relative;
+  color: var(--color-gold);
+  font-family: var(--font-heading);
+  font-size: clamp(6rem, 18svh, 10rem);
+  font-weight: 400;
+  letter-spacing: -0.08em;
+  line-height: 1;
+}
+.spark {
+  position: absolute;
+  top: 0.15em;
+  right: -0.75em;
+  color: var(--color-cameo);
+  font-family: var(--font-body);
+  font-size: 0.2em;
+  letter-spacing: 0;
+}
+.eyebrow {
+  margin-top: 1.75rem;
+  color: var(--color-gold);
+  font-size: var(--font-size-caption);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.heading {
+  max-width: 20ch;
+  margin-top: 0.75rem;
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 1.1;
+}
+.heading > span {
+  color: var(--color-gold);
+}
+.description {
+  max-width: 32rem;
+  margin-top: 1.25rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  line-height: 1.8;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1.5rem;
+  margin-top: 2rem;
+}
+.homeLink,
+.stacksLink {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: var(--font-size-label);
+  text-decoration: none;
+}
+.homeLink {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--color-gold);
+  border-radius: 3px;
+  background: var(--color-gold);
+  color: var(--color-background);
+}
+.homeLink:hover {
+  background: var(--color-cameo);
+  border-color: var(--color-cameo);
+}
+.stacksLink {
+  padding: 0.75rem 0;
+  color: var(--color-text);
+}
+.stacksLink > span {
+  color: var(--color-gold);
+}
+.stacksLink:hover,
+.footer a:hover {
+  color: var(--color-gold);
+}
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-cameo) 18%, transparent);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
+}
+.footer a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+@media (min-width: 600px) {
+  .page {
+    padding: 2rem clamp(2rem, 5vw, 5rem);
+  }
+  .label {
+    max-width: none;
+  }
+}

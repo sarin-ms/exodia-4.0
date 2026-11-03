@@ -86,7 +86,7 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .row[data-status='idle']:not([data-disabled]):hover .slot:not([data-active]) {
+  .row[data-status="idle"]:not([data-disabled]):hover .slot:not([data-active]) {
     background: color-mix(in srgb, var(--cs-ink) 4%, var(--cs-slot));
   }
 }
@@ -95,11 +95,11 @@
   background: color-mix(in srgb, var(--cs-ink) 8%, var(--cs-slot));
 }
 
-.row[data-status='error'] .slot {
+.row[data-status="error"] .slot {
   background: color-mix(in srgb, var(--cs-danger) 20%, var(--cs-slot));
 }
 
-.row[data-status='error'] .fill {
+.row[data-status="error"] .fill {
   background: var(--cs-danger);
 }
 
@@ -179,9 +179,13 @@
     transition: opacity 200ms ease;
   }
 
-  .row[data-status='success'] .wash {
+  .row[data-status="success"] .wash {
     opacity: 1;
   }
 }
 
-.row[data-focused] { outline: 2px solid var(--color-gold); outline-offset: 4px; border-radius: var(--cs-radius); }
+.row[data-focused] {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 4px;
+  border-radius: var(--cs-radius);
+}

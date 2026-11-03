@@ -46,21 +46,6 @@
   opacity: 0.035;
   content: "";
 }
-.lightTrail {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 25%;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--color-gold),
-    transparent
-  );
-  opacity: 0;
-  pointer-events: none;
-}
 .inner {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
@@ -315,11 +300,6 @@
 .join:is(:hover, :focus-visible) .joinArrow svg {
   transform: translate(2px, -2px);
 }
-.buttonSpark {
-  display: inline-block;
-  font-size: 0.5625rem;
-  line-height: 1;
-}
 .bottom {
   display: flex;
   min-height: 45px;
@@ -451,9 +431,6 @@
   .joinArrow svg {
     width: 1.5rem;
     height: 1.5rem;
-  }
-  .buttonSpark {
-    font-size: 0.6875rem;
   }
   .bottom {
     font-size: 0.625rem;

@@ -284,6 +284,7 @@
     overflow: visible;
     transform-style: preserve-3d;
     scroll-snap-type: none;
+    pointer-events: none;
   }
   .gallery[data-gallery-enhanced="true"] .row + .row {
     top: 50%;
@@ -300,6 +301,7 @@
     width: clamp(16rem, min(30vw, 40svh), 25rem);
   }
   .gallery[data-gallery-enhanced="true"] .photoLink {
+    pointer-events: auto;
     user-select: none;
     cursor: grab;
   }

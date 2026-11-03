@@ -2,12 +2,22 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { EmailVerification } from "@/app/lib/registration";
-import { isTicketEmail, normalizeTicketEmail, type RecoveredTicket, type TicketLookupResult } from "@/app/lib/ticket-lookup";
+import {
+  isTicketEmail,
+  normalizeTicketEmail,
+  type RecoveredTicket,
+  type TicketLookupResult,
+} from "@/app/lib/ticket-lookup";
 
-export default function useTicketLookup(apiUrl: string, onOpen: (ticket: RecoveredTicket) => void) {
+export default function useTicketLookup(
+  apiUrl: string,
+  onOpen: (ticket: RecoveredTicket) => void,
+) {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [verification, setVerification] = useState<EmailVerification | null>(null);
+  const [verification, setVerification] = useState<EmailVerification | null>(
+    null,
+  );
   const [tickets, setTickets] = useState<RecoveredTicket[] | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -22,18 +32,31 @@ export default function useTicketLookup(apiUrl: string, onOpen: (ticket: Recover
   }, [verification]);
 
   async function request<T>(path: string, body: unknown): Promise<T> {
-    if (!accessToken.current) accessToken.current = Array.from(crypto.getRandomValues(new Uint8Array(32)), (n) => n.toString(16).padStart(2, "0")).join("");
+    if (!accessToken.current)
+      accessToken.current = Array.from(
+        crypto.getRandomValues(new Uint8Array(32)),
+        (n) => n.toString(16).padStart(2, "0"),
+      ).join("");
     const response = await fetch(apiUrl + path, {
       method: "POST",
       cache: "no-store",
-      headers: { "Content-Type": "application/json", Authorization: "Bearer " + accessToken.current },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + accessToken.current,
+      },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(25000),
     }).catch(() => {
-      throw new Error("Couldn’t reach ticket lookup. Check your connection and try again.");
+      throw new Error(
+        "Couldn’t reach ticket lookup. Check your connection and try again.",
+      );
     });
     const result = await response.json().catch(() => null);
-    if (!response.ok || !result) throw new Error(result?.error ?? "Ticket lookup couldn’t connect. Please try again shortly.");
+    if (!response.ok || !result)
+      throw new Error(
+        result?.error ??
+          "Ticket lookup couldn’t connect. Please try again shortly.",
+      );
     return result as T;
   }
 
@@ -48,14 +71,21 @@ export default function useTicketLookup(apiUrl: string, onOpen: (ticket: Recover
     setBusy(true);
     setError("");
     try {
-      const challenge = await request<EmailVerification>("/api/ticket-lookup/request", { email: normalized });
+      const challenge = await request<EmailVerification>(
+        "/api/ticket-lookup/request",
+        { email: normalized },
+      );
       setEmail(normalized);
       setCode("");
       setTickets(null);
       setClock(Date.now() / 1000);
       setVerification(challenge);
     } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Your code could not be sent. Please try again.");
+      setError(
+        failure instanceof Error
+          ? failure.message
+          : "Your code could not be sent. Please try again.",
+      );
     } finally {
       setBusy(false);
       inFlight.current = false;
@@ -72,11 +102,18 @@ export default function useTicketLookup(apiUrl: string, onOpen: (ticket: Recover
     setBusy(true);
     setError("");
     try {
-      const result = await request<TicketLookupResult>("/api/ticket-lookup/verify", { verificationId: verification.verificationId, code });
+      const result = await request<TicketLookupResult>(
+        "/api/ticket-lookup/verify",
+        { verificationId: verification.verificationId, code },
+      );
       setTickets(result.tickets);
       if (result.tickets.length === 1) onOpen(result.tickets[0]);
     } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Your code could not be verified. Please try again.");
+      setError(
+        failure instanceof Error
+          ? failure.message
+          : "Your code could not be verified. Please try again.",
+      );
     } finally {
       setBusy(false);
       inFlight.current = false;
@@ -90,7 +127,21 @@ export default function useTicketLookup(apiUrl: string, onOpen: (ticket: Recover
     setError("");
   }
 
-  return { email, setEmail, code, setCode, verification, tickets, error, setError, busy,
-    resendSeconds: verification ? Math.max(0, Math.ceil(verification.resendAt - clock)) : 0,
-    sendCode, verifyCode, changeEmail };
+  return {
+    email,
+    setEmail,
+    code,
+    setCode,
+    verification,
+    tickets,
+    error,
+    setError,
+    busy,
+    resendSeconds: verification
+      ? Math.max(0, Math.ceil(verification.resendAt - clock))
+      : 0,
+    sendCode,
+    verifyCode,
+    changeEmail,
+  };
 }

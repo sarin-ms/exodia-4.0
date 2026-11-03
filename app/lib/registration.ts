@@ -22,11 +22,7 @@ export type StudentDetails = {
 };
 export type FieldErrors = Partial<Record<keyof StudentDetails, string>>;
 export type RegistrationStatus =
-  | "pending_payment"
-  | "confirmed"
-  | "expired"
-  | "paid_exception"
-  | "refunded";
+  "pending_payment" | "confirmed" | "expired" | "paid_exception" | "refunded";
 export type Catalogue = {
   paymentMode: "test" | "live";
   emailReady: boolean;

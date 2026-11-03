@@ -24,9 +24,7 @@ type LoadingScreenProps = Readonly<{
 
 const MemoizedFlyingWizard = memo(FlyingWizard);
 
-export default function LoadingScreen({
-  children,
-}: LoadingScreenProps) {
+export default function LoadingScreen({ children }: LoadingScreenProps) {
   const [phase, setPhase] = useState<Phase>("waiting");
   const [isReady, setIsReady] = useState(false);
   const isComplete = phase === "complete";

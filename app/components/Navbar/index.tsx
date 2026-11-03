@@ -7,7 +7,11 @@ import styles from "./Navbar.module.css";
 
 const links = [
   { href: "#about", label: "About", description: "The story behind the magic" },
-  { href: "#stacks", label: "Stacks", description: "Find your kind of wizardry" },
+  {
+    href: "#stacks",
+    label: "Stacks",
+    description: "Find your kind of wizardry",
+  },
   {
     href: "#glimpses",
     label: "Glimpses",
@@ -108,7 +112,9 @@ export default function Navbar() {
                 <div className={styles.menuHeading}>
                   <span className={styles.menuEyebrow}>The sorting room</span>
                   <h2 id="mobile-menu-title">
-                    Where to,<br />curious one?
+                    Where to,
+                    <br />
+                    curious one?
                   </h2>
                   <div className={styles.hatScene} aria-hidden="true">
                     <span className={styles.hatOrbit} />
@@ -126,7 +132,7 @@ export default function Navbar() {
 
                 <ul className={styles.menuLinks}>
                   {links.map(({ href, label, description }, index) => (
-                    <li className={styles.menuItem} key={href}>
+                    <li key={href}>
                       <a
                         className={styles.menuLink}
                         href={href}
@@ -154,7 +160,8 @@ export default function Navbar() {
                 </div>
               </div>
               <p className={styles.menuNote}>
-                <span aria-hidden="true">✦</span> A little curiosity. A little magic.
+                <span aria-hidden="true">✦</span> A little curiosity. A little
+                magic.
               </p>
             </div>
           </div>
