@@ -67,14 +67,18 @@ export default function AboutMotion() {
         const counters = select("[data-about-count]") as HTMLElement[];
         const originals = counters.map((element) => element.textContent);
         counters.forEach((element) => {
-          const value = Number(element.dataset.aboutCount);
+          const target = element.dataset.aboutCount ?? "0";
+          const digits = target.startsWith("0") ? target.length : 1;
           const counter = { value: 0 };
           gsap.to(counter, {
-            value,
+            value: Number(target),
             duration: 1.5,
             ease: "power2.out",
             onUpdate: () => {
-              element.textContent = String(Math.round(counter.value));
+              element.textContent = String(Math.round(counter.value)).padStart(
+                digits,
+                "0",
+              );
             },
             scrollTrigger: { trigger: element, start: "top 98%", once: true },
           });

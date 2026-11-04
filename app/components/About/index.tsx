@@ -1,26 +1,23 @@
-import Image from "next/image";
 import AboutBackdrop from "@/app/components/AboutBackdrop";
 import AboutMotion from "@/app/components/AboutMotion";
 import styles from "./About.module.css";
 
 const introduction =
-  "A meeting ground for curious minds, bold ideas, and the people who love making things.";
+  "EXODIA is a flagship technical learning gala that brings together passionate learners, aspiring innovators and technology enthusiasts from across Kerala. It provides an immersive platform to explore emerging technologies, exchange ideas and discover new possibilities in the ever-evolving world of technology.";
 
-const previousEdition = [
-  { value: 3, label: "Tech stacks" },
-  { value: 180, label: "Participants" },
-  { value: 2, label: "Days of innovation" },
+const highlights = [
+  "Explore Emerging Technologies",
+  "Gain Practical Experience",
+  "Connect with Innovators",
+  "Develop Technical Skills",
+  "Collaborate and Create",
+  "Discover New Possibilities",
 ];
 
-const organizers = [
-  {
-    name: "IEDC Bootcamp, College of Engineering Chengannur",
-    logo: "/brand/iedc-bootcamp.svg",
-    width: 960,
-    height: 577,
-  },
-  { name: "FOCES CEC", logo: "/brand/foces.svg", width: 1657, height: 350 },
-  { name: "µLearn CHN", logo: "/brand/mulearn.svg", width: 1445, height: 533 },
+const stats = [
+  { count: "180", suffix: "+", label: "Students" },
+  { count: "03", label: "Tech Stacks" },
+  { count: "02", suffix: " Days", label: "Duration" },
 ];
 
 export default function About() {
@@ -40,21 +37,15 @@ export default function About() {
               id="about-heading"
               data-about-reveal
             >
-              What is Exodia
+              ABOUT THE EVENT
             </h2>
             <p className={styles.heading}>
               <span className={styles.headingLine}>
-                <span data-about-heading>Where curiosity</span>
-              </span>
-              <span className={styles.headingLine}>
-                <span data-about-heading>becomes</span>
-              </span>
-              <span className={`${styles.headingLine} ${styles.headingAccent}`}>
-                <span data-about-heading>extraordinary.</span>
+                <span data-about-heading>EXODIA 4.0</span>
               </span>
             </p>
-            <p className={styles.gala} data-about-reveal>
-              The All Kerala Technical Learning Gala.
+            <p className={styles.tagline} data-about-reveal>
+              Beyond Learning. Into Innovation.
             </p>
             <p className={styles.lead} data-about-copy>
               {introduction.split(" ").map((word, index) => (
@@ -64,58 +55,58 @@ export default function About() {
               ))}
             </p>
             <p className={styles.description} data-about-reveal>
-              Exodia brings learning to life through hands-on experiences and
-              shared discovery. Come with a question. Leave with a new skill, a
-              fresh perspective, and a story worth telling.
+              EXODIA encourages participants to step beyond conventional
+              learning through expert-led workshops, hands-on sessions and
+              collaborative experiences.
+            </p>
+            <p className={styles.description} data-about-reveal>
+              With three specialised technology tracks, EXODIA 4.0 offers an
+              opportunity to experiment with emerging technologies, develop
+              practical skills and transform curiosity into creativity.
+            </p>
+            <p className={styles.description} data-about-reveal>
+              More than just a technical event, EXODIA is a celebration of
+              innovation, collaboration and continuous learning.
+            </p>
+            <p className={styles.slogan} data-about-reveal>
+              Three Tech Stacks. Two Days. Endless Possibilities.
             </p>
           </div>
 
-          <div className={styles.legacy}>
-            <p className={styles.legacyEdition} data-about-reveal>
-              A look back at <span>Exodia 3.0</span>
-            </p>
-            <dl className={styles.stats} aria-label="Exodia 3.0 in numbers">
-              {previousEdition.map((stat) => (
+          <div className={styles.eventOverview}>
+            <div data-about-reveal>
+              <h3 className={styles.subheading}>What Awaits You?</h3>
+              <ul className={styles.highlights}>
+                {highlights.map((highlight) => (
+                  <li key={highlight}>{highlight}</li>
+                ))}
+              </ul>
+            </div>
+            <h3
+              className={`${styles.subheading} ${styles.statsHeading}`}
+              id="about-stats-heading"
+              data-about-reveal
+            >
+              EXODIA 4.0 at a Glance
+            </h3>
+            <dl className={styles.stats} aria-labelledby="about-stats-heading">
+              {stats.map((stat) => (
                 <div className={styles.stat} key={stat.label} data-about-reveal>
                   <dt>{stat.label}</dt>
                   <dd>
-                    <span className={styles.accessibleValue}>{stat.value}</span>
-                    <span aria-hidden="true" data-about-count={stat.value}>
-                      {stat.value}
+                    <span className={styles.accessibleValue}>
+                      {stat.count}
+                      {stat.suffix}
+                    </span>
+                    <span aria-hidden="true">
+                      <span data-about-count={stat.count}>{stat.count}</span>
+                      <span className={styles.statSuffix}>{stat.suffix}</span>
                     </span>
                   </dd>
                 </div>
               ))}
             </dl>
-            <div className={styles.organizers} data-about-reveal>
-              <p className={styles.organizerLabel}>Organised By</p>
-              <ul
-                className={styles.organizerLogos}
-                aria-label="Exodia 3.0 organizers"
-              >
-                {organizers.map((organizer) => (
-                  <li key={organizer.logo}>
-                    <Image
-                      className={styles.organizerLogo}
-                      src={organizer.logo}
-                      alt={organizer.name}
-                      width={organizer.width}
-                      height={organizer.height}
-                      unoptimized
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
-        </div>
-
-        <div className={styles.values} data-about-reveal>
-          <p>Learn by doing.</p>
-          <span aria-hidden="true">✦</span>
-          <p>Build the unexpected.</p>
-          <span aria-hidden="true">✦</span>
-          <p>Find your people.</p>
         </div>
       </div>
       <AboutMotion />

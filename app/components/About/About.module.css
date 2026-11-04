@@ -59,41 +59,62 @@
 .headingLine > span {
   display: block;
 }
-.headingAccent {
+.tagline {
+  margin-top: 0.5rem;
   color: var(--color-gold);
+  font-family: var(--font-heading);
+  font-size: clamp(1.125rem, 4vw, 1.75rem);
+  line-height: 1.4;
+  text-wrap: balance;
 }
-.gala {
-  margin-top: 1.125rem;
+.eventDetails {
+  margin-top: 0.875rem;
   color: var(--color-cameo);
-  font-size: 0.625rem;
-  letter-spacing: 0.06em;
+  font-size: 0.875rem;
 }
-.lead {
-  max-width: 31rem;
-  margin-top: 1.25rem;
-  font-size: clamp(1rem, 3.9vw, 1.25rem);
+.lead,
+.description {
+  max-width: 36rem;
   line-height: 1.7;
   text-wrap: pretty;
 }
+.lead {
+  margin-top: 1.25rem;
+  font-size: 1rem;
+}
 .description {
-  max-width: 32rem;
   margin-top: 0.875rem;
   color: var(--color-text-muted);
-  font-size: 0.8125rem;
-  line-height: 1.85;
+  font-size: 0.9375rem;
+}
+.slogan {
+  margin-top: 1.25rem;
+  color: var(--color-gold);
+  font-family: var(--font-heading);
   text-wrap: pretty;
 }
-.legacy {
+.eventOverview {
   min-width: 0;
 }
-.legacyEdition {
-  color: var(--color-text-muted);
-  font-size: 0.5625rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.subheading {
+  margin: 0;
+  color: var(--color-cameo);
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 400;
 }
-.legacyEdition > span {
+.highlights {
+  display: grid;
+  gap: 0.375rem;
+  margin: 0.75rem 0 0;
+  padding-inline-start: 1.25rem;
+  font-size: 0.9375rem;
+}
+.highlights li::marker {
   color: var(--color-gold);
+}
+.statsHeading {
+  margin-top: 1.75rem;
 }
 .stats {
   display: grid;
@@ -122,6 +143,11 @@
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.055em;
   line-height: 1.15;
+  white-space: nowrap;
+}
+.statSuffix {
+  font-size: 0.5em;
+  letter-spacing: normal;
 }
 .accessibleValue {
   position: absolute;
@@ -130,62 +156,6 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
-}
-.organizers {
-  margin-top: 1rem;
-}
-.organizerLabel {
-  color: var(--color-text-muted);
-  font-size: 0.5rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.organizerLogos {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: center;
-  gap: 1rem;
-  margin: 0.75rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-.organizerLogos li {
-  display: flex;
-  min-width: 0;
-  min-height: 3rem;
-  align-items: center;
-  justify-content: center;
-}
-.organizerLogo {
-  display: block;
-  width: 100%;
-  max-width: 7rem;
-  height: auto;
-}
-.organizerLogos li:first-child .organizerLogo {
-  max-width: 5.75rem;
-}
-.values {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.625rem;
-  margin-top: 1.75rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid color-mix(in srgb, var(--color-cameo) 20%, transparent);
-}
-.values p {
-  max-width: 6rem;
-  color: var(--color-cameo);
-  font-family: var(--font-heading);
-  font-size: 0.6875rem;
-  font-weight: 400;
-  font-synthesis: none;
-  line-height: 1.5;
-}
-.values > span {
-  color: var(--color-gold);
-  font-size: 0.5rem;
 }
 @media (min-width: 600px) {
   .about {
@@ -196,10 +166,6 @@
   }
   .stats {
     gap: 2rem;
-  }
-  .values p {
-    max-width: none;
-    font-size: 0.875rem;
   }
 }
 @media (min-width: 900px) {
@@ -218,25 +184,10 @@
     margin-bottom: clamp(1rem, 2.5svh, 1.5rem);
     font-size: 1.25rem;
   }
-  .gala {
-    margin-top: clamp(1rem, 2.5svh, 1.5rem);
-    font-size: 0.6875rem;
-  }
-  .lead {
-    margin-top: clamp(1.125rem, 3svh, 1.75rem);
-    font-size: 1.25rem;
-  }
-  .description {
-    margin-top: 1rem;
-    font-size: 0.8125rem;
-  }
-  .legacy {
+  .eventOverview {
     padding-left: clamp(2rem, 4vw, 4rem);
     border-left: 1px solid
       color-mix(in srgb, var(--color-cameo) 20%, transparent);
-  }
-  .legacyEdition {
-    font-size: 0.625rem;
   }
   .stats {
     grid-template-columns: 1fr;
@@ -257,24 +208,5 @@
   }
   .stat dd {
     font-size: clamp(2.75rem, 7svh, 4rem);
-  }
-  .organizers {
-    margin-top: 1.5rem;
-  }
-  .organizerLabel {
-    font-size: 0.5625rem;
-  }
-  .organizerLogos {
-    gap: clamp(0.75rem, 1.5vw, 1.5rem);
-  }
-  .values {
-    margin-top: clamp(2rem, 5svh, 3.5rem);
-    padding-top: clamp(1.25rem, 3svh, 2rem);
-  }
-  .values p {
-    font-size: 1.0625rem;
-  }
-  .values > span {
-    font-size: 0.625rem;
   }
 }
