@@ -1,0 +1,253 @@
+.schedule {
+  padding: clamp(2.25rem, 6svh, 4rem) 0;
+  background: var(--color-background);
+}
+
+.paper {
+  --newsprint: #e4d0ad;
+  --newsprint-light: #f2e3c7;
+  --newsprint-edge: #9e754e;
+  --ink: #30271d;
+  --soft-ink: color-mix(in srgb, var(--ink) 86%, var(--newsprint));
+  --rule: color-mix(in srgb, var(--ink) 53%, transparent);
+  --tear-depth: clamp(0.625rem, 1.9vw, 1.5rem);
+  position: relative;
+  isolation: isolate;
+  width: min(100% - clamp(1.5rem, 8vw, 6rem), 52rem);
+  margin-inline: auto;
+  padding: clamp(0.875rem, 3vw, 1.875rem);
+  padding-bottom: calc(clamp(0.875rem, 3vw, 1.875rem) + 0.375rem);
+  color: var(--ink);
+  filter: drop-shadow(
+    0 1.25rem 2rem color-mix(in srgb, var(--color-void) 42%, transparent)
+  );
+}
+
+.paper::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 22% 12%,
+      color-mix(in srgb, var(--newsprint-light) 68%, transparent),
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse at 87% 81%,
+      color-mix(in srgb, var(--newsprint-edge) 28%, transparent),
+      transparent 45%
+    ),
+    linear-gradient(
+      105deg,
+      color-mix(in srgb, var(--newsprint-edge) 42%, transparent),
+      transparent 16% 78%,
+      color-mix(in srgb, var(--newsprint-edge) 40%, transparent)
+    ),
+    url("/assets/stack/paper-grain.webp") center / 10rem,
+    url("/assets/stack/paper-grain.webp") top left / 22rem,
+    var(--newsprint);
+  background-blend-mode:
+    soft-light, multiply, multiply, multiply, multiply, normal;
+  clip-path: polygon(
+    0 4px,
+    12% 1px,
+    23% 3px,
+    37% 0,
+    48% 3px,
+    68% 1px,
+    85% 4px,
+    100% 2px,
+    calc(100% - 3px) 23%,
+    100% 37%,
+    calc(100% - 5px) 51%,
+    100% 73%,
+    calc(100% - 2px) calc(100% - 3px),
+    96% 100%,
+    93% calc(100% - 2px),
+    88% calc(100% - 1px),
+    85% calc(100% - 6px),
+    83% calc(100% - var(--tear-depth) + 6px),
+    81% calc(100% - var(--tear-depth)),
+    79% calc(100% - var(--tear-depth) + 2px),
+    77% calc(100% - var(--tear-depth) + 1px),
+    74% calc(100% - var(--tear-depth) + 6px),
+    71% calc(100% - 8px),
+    68% calc(100% - 6px),
+    64% calc(100% - 1px),
+    56% calc(100% - 2px),
+    41% calc(100% - 4px),
+    35% calc(100% - 1px),
+    22% calc(100% - 6px),
+    15% calc(100% - 2px),
+    6% calc(100% - 5px),
+    0 100%,
+    3px 82%,
+    0 59%,
+    3px 46%,
+    0 22%
+  );
+  content: "";
+}
+
+.mastheadRule {
+  display: block;
+  width: 100%;
+  height: clamp(0.375rem, 1.25vw, 0.75rem);
+}
+
+.edition,
+.kicker,
+.date {
+  font-size: var(--font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.edition {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.375rem;
+  padding: 0.125rem 0.125rem 0;
+  color: var(--soft-ink);
+  font-size: clamp(0.625rem, 1.6vw, 0.75rem);
+}
+
+.notice span {
+  font-size: 0.625rem;
+}
+
+.name {
+  display: block;
+  width: min(100%, 39rem);
+  height: auto;
+  margin-inline: auto;
+}
+
+.frontPage {
+  display: grid;
+  gap: 0.5rem;
+  padding-block: clamp(0.75rem, 2vw, 1rem);
+  border-bottom: 3px double var(--ink);
+}
+
+.kicker {
+  width: fit-content;
+  padding: 0.125rem 0.375rem;
+  background: var(--ink);
+  color: var(--newsprint-light);
+  line-height: 1.35;
+}
+
+.heading,
+.dayHeading {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.heading {
+  margin-top: 0.375rem;
+  font-size: clamp(1.625rem, 6vw, 3.5rem);
+  text-transform: uppercase;
+}
+
+.tagline {
+  max-width: 33ch;
+  color: var(--soft-ink);
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-weight: 500;
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+.day {
+  min-width: 0;
+  padding-block: clamp(0.75rem, 2vw, 1.125rem);
+}
+
+.day + .day {
+  border-top: 1px solid var(--rule);
+}
+
+.dayHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.375rem 1rem;
+  margin: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  font-size: clamp(1.375rem, 3vw, 1.875rem);
+  text-transform: uppercase;
+}
+
+.dayNumber {
+  font-family: var(--font-body);
+  font-size: 0.8em;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.date {
+  color: var(--soft-ink);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+.sessions {
+  margin: 0.5rem 0 0;
+  padding-left: 1.125rem;
+  font-size: var(--font-size-body);
+  line-height: 1.5;
+}
+
+.sessions li {
+  padding: 0.125rem 0 0.125rem 0.125rem;
+}
+
+.sessions li::marker {
+  font-size: 0.75em;
+}
+
+.notice {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  padding-top: 0.5rem;
+  border-top: 3px double var(--ink);
+  color: var(--soft-ink);
+  font-size: var(--font-size-label);
+  line-height: 1.5;
+}
+
+@media (min-width: 640px) {
+  .frontPage {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 1.5rem;
+  }
+
+  .tagline {
+    text-align: right;
+  }
+
+  .days {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .day:first-child {
+    padding-right: clamp(1rem, 3vw, 1.75rem);
+  }
+
+  .day + .day {
+    padding-left: clamp(1rem, 3vw, 1.75rem);
+    border-top: 0;
+    border-left: 1px solid var(--rule);
+  }
+}

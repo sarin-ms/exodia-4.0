@@ -13,6 +13,11 @@ const links = [
     description: "Find your kind of wizardry",
   },
   {
+    href: "#schedule",
+    label: "Schedule",
+    description: "Read the Exodia Prophet",
+  },
+  {
     href: "#glimpses",
     label: "Glimpses",
     description: "Memories from the great hall",

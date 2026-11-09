@@ -1,39 +1,44 @@
 export const faq = [
   {
-    id: "who-is-it-for",
-    question: "Who is Exodia for?",
+    id: "about-exodia",
+    question: "What is Exodia?",
     answer:
-      "Exodia brings together curious learners, builders, and tech enthusiasts. If you enjoy exploring ideas, making things, and learning with other people, you’re in the right place.",
+      "Exodia is a state level technical fest at the College of Engineering Chengannur, celebrating technology, innovation and creativity.",
+  },
+  {
+    id: "who-is-it-for",
+    question: "Who can participate?",
+    answer:
+      "College students and technology enthusiasts from across Kerala are welcome to participate.",
   },
   {
     id: "learning-stacks",
-    question: "What can I explore at Exodia 4.0?",
+    question: "What are the major technical stacks?",
     answer:
-      "This chapter brings three stacks: Agentic AI, Embedded Systems, and Game Development. Explore intelligent agents, connect code with hardware, or bring a game world to life.",
+      "Exodia features three domains: Agentic AI, Embedded Systems and Game Development.",
   },
   {
     id: "prior-experience",
-    question: "Do I need experience in my chosen stack?",
+    question: "Do I need prior technical knowledge?",
     answer:
-      "Start with the stack that sparks your curiosity. Specific prerequisites and preparation notes will be included in the workshop details, so you can check what you need before choosing.",
-  },
-  {
-    id: "what-to-bring",
-    question: "What should I bring along?",
-    answer:
-      "A laptop, its charger, and a willingness to experiment are a good start. Check your stack’s setup notes for any software or hardware requirements before the event.",
+      "Not necessarily! Participants with different skill levels are welcome. Specific event requirements will be shared separately.",
   },
   {
     id: "registration",
-    question: "How do I register?",
+    question: "How can I register?",
     answer:
-      "Follow the Register button, fill in your student details, and choose one learning stack. Registration costs ₹799 per student. Review your details and pay securely through Razorpay when sales open. Your registration is confirmed after payment verification.",
+      "Visit the official Exodia website, explore the events and follow the registration instructions.",
   },
   {
-    id: "event-logistics",
-    question: "What about travel, accommodation, and meals?",
+    id: "certificates",
+    question: "Will participants receive certificates?",
+    answer: "Yes, the participants will receive certificates.",
+  },
+  {
+    id: "venue",
+    question: "Where will Exodia take place?",
     answer:
-      "These arrangements haven’t been announced for Exodia 4.0 yet. Check the event information when registration opens before making travel or stay plans.",
+      "Exodia will be hosted at the College of Engineering Chengannur (CEC), Kerala.",
   },
 ] as const;
 

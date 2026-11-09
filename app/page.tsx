@@ -5,6 +5,7 @@ import Hero from "@/app/components/Hero";
 import Glimpses from "@/app/components/Glimpses";
 import LoadingScreen from "@/app/components/LoadingScreen";
 import Navbar from "@/app/components/Navbar";
+import Schedule from "@/app/components/Schedule";
 import Stacks from "@/app/components/Stacks";
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
         <Hero />
         <About />
         <Stacks />
+        <Schedule />
         <Glimpses />
         <Faq />
       </main>

@@ -1,4 +1,5 @@
 import AboutBackdrop from "@/app/components/AboutBackdrop";
+import AboutForums from "@/app/components/AboutForums";
 import AboutMotion from "@/app/components/AboutMotion";
 import styles from "./About.module.css";
 
@@ -106,6 +107,7 @@ export default function About() {
                 </div>
               ))}
             </dl>
+            <AboutForums />
           </div>
         </div>
       </div>

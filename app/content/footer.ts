@@ -1,8 +1,23 @@
 export const footerContact = {
   email: "exodiacec@gmail.com",
   phoneCountry: "+91",
-  phoneLabel: "62826 29447",
-  phoneHref: "tel:+916282629447",
+  phones: [
+    {
+      name: "Blessy Stephen",
+      label: "77368 59869",
+      href: "tel:+917736859869",
+    },
+    {
+      name: "Divyalakshmi",
+      label: "99613 21024",
+      href: "tel:+919961321024",
+    },
+    {
+      name: "Lisha Jins",
+      label: "75920 39087",
+      href: "tel:+917592039087",
+    },
+  ],
 } as const;
 
 export const footerSocials = [

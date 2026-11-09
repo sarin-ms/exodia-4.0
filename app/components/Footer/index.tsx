@@ -33,17 +33,20 @@ export default function Footer() {
               <span aria-hidden="true">↗</span>
             </a>
             <ul className={styles.phones} aria-label="Exodia contacts">
-              {[1, 2, 3].map((number) => (
-                <li key={number}>
+              {footerContact.phones.map((contact) => (
+                <li key={contact.href}>
                   <a
                     className={styles.phone}
-                    href={footerContact.phoneHref}
-                    aria-label={`Call Exodia contact ${number}: ${footerContact.phoneCountry} ${footerContact.phoneLabel}`}
+                    href={contact.href}
+                    aria-label={`Call ${contact.name}: ${footerContact.phoneCountry} ${contact.label}`}
                   >
-                    <span className={styles.phoneCountry}>
-                      {footerContact.phoneCountry}
+                    <span className={styles.phoneName}>{contact.name}</span>
+                    <span>
+                      <span className={styles.phoneCountry}>
+                        {footerContact.phoneCountry}
+                      </span>{" "}
+                      {contact.label}
                     </span>
-                    <span>{footerContact.phoneLabel}</span>
                   </a>
                 </li>
               ))}

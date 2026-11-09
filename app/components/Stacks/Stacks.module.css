@@ -612,10 +612,11 @@
     inset: 0.5rem -0.25rem -0.6rem;
   }
   .book {
-    height: clamp(25rem, 64svh, 34rem);
+    min-height: clamp(31rem, 64svh, 34rem);
+    height: auto;
   }
   .spread {
-    position: absolute;
+    position: relative;
     inset: 0;
     min-height: 0;
     height: 100%;
@@ -636,7 +637,7 @@
   .stacks:not([data-book-ready]) .spread {
     position: relative;
     display: grid;
-    min-height: clamp(25rem, 64svh, 34rem);
+    min-height: clamp(31rem, 64svh, 34rem);
   }
   .page {
     position: relative;
@@ -870,7 +871,7 @@
   }
   @media (min-width: 900px) {
     .stacks:not([data-book-ready]) .book {
-      height: clamp(25rem, 64svh, 34rem);
+      min-height: clamp(31rem, 64svh, 34rem);
     }
     .stacks:not([data-book-ready]) .bookShell {
       transform: perspective(2500px) rotateX(6deg) rotateZ(-0.7deg);
